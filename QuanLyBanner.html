@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quản lý banner</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* ================= NAVBAR ================= */
     #navbar {
       position: fixed;
       top: 0;
@@ -23,7 +23,8 @@
       border-bottom: 1px solid #ccc;
     }
 
-    #navbar .nav-left, .nav-right {
+    #navbar .nav-left,
+    .nav-right {
       display: flex;
       align-items: center;
     }
@@ -54,7 +55,6 @@
       border-radius: 50%;
     }
 
-    /* ================= TASKBAR ================= */
     .taskbar {
       position: fixed;
       top: 100px;
@@ -85,17 +85,16 @@
       transform: scale(1.1);
     }
 
-    /* ================= CONTAINER ================= */
     .container {
-  width: 100%;
-  max-width: 100%;
-  margin-left: 120px;
-  margin-top: 120px;
-  padding: 30px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
+      width: 100%;
+      max-width: 100%;
+      margin-left: 120px;
+      margin-top: 120px;
+      padding: 30px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
 
     h1 {
       color: #333;
@@ -131,10 +130,11 @@
       margin-top: 20px;
     }
 
-    .data-table th, .data-table td {
+    .data-table td {
       border: 1px solid #ddd;
       padding: 12px;
-      text-align: left;
+      text-align: center;
+      vertical-align: middle;
     }
 
     .data-table th {
@@ -142,10 +142,12 @@
     }
 
     .data-table img {
-      width: 50px;
-      height: 50px;
+      width: 100px;
+      height: 100px;
       object-fit: cover;
       border-radius: 4px;
+      display: block;
+      margin: 0 auto;
     }
 
     .action-buttons button {
@@ -209,187 +211,229 @@
       padding: 8px;
       border-radius: 6px;
     }
-    .form-banner{
+
+    .form-banner {
       max-width: 1500px;
     }
-    
   </style>
 </head>
+
 <body>
-
-<!-- NAVBAR -->
-<nav id="navbar">
-  <div class="nav-left">
-    <div class="logo-wrapper">
-      <img src="/img/processed_no_white.png" alt="Logo" />
-      <div class="logo-title">Gundam Shop</div>
+  <nav id="navbar" class="flex justify-between items-center px-6 py-3 bg-white shadow-md">
+    <div class="nav-left flex items-center">
+      <div class="logo-wrapper flex items-center">
+        <img src="/img/processed_no_white.png" alt="Logo" class="h-10 mr-2" />
+        <div class="logo-title text-xl font-bold">Gundam Shop</div>
+      </div>
     </div>
-  </div>
-  <div class="nav-right">
-    <label>Tài khoản |</label>
-    <a href="#"><img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Tài khoản"/></a>
-  </div>
-</nav>
 
-<!-- TASKBAR -->
-<div class="taskbar">
-  <a href="/QuanLySanPham.html"><img src="/img/box.png" title="Quản lý sản phẩm"/></a>
-  <a href="/QuanLyTaiKhoan.html"><img src="/img/account.png" title="Quản lý tài khoản"/></a>
-  <a href="/QuanLyDonHang.html"><img src="/img/booking.png" title="Quản lý đơn hàng"/></a>
-  <a href="/QuanLyDanhGia.html"><img src="/img/review.png" title="Quản lý đánh giá"/></a>
-  <a href="/QuanLyBanner.html"><img src="/img/advertisement.png" title="Quản lý banner"/></a>
-  <a href="/QuanLyThanhToan.html"><img src="/img/credit-card.png" title="Quản lý thanh toán"/></a>
-</div>
+    <div class="nav-right relative">
+      <button id="accountToggle" class="flex items-center space-x-2 focus:outline-none">
+        <span class="text-gray-700 font-medium">Tài khoản</span>
+        <img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Tài khoản"
+          class="h-10 w-10 object-cover rounded-full" />
+      </button>
 
-<!-- MAIN CONTENT -->
-<div class="container" style="max-width: 1770px; width: 100%;">
-  <h1>Quản Lý Banner</h1>
-
-  <div class="search-section">
-    <input type="text" placeholder="Nhập 1 khóa tìm kiếm">
-    <button><i class="fas fa-search"></i> Tìm kiếm</button>
-  </div>
-
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th><input type="checkbox"></th>
-        <th>Ảnh</th>
-        <th>Mã</th>
-        <th>Tên banner</th>
-        <th>Liên kết</th>
-        <th>Danh mục</th>
-        <th>Hiển thị</th>
-        <th>Tác vụ</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Các dòng mẫu -->
-      <tr>
-        <td><input type="checkbox" checked></td>
-        <td><img src="/img/MoHinh/BanDai/HG/GundamCalibarn/sp4.2.png"></td>
-        <td>MH2024</td>
-        <td>Banner</td>
-        <td>san-pham</td>
-        <td>Banner footer</td>
-        <td><input type="checkbox" checked></td>
-        <td class="action-buttons">
-          <button class="btn-edit" title="Sửa"><i class="fas fa-pencil-alt"></i></button>
-          <button class="btn-view" title="Xem"><i class="fas fa-eye"></i></button>
-          <button class="btn-delete" title="Xóa"><i class="fas fa-trash-alt"></i></button>
-        </td>
-      </tr>
-
-
-
-      <tr>
-        <td><input type="checkbox" checked></td>
-        <td><img src="/img/MoHinh/BanDai/HG/GundamCalibarn/sp4.2.png"></td>
-        <td>MH2029</td>
-        <td>Banner</td>
-        <td>san-pham</td>
-        <td>Banner footer</td>
-        <td><input type="checkbox" checked></td>
-        <td class="action-buttons">
-          <button class="btn-edit" title="Sửa"><i class="fas fa-pencil-alt"></i></button>
-          <button class="btn-view" title="Xem"><i class="fas fa-eye"></i></button>
-          <button class="btn-delete" title="Xóa"><i class="fas fa-trash-alt"></i></button>
-        </td>
-      </tr>
-      
-    </tbody>
-  </table>
-
-  <div class="pagination">
-    <button>&laquo;</button>
-    <button class="active">1</button>
-    <button>2</button>
-    <button>&raquo;</button>
-  </div>
-
-  <div class="form-banner">
-    <div class="w-full">
-      <label>Mã:</label>
-      <input type="text">
-      <label>Ngày bắt đầu:</label>
-      <input type="date">
-      <label>Ngày kết thúc:</label>
-      <input type="date">
-      <label>Link:</label>
-      <input type="text">
-      <label>Loại Banner:</label>
-      <input type="text">
-      <label>Tiêu đề Banner:</label>
-      <input type="text">
-      <label>Nội dung:</label>
-      <textarea rows="4"></textarea>
+      <div id="accountMenu"
+        class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-10">
+        <a href="TrangCaNhan.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Thông tin cá nhân</a>
+        <a href="login.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Đăng xuất</a>
+      </div>
     </div>
-    <div class="flex flex-col items-center button-column">
-      <label class="mb-2">Ảnh Banner</label>
-      <img src="/img/MoHinh/BanDai/HG/GundamCalibarn/sp4.2.png" class="w-24 h-24 object-cover rounded border mb-4">
-      <button class="bg-green-500 text-white"><i class="fas fa-save mr-1"></i> Lưu</button>
-      <button class="bg-red-500 text-white"><i class="fas fa-trash-alt mr-1"></i> Xóa</button>
-      <button class="bg-yellow-400 text-black"><i class="fas fa-sync-alt mr-1"></i> Cập nhật</button>
-      <button class="bg-blue-400 text-white"><i class="fas fa-sync mr-1"></i> Reset</button>
-    </div>
-  </div>
-</div>
+  </nav>
+  <script>
+    const toggleBtn = document.getElementById('accountToggle');
+    const menu = document.getElementById('accountMenu');
 
-<!-- ================= JAVASCRIPT ================= -->
-<script>
-  document.querySelector('.search-section button').addEventListener('click', function () {
-    const keyword = document.querySelector('.search-section input').value.trim();
-    alert('Tìm kiếm với từ khóa: ' + keyword);
-  });
-
-  const rows = document.querySelectorAll('.data-table tbody tr');
-  rows.forEach(row => {
-    const btnEdit = row.querySelector('.btn-edit');
-    const btnView = row.querySelector('.btn-view');
-    const btnDelete = row.querySelector('.btn-delete');
-
-    btnEdit.addEventListener('click', () => loadRowToForm(row));
-    btnView.addEventListener('click', () => {
-      loadRowToForm(row);
-      alert('Xem chi tiết banner');
+    toggleBtn.addEventListener('click', function () {
+      menu.classList.toggle('hidden');
     });
-    btnDelete.addEventListener('click', () => {
-      const confirmDelete = confirm('Bạn có chắc chắn muốn xóa banner này?');
-      if (confirmDelete) row.remove();
+
+    document.addEventListener('click', function (event) {
+      if (!toggleBtn.contains(event.target) && !menu.contains(event.target)) {
+        menu.classList.add('hidden');
+      }
     });
-  });
+  </script>
 
-  function loadRowToForm(row) {
-    const tds = row.querySelectorAll('td');
-    const inputs = document.querySelectorAll('.form-banner input');
-    inputs[0].value = tds[2].textContent.trim(); // Mã
-    inputs[3].value = tds[4].textContent.trim(); // Link
-    inputs[4].value = tds[5].textContent.trim(); // Loại Banner
-    inputs[5].value = tds[3].textContent.trim(); // Tiêu đề
-    document.querySelector('.form-banner textarea').value = "Thông tin mô tả";
-    document.querySelector('.form-banner img').src = tds[1].querySelector('img').src;
-  }
+  <div class="taskbar">
+    <a href="/QuanLySanPham.html"><img src="/img/box.png" title="Quản lý sản phẩm" /></a>
+    <a href="/QuanLyTaiKhoan.html"><img src="/img/account.png" title="Quản lý tài khoản" /></a>
+    <a href="/QuanLyDonHang.html"><img src="/img/booking.png" title="Quản lý đơn hàng" /></a>
+    <a href="/QuanLyDanhGia.html"><img src="/img/review.png" title="Quản lý đánh giá" /></a>
+    <a href="/QuanLyBanner.html"><img src="/img/advertisement.png" title="Quản lý banner" /></a>
+    <a href="/QuanLyThanhToan.html"><img src="/img/credit-card.png" title="Quản lý thanh toán" /></a>
+  </div>
 
-  document.querySelector('.form-banner .bg-green-500').addEventListener('click', () => {
-    alert('Đã lưu banner!');
-  });
+  <div class="container" style="max-width: 1770px; width: 100%;">
+    <h1 style="font-size: 20px; font-weight: bold; display: block; margin-bottom: 20px;">Quản Lý Banner</h1>
 
-  document.querySelector('.form-banner .bg-red-500').addEventListener('click', () => {
-    if (confirm('Xóa banner đang hiển thị trong form?')) {
+    <div class="search-section">
+      <input type="text" placeholder="Nhập 1 khóa tìm kiếm">
+      <button><i class="fas fa-search"></i> Tìm kiếm</button>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><input type="checkbox"></th>
+          <th>Ảnh</th>
+          <th>Mã</th>
+          <th>Tên banner</th>
+          <th>Liên kết</th>
+          <th>Danh mục</th>
+          <th>Tác vụ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Các dòng mẫu -->
+        <tr>
+          <td><input type="checkbox" checked></td>
+          <td><img src="/img/MoHinh/BanDai/HG/GundamCalibarn/sp4.2.png"></td>
+          <td>MH2024</td>
+          <td>Banner</td>
+          <td>san-pham</td>
+          <td>Banner footer</td>
+          <td class="action-buttons">
+            <button class="btn-edit" title="Sửa"><i class="fas fa-pencil-alt"></i></button>
+            <button class="btn-view" title="Xem"><i class="fas fa-eye"></i></button>
+            <button class="btn-delete" title="Xóa"><i class="fas fa-trash-alt"></i></button>
+          </td>
+        </tr>
+
+
+
+        <tr>
+          <td><input type="checkbox" checked></td>
+          <td><img src="/img/MoHinh/BanDai/HG/GundamCalibarn/sp4.2.png"></td>
+          <td>MH2029</td>
+          <td>Banner</td>
+          <td>san-pham</td>
+          <td>Banner footer</td>
+          <td class="action-buttons">
+            <button class="btn-edit" title="Sửa"><i class="fas fa-pencil-alt"></i></button>
+            <button class="btn-view" title="Xem"><i class="fas fa-eye"></i></button>
+            <button class="btn-delete" title="Xóa"><i class="fas fa-trash-alt"></i></button>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button>&laquo;</button>
+      <button class="active">1</button>
+      <button>2</button>
+      <button>&raquo;</button>
+    </div>
+
+    <div class="form-banner">
+      <div class="w-full">
+        <label>Mã:</label>
+        <input type="text">
+        <label>Ngày bắt đầu:</label>
+        <input type="date">
+        <label>Ngày kết thúc:</label>
+        <input type="date">
+        <label>Link:</label>
+        <input type="text">
+        <label>Loại Banner:</label>
+        <input type="text">
+        <label>Tiêu đề Banner:</label>
+        <input type="text">
+        <label>Nội dung:</label>
+        <textarea rows="4"></textarea>
+      </div>
+      <div
+        class="flex flex-col items-center gap-4 p-5 rounded-xl shadow-md bg-white w-full max-w-xs mx-auto border border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-700">Ảnh Banner</h2>
+
+        <img src="/img/MoHinh/BanDai/HG/GundamCalibarn/sp4.2.png" alt="Banner Preview"
+          class="w-32 h-32 object-cover rounded-lg border shadow-sm transition-transform duration-200 hover:scale-105" />
+
+        <div class="flex flex-col gap-2 w-full">
+          <button
+            class="flex items-center justify-center gap-2 w-full py-2 bg-green-500 hover:bg-green-600 text-white rounded-md shadow transition duration-200">
+            <i class="fas fa-save"></i> <span>Lưu</span>
+          </button>
+
+          <button
+            class="flex items-center justify-center gap-2 w-full py-2 bg-red-500 hover:bg-red-600 text-white rounded-md shadow transition duration-200">
+            <i class="fas fa-trash-alt"></i> <span>Xóa</span>
+          </button>
+
+          <button
+            class="flex items-center justify-center gap-2 w-full py-2 bg-yellow-400 hover:bg-yellow-300 text-black rounded-md shadow transition duration-200">
+            <i class="fas fa-sync-alt"></i> <span>Cập nhật</span>
+          </button>
+
+          <button
+            class="flex items-center justify-center gap-2 w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md shadow transition duration-200">
+            <i class="fas fa-sync"></i> <span>Reset</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    document.querySelector('.search-section button').addEventListener('click', function () {
+      const keyword = document.querySelector('.search-section input').value.trim();
+      alert('Tìm kiếm với từ khóa: ' + keyword);
+    });
+
+    const rows = document.querySelectorAll('.data-table tbody tr');
+    rows.forEach(row => {
+      const btnEdit = row.querySelector('.btn-edit');
+      const btnView = row.querySelector('.btn-view');
+      const btnDelete = row.querySelector('.btn-delete');
+
+      btnEdit.addEventListener('click', () => loadRowToForm(row));
+      btnView.addEventListener('click', () => {
+        loadRowToForm(row);
+        alert('Xem chi tiết banner');
+      });
+      btnDelete.addEventListener('click', () => {
+        const confirmDelete = confirm('Bạn có chắc chắn muốn xóa banner này?');
+        if (confirmDelete) row.remove();
+      });
+    });
+
+    function loadRowToForm(row) {
+      const tds = row.querySelectorAll('td');
+      const inputs = document.querySelectorAll('.form-banner input');
+      inputs[0].value = tds[2].textContent.trim(); // Mã
+      inputs[3].value = tds[4].textContent.trim(); // Link
+      inputs[4].value = tds[5].textContent.trim(); // Loại Banner
+      inputs[5].value = tds[3].textContent.trim(); // Tiêu đề
+      document.querySelector('.form-banner textarea').value = "Thông tin mô tả";
+      document.querySelector('.form-banner img').src = tds[1].querySelector('img').src;
+    }
+
+    document.querySelector('.form-banner .bg-green-500').addEventListener('click', () => {
+      alert('Đã lưu banner!');
+    });
+
+    document.querySelector('.form-banner .bg-red-500').addEventListener('click', () => {
+      if (confirm('Xóa banner đang hiển thị trong form?')) {
+        document.querySelectorAll('.form-banner input').forEach(input => input.value = '');
+        document.querySelector('.form-banner textarea').value = '';
+      }
+    });
+
+    document.querySelector('.form-banner .bg-yellow-400').addEventListener('click', () => {
+      alert('Đã cập nhật banner!');
+    });
+
+    document.querySelector('.form-banner .bg-blue-400').addEventListener('click', () => {
       document.querySelectorAll('.form-banner input').forEach(input => input.value = '');
       document.querySelector('.form-banner textarea').value = '';
-    }
-  });
+      document.querySelector('.form-banner img').src = '/img/MoHinh/BanDai/HG/GundamCalibarn/sp4.2.png';
+    });
 
-  document.querySelector('.form-banner .bg-yellow-400').addEventListener('click', () => {
-    alert('Đã cập nhật banner!');
-  });
 
-  document.querySelector('.form-banner .bg-blue-400').addEventListener('click', () => {
-    document.querySelectorAll('.form-banner input').forEach(input => input.value = '');
-    document.querySelector('.form-banner textarea').value = '';
-    document.querySelector('.form-banner img').src = '/img/MoHinh/BanDai/HG/GundamCalibarn/sp4.2.png';
-  });
-</script>
+  </script>
 </body>
+
 </html>

@@ -1,140 +1,154 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Quản lý sản phẩm</title>
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-#navbar {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 100px;
-	background-color: #ffffff;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 0 25px;
-	z-index: 999;
-	border-bottom: 1px solid #ccc;
-}
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Quản lý sản phẩm</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+	<script src="https://cdn.tailwindcss.com"></script>
+	<style>
+		#navbar {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 100px;
+			background-color: #ffffff;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 0 25px;
+			z-index: 999;
+			border-bottom: 1px solid #ccc;
+		}
 
-#navbar .logo-wrapper img {
-	height: 45px;
-	margin-right: 10px;
-}
+		#navbar .logo-wrapper img {
+			height: 45px;
+			margin-right: 10px;
+		}
 
-#navbar .logo-title {
-	font-size: 18px;
-	font-weight: bold;
-}
+		#navbar .logo-title {
+			font-size: 18px;
+			font-weight: bold;
+		}
 
-#navbar .nav-right img {
-	height: 35px;
-	border-radius: 50%;
-}
+		#navbar .nav-right img {
+			height: 35px;
+			border-radius: 50%;
+		}
 
-.taskbar {
-	position: fixed;
-	top: 100px;
-	left: 0;
-	width: 100px;
-	height: calc(100vh - 100px);
-	background-color: #f9f9f9;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	padding-top: 20px;
-	border-right: 1px solid #ccc;
-	z-index: 998;
-}
+		.taskbar {
+			position: fixed;
+			top: 100px;
+			left: 0;
+			width: 100px;
+			height: calc(100vh - 100px);
+			background-color: #f9f9f9;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			padding-top: 20px;
+			border-right: 1px solid #ccc;
+			z-index: 998;
+		}
 
-.taskbar a {
-	margin-bottom: 20px;
-}
+		.taskbar a {
+			margin-bottom: 20px;
+		}
 
-.taskbar img {
-	width: 28px;
-	opacity: 0.7;
-	transition: all 0.3s ease;
-}
+		.taskbar img {
+			width: 28px;
+			opacity: 0.7;
+			transition: all 0.3s ease;
+		}
 
-.taskbar img:hover {
-	opacity: 1;
-	transform: scale(1.1);
-}
+		.taskbar img:hover {
+			opacity: 1;
+			transform: scale(1.1);
+		}
 
-.container-admin {
-	margin-top: 100px;
-	margin-left: 100px;
-	padding: 20px;
-	background: #fdfdfd;
-	min-height: calc(100vh - 100px);
-}
-</style>
+		.container-admin {
+			margin-top: 100px;
+			margin-left: 100px;
+			padding: 20px;
+			background: #fdfdfd;
+			min-height: calc(100vh - 100px);
+		}
+	</style>
 </head>
+
 <body>
-	<!-- Navbar -->
-	<nav id="navbar">
-		<div class="nav-left">
+	<nav id="navbar" class="flex justify-between items-center px-6 py-3 bg-white shadow-md">
+		<div class="nav-left flex items-center">
 			<div class="logo-wrapper flex items-center">
-				<img src="/img/processed_no_white.png" alt="Logo" />
-				<div class="logo-title">Gundam Shop</div>
+				<img src="/img/processed_no_white.png" alt="Logo" class="h-10 mr-2" />
+				<div class="logo-title text-xl font-bold">Gundam Shop</div>
 			</div>
 		</div>
-		<div class="nav-right flex items-center">
-			<label>Tài khoản |</label> <a href="#"><img
-				src="/img/Screenshot_2025-06-19_220523-removebg-preview.png"
-				alt="Tài khoản" /></a>
+
+		<div class="nav-right relative">
+			<button id="accountToggle" class="flex items-center space-x-2 focus:outline-none">
+				<span class="text-gray-700 font-medium">Tài khoản</span>
+				<img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Tài khoản"
+					class="h-10 w-10 object-cover rounded-full" />
+			</button>
+
+			<div id="accountMenu"
+				class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-10">
+				<a href="TrangCaNhan.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Thông tin cá
+					nhân</a>
+				<a href="login.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Đăng xuất</a>
+			</div>
 		</div>
 	</nav>
 
-	<!-- Taskbar -->
-  <div class="taskbar">
-    <a href="/QuanLySanPham.html" title="Quản lý sản phẩm"><img src="/img/box.png" alt="" /></a>
-    <a href="/QuanLyTaiKhoan.html" title="Quản lý tài khoản"><img src="/img/account.png" alt="" /></a>
-    <a href="/QuanLyDonHang.html" title="Quản lý đơn hàng"><img src="/img/booking.png" alt="" /></a>
-    <a href="QuanLyDanhGia.html" title="Quản lý đánh giá"><img src="/img/review.png" alt="" /></a>
-    <a href="/QuanLyBanner.html" title="Quản lý banner"><img src="/img/advertisement.png" alt="" /></a>
-    <a href="QuanLyThanhToan.html" title="Quản lý thanh toán"><img src="/img/credit-card.png" alt="" /></a>
-  </div>
+	<script>
+		const toggleBtn = document.getElementById('accountToggle');
+		const menu = document.getElementById('accountMenu');
 
-	<!-- Nội dung chính -->
+		toggleBtn.addEventListener('click', function () {
+			menu.classList.toggle('hidden');
+		});
+
+		document.addEventListener('click', function (event) {
+			if (!toggleBtn.contains(event.target) && !menu.contains(event.target)) {
+				menu.classList.add('hidden');
+			}
+		});
+	</script>
+
+
+	<div class="taskbar">
+		<a href="/QuanLySanPham.html" title="Quản lý sản phẩm"><img src="/img/box.png" alt="" /></a>
+		<a href="/QuanLyTaiKhoan.html" title="Quản lý tài khoản"><img src="/img/account.png" alt="" /></a>
+		<a href="/QuanLyDonHang.html" title="Quản lý đơn hàng"><img src="/img/booking.png" alt="" /></a>
+		<a href="QuanLyDanhGia.html" title="Quản lý đánh giá"><img src="/img/review.png" alt="" /></a>
+		<a href="/QuanLyBanner.html" title="Quản lý banner"><img src="/img/advertisement.png" alt="" /></a>
+		<a href="QuanLyThanhToan.html" title="Quản lý thanh toán"><img src="/img/credit-card.png" alt="" /></a>
+	</div>
+
 	<div class="container-admin" class="bg-gray-100">
 		<div class="bg-white rounded-lg shadow p-5">
 			<div class="flex justify-between items-center mb-4">
 				<h1 class="text-xl font-bold">Quản lý sản phẩm</h1>
-				<button
-					class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Thêm
+				<button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Thêm
 					sản phẩm</button>
 			</div>
 
 			<!-- Tìm kiếm -->
 			<div class="flex mb-4 gap-4">
-				<input type="text" placeholder="Tìm sản phẩm..."
-					class="flex-1 border px-3 py-2 rounded" /> <select
-					class="border px-3 py-2 rounded">
-					<option>Các hãng sản phẩm</option>
-					<option>Bandai</option>
-					<option>High Grade</option>
-					<option>Real Grade</option>
-					<option>Master Grade</option>
-					<option>Perfect Grade</option>
-					<option>MOSHOWTOYS</option>
-					<option>IN ERA+</option>
-					<option>SNAA</option>
-					<option>MOTOR NUCLEAR</option>
+				<input type="text" placeholder="Tìm sản phẩm, hãng..." class="flex-1 border px-3 py-2 rounded" />
+				<select class="border px-3 py-2 rounded">
+					<option>Trạng thái sản phẩm</option>
+					<option>Hết hàng</option>
+					<option>Còn hàng</option>
 				</select>
 				<button class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">
 					<i class="fas fa-search"></i>
 				</button>
 			</div>
 
-			<!-- Bảng sản phẩm -->
 			<div class="overflow-x-auto">
 				<table class="min-w-full border text-sm">
 					<thead class="bg-gray-100">
@@ -155,77 +169,73 @@
 						<tr class="hover:bg-gray-50 text-center">
 							<td class="p-2 border">SP001</td>
 							<td class="p-2 border">Gumdam No.1</td>
-							<td class="p-2 border"><img
-								src="/img/307f0218b0d4b365a93450f516056387.jpg"
-								class="w-[150px] h-[150px] object-cover rounded mx-auto" /></td>
+							<td class="p-2 border"><img src="/img/307f0218b0d4b365a93450f516056387.jpg"
+									class="w-[150px] h-[150px] object-cover rounded mx-auto" /></td>
 							<td class="p-2 border">Kim loại</td>
 							<td class="p-2 border"><span
-								class="px-2 py-1 bg-yellow-200 text-red-800 rounded-full text-xs"><strong>Bandai</strong></span></td>
+									class="px-2 py-1 bg-yellow-200 text-red-800 rounded-full text-xs"><strong>Bandai</strong></span>
+							</td>
 							<td class="p-2 border text-blue-600 font-semibold">1.500.000₫</td>
 							<td class="p-2 border">không giảm</td>
 							<td class="p-2 border">50</td>
 							<td class="p-2 border"><span
-								class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs"><strong>Còn
+									class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs"><strong>Còn
 										hàng</strong></span></td>
-							<td class="p-2 border"><i
-								class="fas fa-pen text-blue-600 cursor-pointer"></i></td>
+							<td class="p-2 border"><i class="fas fa-pen text-blue-600 cursor-pointer"></i></td>
 						</tr>
 
 						<tr class="hover:bg-gray-50 text-center">
 							<td class="p-2 border">SP001</td>
 							<td class="p-2 border">Gumdam No.1</td>
-							<td class="p-2 border"><img
-								src="/img/307f0218b0d4b365a93450f516056387.jpg"
-								class="w-[150px] h-[150px] object-cover rounded mx-auto" /></td>
+							<td class="p-2 border"><img src="/img/307f0218b0d4b365a93450f516056387.jpg"
+									class="w-[150px] h-[150px] object-cover rounded mx-auto" /></td>
 							<td class="p-2 border">Kim loại</td>
 							<td class="p-2 border"><span
-								class="px-2 py-1 bg-yellow-200 text-red-800 rounded-full text-xs"><strong>Bandai</strong></span></td>
+									class="px-2 py-1 bg-yellow-200 text-red-800 rounded-full text-xs"><strong>Bandai</strong></span>
+							</td>
 							<td class="p-2 border text-blue-600 font-semibold">1.500.000₫</td>
 							<td class="p-2 border">không giảm</td>
 							<td class="p-2 border">0</td>
 							<td class="p-2 border"><span
-								class="px-2 py-1 bg-red-400 text-red-800 rounded-full text-xs"><strong>Hết
+									class="px-2 py-1 bg-red-400 text-red-800 rounded-full text-xs"><strong>Hết
 										hàng</strong></span></td>
-							<td class="p-2 border"><i
-								class="fas fa-pen text-blue-600 cursor-pointer"></i></td>
+							<td class="p-2 border"><i class="fas fa-pen text-blue-600 cursor-pointer"></i></td>
 						</tr>
 
 						<tr class="hover:bg-gray-50 text-center">
 							<td class="p-2 border">SP001</td>
 							<td class="p-2 border">Gumdam No.1</td>
-							<td class="p-2 border"><img
-								src="/img/307f0218b0d4b365a93450f516056387.jpg"
-								class="w-[150px] h-[150px] object-cover rounded mx-auto" /></td>
+							<td class="p-2 border"><img src="/img/307f0218b0d4b365a93450f516056387.jpg"
+									class="w-[150px] h-[150px] object-cover rounded mx-auto" /></td>
 							<td class="p-2 border">Kim loại</td>
 							<td class="p-2 border"><span
-								class="px-2 py-1 bg-yellow-200 text-red-800 rounded-full text-xs"><strong>Bandai</strong></span></td>
+									class="px-2 py-1 bg-yellow-200 text-red-800 rounded-full text-xs"><strong>Bandai</strong></span>
+							</td>
 							<td class="p-2 border text-blue-600 font-semibold">1.500.000₫</td>
 							<td class="p-2 border">không giảm</td>
 							<td class="p-2 border">250</td>
 							<td class="p-2 border"><span
-								class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs"><strong>Còn
+									class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs"><strong>Còn
 										hàng</strong></span></td>
-							<td class="p-2 border"><i
-								class="fas fa-pen text-blue-600 cursor-pointer"></i></td>
+							<td class="p-2 border"><i class="fas fa-pen text-blue-600 cursor-pointer"></i></td>
 						</tr>
 
 						<tr class="hover:bg-gray-50 text-center">
 							<td class="p-2 border">SP001</td>
 							<td class="p-2 border">Gumdam No.1</td>
-							<td class="p-2 border"><img
-								src="/img/307f0218b0d4b365a93450f516056387.jpg"
-								class="w-[150px] h-[150px] object-cover rounded mx-auto" /></td>
+							<td class="p-2 border"><img src="/img/307f0218b0d4b365a93450f516056387.jpg"
+									class="w-[150px] h-[150px] object-cover rounded mx-auto" /></td>
 							<td class="p-2 border">Kim loại</td>
 							<td class="p-2 border"><span
-								class="px-2 py-1 bg-yellow-200 text-red-800 rounded-full text-xs"><strong>Bandai</strong></span></td>
+									class="px-2 py-1 bg-yellow-200 text-red-800 rounded-full text-xs"><strong>Bandai</strong></span>
+							</td>
 							<td class="p-2 border text-blue-600 font-semibold">1.500.000₫</td>
 							<td class="p-2 border">không giảm</td>
 							<td class="p-2 border">50</td>
 							<td class="p-2 border"><span
-								class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs"><strong>Còn
+									class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs"><strong>Còn
 										hàng</strong></span></td>
-							<td class="p-2 border"><i
-								class="fas fa-pen text-blue-600 cursor-pointer"></i></td>
+							<td class="p-2 border"><i class="fas fa-pen text-blue-600 cursor-pointer"></i></td>
 						</tr>
 					</tbody>
 				</table>
@@ -237,16 +247,15 @@
 
 	<script>
 		let imageBase64 = '';
-document.addEventListener('DOMContentLoaded', function () {
-  insertModalHTML();
-  setupInitialData();
-  renderProducts();
-  registerEventListeners();
-});
+		document.addEventListener('DOMContentLoaded', function () {
+			insertModalHTML();
+			setupInitialData();
+			renderProducts();
+			registerEventListeners();
+		});
 
-// Thêm modal vào DOM
-function insertModalHTML() {
-  const modalHTML = `
+		function insertModalHTML() {
+			const modalHTML = `
     <div id="productModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity z-50 hidden">
       <div class="relative mx-auto mt-20 max-w-xl">
         <div class="bg-white p-5 rounded shadow">
@@ -261,11 +270,11 @@ function insertModalHTML() {
         </div>
       </div>
     </div>`;
-  document.body.insertAdjacentHTML('beforeend', modalHTML);
-}
+			document.body.insertAdjacentHTML('beforeend', modalHTML);
+		}
 
-function generateFormFields() {
-  return `
+		function generateFormFields() {
+			return `
     <div class="mb-3">
       <label class="block">Tên sản phẩm</label>
       <input type="text" id="productName" class="border p-2 w-full" required>
@@ -307,33 +316,31 @@ function generateFormFields() {
       <label class="block">Tồn kho</label>
       <input type="number" id="productStock" class="border p-2 w-full" required>
     </div>`;
-}
+		}
 
-// Dữ liệu mẫu ban đầu
-function setupInitialData() {
-  const products = JSON.parse(localStorage.getItem('products')) || [];
-  if (products.length === 0) {
-    const sample = [
-      { id: 'SP001', name: 'Gumdam No.1', image: '/img/307f0218b0d4b365a93450f516056387.jpg', category: 'Kim loại', brand: 'Bandai', price: 1500000, discount: 'không giảm', stock: 50 },
-      { id: 'SP002', name: 'Gumdam No.1', image: '/img/307f0218b0d4b365a93450f516056387.jpg', category: 'Kim loại', brand: 'Bandai', price: 1500000, discount: 'không giảm', stock: 0 },
-      { id: 'SP003', name: 'Gumdam No.1', image: '/img/307f0218b0d4b365a93450f516056387.jpg', category: 'Kim loại', brand: 'Bandai', price: 1500000, discount: 'không giảm', stock: 250 },
-      { id: 'SP004', name: 'Gumdam No.1', image: '/img/307f0218b0d4b365a93450f516056387.jpg', category: 'Kim loại', brand: 'Bandai', price: 1500000, discount: 'không giảm', stock: 50 }
-    ];
-    localStorage.setItem('products', JSON.stringify(sample));
-  }
-}
+		function setupInitialData() {
+			const products = JSON.parse(localStorage.getItem('products')) || [];
+			if (products.length === 0) {
+				const sample = [
+					{ id: 'SP001', name: 'Gumdam No.1', image: '/img/307f0218b0d4b365a93450f516056387.jpg', category: 'Kim loại', brand: 'Bandai', price: 1500000, discount: 'không giảm', stock: 50 },
+					{ id: 'SP002', name: 'Gumdam No.1', image: '/img/307f0218b0d4b365a93450f516056387.jpg', category: 'Kim loại', brand: 'Bandai', price: 1500000, discount: 'không giảm', stock: 0 },
+					{ id: 'SP003', name: 'Gumdam No.1', image: '/img/307f0218b0d4b365a93450f516056387.jpg', category: 'Kim loại', brand: 'Bandai', price: 1500000, discount: 'không giảm', stock: 250 },
+					{ id: 'SP004', name: 'Gumdam No.1', image: '/img/307f0218b0d4b365a93450f516056387.jpg', category: 'Kim loại', brand: 'Bandai', price: 1500000, discount: 'không giảm', stock: 50 }
+				];
+				localStorage.setItem('products', JSON.stringify(sample));
+			}
+		}
 
-// Hiển thị danh sách sản phẩm
-function renderProducts() {
-  const products = JSON.parse(localStorage.getItem('products')) || [];
-  const tbody = document.querySelector('tbody');
-  tbody.innerHTML = '';
+		function renderProducts() {
+			const products = JSON.parse(localStorage.getItem('products')) || [];
+			const tbody = document.querySelector('tbody');
+			tbody.innerHTML = '';
 
-  products.forEach(product => {
-    const row = document.createElement('tr');
-    row.className = 'hover:bg-gray-50 text-center';
+			products.forEach(product => {
+				const row = document.createElement('tr');
+				row.className = 'hover:bg-gray-50 text-center';
 
-    row.innerHTML = `
+				row.innerHTML = `
       <td class="p-2 border">${product.id}</td>
       <td class="p-2 border">${product.name}</td>
       <td class="p-2 border"><img src="${product.image}" class="w-[150px] h-[150px] object-cover rounded mx-auto" /></td>
@@ -353,119 +360,80 @@ function renderProducts() {
         <i class="fas fa-pen text-blue-600 cursor-pointer" data-id="${product.id}"></i>
       </td>`;
 
-    row.querySelector('.fa-pen').addEventListener('click', () => openModal(product) );
-    tbody.appendChild(row);
-  });
-}
+				row.querySelector('.fa-pen').addEventListener('click', () => openModal(product));
+				tbody.appendChild(row);
+			});
+		}
 
-// Mở form modal (thêm/sửa)
-function openModal(product = null) {
-  const modal = document.getElementById('productModal');
-  const form = document.getElementById('productForm');
-  modal.classList.remove('hidden');
+		function openModal(product = null) {
+			const modal = document.getElementById('productModal');
+			const form = document.getElementById('productForm');
+			modal.classList.remove('hidden');
 
-  if (!product) {
-    form.reset();
-    form.removeAttribute('data-edit-id');
-    document.getElementById('productDiscount').value = 'không giảm';
-    modal.querySelector('h2').textContent = 'Thêm sản phẩm';
-  } else {
-    form.dataset.editId = product.id;
-    modal.querySelector('h2').textContent = 'Sửa sản phẩm';
+			if (!product) {
+				form.reset();
+				form.removeAttribute('data-edit-id');
+				document.getElementById('productDiscount').value = 'không giảm';
+				modal.querySelector('h2').textContent = 'Thêm sản phẩm';
+			} else {
+				form.dataset.editId = product.id;
+				modal.querySelector('h2').textContent = 'Sửa sản phẩm';
 
-    document.getElementById('productName').value = product.name;
-    const preview = document.getElementById('previewImage');
-	preview.src = product.image;
-	preview.classList.remove('hidden');
-    document.getElementById('productCategory').value = product.category;
-    document.getElementById('productBrand').value = product.brand;
-    document.getElementById('productPrice').value = product.price;
-    document.getElementById('productDiscount').value = product.discount;
-    document.getElementById('productStock').value = product.stock;
-  }
-}
+				document.getElementById('productName').value = product.name;
+				const preview = document.getElementById('previewImage');
+				preview.src = product.image;
+				preview.classList.remove('hidden');
+				document.getElementById('productCategory').value = product.category;
+				document.getElementById('productBrand').value = product.brand;
+				document.getElementById('productPrice').value = product.price;
+				document.getElementById('productDiscount').value = product.discount;
+				document.getElementById('productStock').value = product.stock;
+			}
+		}
 
-// Đóng modal
-function closeModal() {
-  document.getElementById('productModal').classList.add('hidden');
-  document.getElementById('productForm').removeAttribute('data-edit-id');
-}
+		function closeModal() {
+			document.getElementById('productModal').classList.add('hidden');
+			document.getElementById('productForm').removeAttribute('data-edit-id');
+		}
 
-// Lưu sản phẩm mới hoặc sửa sản phẩm cũ
-function handleFormSubmit(e) {
-  e.preventDefault();
-  const form = e.target;
-  const isEdit = form.dataset.editId !== undefined;
+		function generateId(products) {
+			const maxId = products.reduce((max, p) => {
+				const num = parseInt(p.id.replace('SP', '')) || 0;
+				return Math.max(max, num);
+			}, 0);
+			return `SP${(maxId + 1).toString().padStart(3, '0')}`;
+		}
 
-  const newProduct = {
-	name: document.getElementById('productName').value,
-	image: imageBase64,
-	category: document.getElementById('productCategory').value,
-	brand: document.getElementById('productBrand').value,
-	price: parseFloat(document.getElementById('productPrice').value),
-	discount: document.getElementById('productDiscount').value,
-	stock: parseInt(document.getElementById('productStock').value, 10)
-};
+		function formatPrice(price) {
+			return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+		}
 
-  let products = JSON.parse(localStorage.getItem('products')) || [];
+		function registerEventListeners() {
+			document.getElementById('productImageFile').addEventListener('change', previewImage);
+			document.querySelector('button.bg-blue-500').addEventListener('click', () => openModal());
+			document.getElementById('closeModal').addEventListener('click', closeModal);
+			document.getElementById('productModal').addEventListener('click', e => {
+				if (e.target === document.getElementById('productModal')) closeModal();
+			});
+			document.getElementById('productForm').addEventListener('submit', handleFormSubmit);
+		}
 
-  if (isEdit) {
-    const id = form.dataset.editId;
-    const index = products.findIndex(p => p.id === id);
-    if (index !== -1) {
-      newProduct.id = id;
-      products[index] = newProduct;
-    }
-  } else {
-    newProduct.id = generateId(products);
-    products.push(newProduct);
-  }
+		function previewImage(event) {
+			const file = event.target.files[0];
+			if (!file) return;
 
-  localStorage.setItem('products', JSON.stringify(products));
-  renderProducts();
-  closeModal();
-}
+			const reader = new FileReader();
+			reader.onload = function (e) {
+				imageBase64 = e.target.result;
+				const preview = document.getElementById('previewImage');
+				preview.src = imageBase64;
+				preview.classList.remove('hidden');
+			};
+			reader.readAsDataURL(file);
+		}
 
-// Tạo ID sản phẩm mới
-function generateId(products) {
-  const maxId = products.reduce((max, p) => {
-    const num = parseInt(p.id.replace('SP', '')) || 0;
-    return Math.max(max, num);
-  }, 0);
-  return `SP${(maxId + 1).toString().padStart(3, '0')}`;
-}
-
-// Định dạng tiền VND
-function formatPrice(price) {
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-}
-
-// Gắn sự kiện click, submit
-function registerEventListeners() {
-  document.getElementById('productImageFile').addEventListener('change', previewImage);	
-  document.querySelector('button.bg-blue-500').addEventListener('click', () => openModal());
-  document.getElementById('closeModal').addEventListener('click', closeModal);
-  document.getElementById('productModal').addEventListener('click', e => {
-    if (e.target === document.getElementById('productModal')) closeModal();
-  });
-  document.getElementById('productForm').addEventListener('submit', handleFormSubmit);
-}
-
-function previewImage(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    imageBase64 = e.target.result;
-    const preview = document.getElementById('previewImage');
-    preview.src = imageBase64;
-    preview.classList.remove('hidden');
-  };
-  reader.readAsDataURL(file);
-}
-
-</script>
+	</script>
 
 </body>
+
 </html>

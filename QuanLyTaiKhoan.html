@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quản lý tài khoản</title>
-
-  <!-- Icon Font -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    /* ========== NAVIGATION BAR ========== */
     #navbar {
       position: fixed;
       top: 0;
@@ -62,10 +60,9 @@
       border-radius: 50%;
     }
 
-    /* ========== TASKBAR (Dọc bên trái) ========== */
     .taskbar {
       position: fixed;
-      top: 100px; /* Chiều cao navbar */
+      top: 100px;
       left: 0;
       width: 100px;
       height: calc(100vh - 60px);
@@ -93,10 +90,9 @@
       transform: scale(1.1);
     }
 
-    /* ========== CONTAINER - Phần nội dung chính ========== */
     .container-admin {
-      margin-top: 80px;   /* Tránh đè navbar */
-      margin-left: 100px;  /* Tránh đè taskbar */
+      margin-top: 80px;
+      margin-left: 100px;
       padding: 20px;
       overflow-x: hidden;
       background: #fdfdfd;
@@ -107,7 +103,7 @@
       background: white;
       border-radius: 10px;
       padding: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
     }
 
     .form-label label {
@@ -158,10 +154,12 @@
       border-collapse: collapse;
     }
 
-    th, td {
+    th,
+    td {
       padding: 10px;
       border-bottom: 1px solid #ddd;
-      text-align: left;
+      text-align: center;
+      vertical-align: middle;
     }
 
     .tools {
@@ -199,24 +197,45 @@
     }
   </style>
 </head>
+
 <body>
-  <!-- ========== NAVBAR ========== -->
-  <nav id="navbar">
-    <div class="nav-left">
-      <div class="logo-wrapper">
-        <img src="/img/processed_no_white.png" alt="Logo" />
-        <div class="logo-title">Gundam Shop</div>
+  <nav id="navbar" class="flex justify-between items-center px-6 py-3 bg-white shadow-md">
+    <div class="nav-left flex items-center">
+      <div class="logo-wrapper flex items-center">
+        <img src="/img/processed_no_white.png" alt="Logo" class="h-10 mr-2" />
+        <div class="logo-title text-xl font-bold">Gundam Shop</div>
       </div>
     </div>
-    <div class="nav-right">
-      <label for="">Tài khoản |</label>
-      <a href="#">
-        <img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Tài khoản"/>
-      </a>
+
+    <div class="nav-right relative">
+      <button id="accountToggle" class="flex items-center space-x-2 focus:outline-none">
+        <span class="text-gray-700 font-medium">Tài khoản</span>
+        <img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Tài khoản"
+          class="h-10 w-10 object-cover rounded-full" />
+      </button>
+
+      <div id="accountMenu"
+        class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-10">
+        <a href="TrangCaNhan.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Thông tin cá nhân</a>
+        <a href="login.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Đăng xuất</a>
+      </div>
     </div>
   </nav>
 
-  <!-- ========== TASKBAR ========== -->
+  <script>
+    const toggleBtn = document.getElementById('accountToggle');
+    const menu = document.getElementById('accountMenu');
+
+    toggleBtn.addEventListener('click', function () {
+      menu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!toggleBtn.contains(event.target) && !menu.contains(event.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+  </script>
   <div class="taskbar">
     <a href="/QuanLySanPham.html" title="Quản lý sản phẩm"><img src="/img/box.png" alt="" /></a>
     <a href="/QuanLyTaiKhoan.html" title="Quản lý tài khoản"><img src="/img/account.png" alt="" /></a>
@@ -226,7 +245,6 @@
     <a href="QuanLyThanhToan.html" title="Quản lý thanh toán"><img src="/img/credit-card.png" alt="" /></a>
   </div>
 
-  <!-- ========== MAIN CONTAINER ========== -->
   <div class="container-admin">
     <div class="form-admin">
       <div class="form-label">
@@ -237,7 +255,6 @@
         </div>
       </div>
 
-      <!-- Tab content -->
       <div class="tab-content tab-khach active">
         <div class="tools">
           <div class="search">
@@ -249,13 +266,19 @@
         <table>
           <thead>
             <tr>
-              <th>ID</th><th>Họ và tên</th><th>Tên đăng nhập</th>
-              <th>Giới tính</th><th>Ngày sinh</th><th>Số điện thoại</th>
-              <th>Địa chỉ</th><th>Email</th><th>Avatar</th><th>Hành động</th>
+              <th>ID</th>
+              <th>Họ và tên</th>
+              <th>Tên đăng nhập</th>
+              <th>Giới tính</th>
+              <th>Ngày sinh</th>
+              <th>Số điện thoại</th>
+              <th>Địa chỉ</th>
+              <th>Email</th>
+              <th>Avatar</th>
+              <th>Hành động</th>
             </tr>
           </thead>
           <tbody id="table-body">
-            <!-- JS will append here -->
           </tbody>
         </table>
       </div>
@@ -271,89 +294,95 @@
         <table>
           <thead>
             <tr>
-              <th>ID</th><th>Họ và tên</th><th>Tên đăng nhập</th>
-              <th>Giới tính</th><th>Ngày sinh</th><th>Số điện thoại</th>
-              <th>Địa chỉ</th><th>Email</th><th>Avatar</th><th>Hành động</th>
+              <th>ID</th>
+              <th>Họ và tên</th>
+              <th>Tên đăng nhập</th>
+              <th>Giới tính</th>
+              <th>Ngày sinh</th>
+              <th>Số điện thoại</th>
+              <th>Địa chỉ</th>
+              <th>Email</th>
+              <th>Avatar</th>
+              <th>Hành động</th>
             </tr>
           </thead>
           <tbody id="table-body2">
-            <!-- JS will append here -->
           </tbody>
         </table>
       </div>
     </div>
 
-<!-- Form chỉnh sửa inline (ẩn ban đầu) -->
-<div id="editFormInline" class="hidden mt-6 p-4 border rounded bg-white shadow">
-  <h2 class="text-lg font-bold mb-2">Chỉnh sửa tài khoản</h2>
-  <form id="inlineForm" class="grid grid-cols-2 gap-4">
-    <input type="hidden" id="inlineIndex">
-    <div><label>ID</label><input id="inlineId" disabled class="w-full border px-2 py-1 rounded" /></div>
-    <div><label>Họ và tên</label><input id="inlineName" class="w-full border px-2 py-1 rounded" /></div>
-    <div><label>Tên đăng nhập</label><input id="inlineUsername" class="w-full border px-2 py-1 rounded" /></div>
-    <div><label>Giới tính</label>
-      <select id="inlineGender" class="w-full border px-2 py-1 rounded">
-        <option>Nam</option><option>Nữ</option>
-      </select>
+    <div id="editFormInline" class="hidden mt-6 p-4 border rounded bg-white shadow">
+      <h2 class="text-lg font-bold mb-2">Chỉnh sửa tài khoản</h2>
+      <form id="inlineForm" class="grid grid-cols-2 gap-4">
+        <input type="hidden" id="inlineIndex">
+        <div><label>ID</label><input id="inlineId" disabled class="w-full border px-2 py-1 rounded" /></div>
+        <div><label>Họ và tên</label><input id="inlineName" class="w-full border px-2 py-1 rounded" /></div>
+        <div><label>Tên đăng nhập</label><input id="inlineUsername" class="w-full border px-2 py-1 rounded" /></div>
+        <div><label>Giới tính</label>
+          <select id="inlineGender" class="w-full border px-2 py-1 rounded">
+            <option>Nam</option>
+            <option>Nữ</option>
+          </select>
+        </div>
+        <div><label>Ngày sinh</label><input id="inlineDob" type="date" class="w-full border px-2 py-1 rounded" /></div>
+        <div><label>SĐT</label><input id="inlinePhone" class="w-full border px-2 py-1 rounded" /></div>
+        <div><label>Địa chỉ</label><input id="inlineAddress" class="w-full border px-2 py-1 rounded" /></div>
+        <div><label>Email</label><input id="inlineEmail" class="w-full border px-2 py-1 rounded" /></div>
+        <div class="col-span-2 flex justify-end gap-3 mt-2">
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Lưu</button>
+          <button type="button" id="inlineCancel" class="bg-gray-400 text-white px-4 py-2 rounded">Hủy</button>
+        </div>
+      </form>
     </div>
-    <div><label>Ngày sinh</label><input id="inlineDob" type="date" class="w-full border px-2 py-1 rounded" /></div>
-    <div><label>SĐT</label><input id="inlinePhone" class="w-full border px-2 py-1 rounded" /></div>
-    <div><label>Địa chỉ</label><input id="inlineAddress" class="w-full border px-2 py-1 rounded" /></div>
-    <div><label>Email</label><input id="inlineEmail" class="w-full border px-2 py-1 rounded" /></div>
-    <div class="col-span-2 flex justify-end gap-3 mt-2">
-      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Lưu</button>
-      <button type="button" id="inlineCancel" class="bg-gray-400 text-white px-4 py-2 rounded">Hủy</button>
-    </div>
-  </form>
-</div>
 
-<!-- Form thêm mới tài khoản -->
-<div id="addForm" class="hidden mt-6 p-4 border rounded bg-white shadow">
-  <h2 class="text-lg font-bold mb-2">Thêm tài khoản mới</h2>
-  <form id="addAccountForm" class="grid grid-cols-2 gap-4">
-    <div><label>ID</label><input id="addId" required class="w-full border px-2 py-1 rounded" /></div>
-    <div><label>Họ và tên</label><input id="addName" required class="w-full border px-2 py-1 rounded" /></div>
-    <div><label>Tên đăng nhập</label><input id="addUsername" required class="w-full border px-2 py-1 rounded" /></div>
-    <div><label>Giới tính</label>
-      <select id="addGender" class="w-full border px-2 py-1 rounded">
-        <option>Nam</option><option>Nữ</option>
-      </select>
+    <div id="addForm" class="hidden mt-6 p-4 border rounded bg-white shadow">
+      <h2 class="text-lg font-bold mb-2">Thêm tài khoản mới</h2>
+      <form id="addAccountForm" class="grid grid-cols-2 gap-4">
+        <div><label>ID</label><input id="addId" required class="w-full border px-2 py-1 rounded" /></div>
+        <div><label>Họ và tên</label><input id="addName" required class="w-full border px-2 py-1 rounded" /></div>
+        <div><label>Tên đăng nhập</label><input id="addUsername" required class="w-full border px-2 py-1 rounded" />
+        </div>
+        <div><label>Giới tính</label>
+          <select id="addGender" class="w-full border px-2 py-1 rounded">
+            <option>Nam</option>
+            <option>Nữ</option>
+          </select>
+        </div>
+        <div><label>Ngày sinh</label><input id="addDob" type="date" required class="w-full border px-2 py-1 rounded" />
+        </div>
+        <div><label>SĐT</label><input id="addPhone" required class="w-full border px-2 py-1 rounded" /></div>
+        <div><label>Địa chỉ</label><input id="addAddress" required class="w-full border px-2 py-1 rounded" /></div>
+        <div><label>Email</label><input id="addEmail" required class="w-full border px-2 py-1 rounded" /></div>
+        <div class="col-span-2 flex justify-end gap-3 mt-2">
+          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Thêm</button>
+          <button type="button" id="addCancel" class="bg-gray-400 text-white px-4 py-2 rounded">Hủy</button>
+        </div>
+      </form>
     </div>
-    <div><label>Ngày sinh</label><input id="addDob" type="date" required class="w-full border px-2 py-1 rounded" /></div>
-    <div><label>SĐT</label><input id="addPhone" required class="w-full border px-2 py-1 rounded" /></div>
-    <div><label>Địa chỉ</label><input id="addAddress" required class="w-full border px-2 py-1 rounded" /></div>
-    <div><label>Email</label><input id="addEmail" required class="w-full border px-2 py-1 rounded" /></div>
-    <div class="col-span-2 flex justify-end gap-3 mt-2">
-      <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Thêm</button>
-      <button type="button" id="addCancel" class="bg-gray-400 text-white px-4 py-2 rounded">Hủy</button>
-    </div>
-  </form>
-</div>
 
 
 
   </div>
 
-<script>
-  // Tab switching logic
-  const buttons = document.querySelectorAll(".tab-button");
-  buttons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const tab = button.dataset.tab;
-      buttons.forEach(b => b.classList.remove("active"));
-      button.classList.add("active");
+  <script>
+    const buttons = document.querySelectorAll(".tab-button");
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const tab = button.dataset.tab;
+        buttons.forEach(b => b.classList.remove("active"));
+        button.classList.add("active");
 
-      document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
-      document.querySelector(".tab-" + tab).classList.add("active");
+        document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+        document.querySelector(".tab-" + tab).classList.add("active");
+      });
     });
-  });
 
-  // Dummy data render
-  const tbody = document.getElementById("table-body");
-  const tbody2 = document.getElementById("table-body2");
+    const tbody = document.getElementById("table-body");
+    const tbody2 = document.getElementById("table-body2");
 
-  for (let i = 1; i <= 5; i++) {
-    tbody.innerHTML += `
+    for (let i = 1; i <= 5; i++) {
+      tbody.innerHTML += `
       <tr>
         <td>A0${i}</td><td>Nguyễn Văn A</td><td>nguyenvana</td>
         <td>Nam</td><td>01-01-2000</td><td>0901234567</td>
@@ -361,7 +390,7 @@
         <td><img style="width:40px;" src="/img/Screenshot_2025-06-19_220523-removebg-preview.png"/></td>
         <td class="text-center"><i class="fas fa-edit cursor-pointer text-blue-500"></i></td>
       </tr>`;
-    tbody2.innerHTML += `
+      tbody2.innerHTML += `
       <tr>
         <td>B0${i}</td><td>Trần Thị B</td><td>tranthib</td>
         <td>Nữ</td><td>02-02-1995</td><td>0912345678</td>
@@ -369,35 +398,111 @@
         <td><img style="width:40px;" src="/img/Screenshot_2025-06-19_220523-removebg-preview.png"/></td>
         <td><i class="fas fa-edit cursor-pointer text-blue-500"></i></td>
       </tr>`;
-  }
+    }
 
-  // Inline form logic
-  const inlineForm = document.getElementById("editFormInline");
-  const inlineIndex = document.getElementById("inlineIndex");
-  const inlineId = document.getElementById("inlineId");
-  const inlineName = document.getElementById("inlineName");
-  const inlineUsername = document.getElementById("inlineUsername");
-  const inlineGender = document.getElementById("inlineGender");
-  const inlineDob = document.getElementById("inlineDob");
-  const inlinePhone = document.getElementById("inlinePhone");
-  const inlineAddress = document.getElementById("inlineAddress");
-  const inlineEmail = document.getElementById("inlineEmail");
-  const inlineCancel = document.getElementById("inlineCancel");
+    const inlineForm = document.getElementById("editFormInline");
+    const inlineIndex = document.getElementById("inlineIndex");
+    const inlineId = document.getElementById("inlineId");
+    const inlineName = document.getElementById("inlineName");
+    const inlineUsername = document.getElementById("inlineUsername");
+    const inlineGender = document.getElementById("inlineGender");
+    const inlineDob = document.getElementById("inlineDob");
+    const inlinePhone = document.getElementById("inlinePhone");
+    const inlineAddress = document.getElementById("inlineAddress");
+    const inlineEmail = document.getElementById("inlineEmail");
+    const inlineCancel = document.getElementById("inlineCancel");
 
-  let editingType = "khach"; // khach | nhanvien
+    let editingType = "khach";
 
-  function convertToInputDate(dateStr) {
-    const [d, m, y] = dateStr.split("-");
-    return `${y}-${m}-${d}`;
-  }
+    function convertToInputDate(dateStr) {
+      const [d, m, y] = dateStr.split("-");
+      return `${y}-${m}-${d}`;
+    }
 
-  function convertToDisplayDate(dateStr) {
-    const [y, m, d] = dateStr.split("-");
-    return `${d}-${m}-${y}`;
-  }
+    function convertToDisplayDate(dateStr) {
+      const [y, m, d] = dateStr.split("-");
+      return `${d}-${m}-${y}`;
+    }
 
-  function attachEditEvents(tbodyId, type) {
-    document.querySelectorAll(`#${tbodyId} .fa-edit`).forEach((icon, index) => {
+    function attachEditEvents(tbodyId, type) {
+      document.querySelectorAll(`#${tbodyId} .fa-edit`).forEach((icon, index) => {
+        icon.addEventListener("click", () => {
+          editingType = type;
+          inlineIndex.value = index;
+          const row = icon.closest("tr");
+          const cells = row.querySelectorAll("td");
+
+          inlineId.value = cells[0].innerText;
+          inlineName.value = cells[1].innerText;
+          inlineUsername.value = cells[2].innerText;
+          inlineGender.value = cells[3].innerText;
+          inlineDob.value = convertToInputDate(cells[4].innerText);
+          inlinePhone.value = cells[5].innerText;
+          inlineAddress.value = cells[6].innerText;
+          inlineEmail.value = cells[7].innerText;
+
+          addForm.classList.add("hidden");
+          inlineForm.classList.remove("hidden");
+          inlineForm.scrollIntoView({ behavior: "smooth" });
+        });
+      });
+    }
+
+    attachEditEvents("table-body", "khach");
+    attachEditEvents("table-body2", "nhanvien");
+
+    document.getElementById("inlineForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const rows = document.querySelectorAll(
+        editingType === "khach" ? "#table-body tr" : "#table-body2 tr"
+      );
+      const row = rows[inlineIndex.value];
+      const cells = row.querySelectorAll("td");
+
+      cells[1].innerText = inlineName.value;
+      cells[2].innerText = inlineUsername.value;
+      cells[3].innerText = inlineGender.value;
+      cells[4].innerText = convertToDisplayDate(inlineDob.value);
+      cells[5].innerText = inlinePhone.value;
+      cells[6].innerText = inlineAddress.value;
+      cells[7].innerText = inlineEmail.value;
+
+      inlineForm.classList.add("hidden");
+      alert("Đã cập nhật thông tin!");
+    });
+
+    inlineCancel.onclick = () => inlineForm.classList.add("hidden");
+
+    const addForm = document.getElementById("addForm");
+    const addId = document.getElementById("addId");
+    const addName = document.getElementById("addName");
+    const addUsername = document.getElementById("addUsername");
+    const addGender = document.getElementById("addGender");
+    const addDob = document.getElementById("addDob");
+    const addPhone = document.getElementById("addPhone");
+    const addAddress = document.getElementById("addAddress");
+    const addEmail = document.getElementById("addEmail");
+    const addCancel = document.getElementById("addCancel");
+
+    document.querySelectorAll(".add").forEach(btn => {
+      btn.addEventListener("click", () => {
+        editFormInline.classList.add("hidden");
+        addForm.classList.remove("hidden");
+        addForm.scrollIntoView({ behavior: "smooth" });
+      });
+    });
+
+    addCancel.onclick = () => {
+      addForm.classList.add("hidden");
+      document.getElementById("addAccountForm").reset();
+    };
+
+    function attachEditToLastRow(tbodyId, type) {
+      const lastRow = document.querySelectorAll(`#${tbodyId} .fa-edit`);
+      const icon = lastRow[lastRow.length - 1];
+      const index = lastRow.length - 1;
+
       icon.addEventListener("click", () => {
         editingType = type;
         inlineIndex.value = index;
@@ -417,97 +522,16 @@
         inlineForm.classList.remove("hidden");
         inlineForm.scrollIntoView({ behavior: "smooth" });
       });
-    });
-  }
+    }
 
-  attachEditEvents("table-body", "khach");
-  attachEditEvents("table-body2", "nhanvien");
+    document.getElementById("addAccountForm").addEventListener("submit", (e) => {
+      e.preventDefault();
 
-  document.getElementById("inlineForm").addEventListener("submit", (e) => {
-    e.preventDefault();
+      const type = document.querySelector(".tab-button.active").dataset.tab;
+      const tbody = type === "khach" ? document.getElementById("table-body") : document.getElementById("table-body2");
 
-    const rows = document.querySelectorAll(
-      editingType === "khach" ? "#table-body tr" : "#table-body2 tr"
-    );
-    const row = rows[inlineIndex.value];
-    const cells = row.querySelectorAll("td");
-
-    cells[1].innerText = inlineName.value;
-    cells[2].innerText = inlineUsername.value;
-    cells[3].innerText = inlineGender.value;
-    cells[4].innerText = convertToDisplayDate(inlineDob.value);
-    cells[5].innerText = inlinePhone.value;
-    cells[6].innerText = inlineAddress.value;
-    cells[7].innerText = inlineEmail.value;
-
-    inlineForm.classList.add("hidden");
-    alert("Đã cập nhật thông tin!");
-  });
-
-  inlineCancel.onclick = () => inlineForm.classList.add("hidden");
-
-
-  const addForm = document.getElementById("addForm");
-  const addId = document.getElementById("addId");
-  const addName = document.getElementById("addName");
-  const addUsername = document.getElementById("addUsername");
-  const addGender = document.getElementById("addGender");
-  const addDob = document.getElementById("addDob");
-  const addPhone = document.getElementById("addPhone");
-  const addAddress = document.getElementById("addAddress");
-  const addEmail = document.getElementById("addEmail");
-  const addCancel = document.getElementById("addCancel");
-
-  // Hiển thị form thêm
-  document.querySelectorAll(".add").forEach(btn => {
-    btn.addEventListener("click", () => {
-      addForm.classList.remove("hidden");
-      addForm.scrollIntoView({ behavior: "smooth" });
-    });
-  });
-
-  // Hủy thêm mới
-  addCancel.onclick = () => {
-    addForm.classList.add("hidden");
-    document.getElementById("addAccountForm").reset();
-  };
-
-  // Gắn edit sau khi thêm dòng mới
-  function attachEditToLastRow(tbodyId, type) {
-    const lastRow = document.querySelectorAll(`#${tbodyId} .fa-edit`);
-    const icon = lastRow[lastRow.length - 1];
-    const index = lastRow.length - 1;
-
-    icon.addEventListener("click", () => {
-      editingType = type;
-      inlineIndex.value = index;
-      const row = icon.closest("tr");
-      const cells = row.querySelectorAll("td");
-
-      inlineId.value = cells[0].innerText;
-      inlineName.value = cells[1].innerText;
-      inlineUsername.value = cells[2].innerText;
-      inlineGender.value = cells[3].innerText;
-      inlineDob.value = convertToInputDate(cells[4].innerText);
-      inlinePhone.value = cells[5].innerText;
-      inlineAddress.value = cells[6].innerText;
-      inlineEmail.value = cells[7].innerText;
-
-      inlineForm.classList.add("hidden");
-      inlineForm.classList.remove("hidden");
-      inlineForm.scrollIntoView({ behavior: "smooth" });
-    });
-  }
-
-  // Gửi form thêm mới
-  document.getElementById("addAccountForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const type = document.querySelector(".tab-button.active").dataset.tab;
-    const tbody = type === "khach" ? document.getElementById("table-body") : document.getElementById("table-body2");
-
-    const displayDate = convertToDisplayDate(addDob.value);
-    tbody.innerHTML += `
+      const displayDate = convertToDisplayDate(addDob.value);
+      tbody.innerHTML += `
       <tr>
         <td>${addId.value}</td>
         <td>${addName.value}</td>
@@ -521,16 +545,16 @@
         <td><i class="fas fa-edit cursor-pointer text-blue-500"></i></td>
       </tr>`;
 
-    // Gắn lại sự kiện sửa cho dòng mới
-    attachEditToLastRow(tbody.id, type);
+      attachEditToLastRow(tbody.id, type);
 
-    // Reset form và ẩn đi
-    document.getElementById("addAccountForm").reset();
-    addForm.classList.add("hidden");
+      document.getElementById("addAccountForm").reset();
+      addForm.classList.add("hidden");
 
-    alert("Đã thêm tài khoản mới!");
-  });
-</script>
+      alert("Đã thêm tài khoản mới!");
+    });
+  </script>
+
 
 </body>
+
 </html>

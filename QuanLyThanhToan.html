@@ -1,352 +1,413 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Quản lý tài khoản</title>
-<style>
-/* ========== NAVIGATION BAR ========== */
-#navbar {
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-height: 100px;
-background-color: #ffffff;
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 0 25px;
-z-index: 999;
-border-bottom: 1px solid #ccc;
-}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý tài khoản</title>
+    <style>
+        #navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 25px;
+            z-index: 999;
+            border-bottom: 1px solid #ccc;
+        }
 
-#navbar .nav-left {
-display: flex;
-align-items: center;
-}
+        #navbar .nav-left {
+            display: flex;
+            align-items: center;
+        }
 
-#navbar .logo-wrapper {
-display: flex;
-align-items: center;
-}
+        #navbar .logo-wrapper {
+            display: flex;
+            align-items: center;
+        }
 
-#navbar .logo-wrapper img {
-height: 45px;
-margin-right: 10px;
-}
+        #navbar .logo-wrapper img {
+            height: 45px;
+            margin-right: 10px;
+        }
 
-#navbar .logo-title {
-font-size: 18px;
-font-weight: bold;
-color: #000;
-}
+        #navbar .logo-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+        }
 
-#navbar .nav-right {
-display: flex;
-align-items: center;
-}
+        #navbar .nav-right {
+            display: flex;
+            align-items: center;
+        }
 
-#navbar .nav-right label {
-margin-right: 10px;
-font-weight: 500;
-}
+        #navbar .nav-right label {
+            margin-right: 10px;
+            font-weight: 500;
+        }
 
-#navbar .nav-right img {
-height: 35px;
-border-radius: 50%;
-}
+        #navbar .nav-right img {
+            height: 35px;
+            border-radius: 50%;
+        }
 
-/* ========== TASKBAR (Dọc bên trái) ========== */
-.taskbar {
-position: fixed;
-top: 100px; /* Chiều cao navbar */
-left: 0;
-width: 100px;
-height: calc(100vh - 60px);
-background-color: #f9f9f9;
-display: flex;
-flex-direction: column;
-align-items: center;
-padding-top: 20px;
-border-right: 1px solid #ccc;
-z-index: 998;
-}
+        .taskbar {
+            position: fixed;
+            top: 100px;
+            left: 0;
+            width: 100px;
+            height: calc(100vh - 60px);
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            border-right: 1px solid #ccc;
+            z-index: 998;
+        }
 
-.taskbar a {
-margin-bottom: 20px;
-}
+        .taskbar a {
+            margin-bottom: 20px;
+        }
 
-.taskbar img {
-width: 28px;
-opacity: 0.7;
-transition: all 0.3s ease;
-}
+        .taskbar img {
+            width: 28px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
 
-.taskbar img:hover {
-opacity: 1;
-transform: scale(1.1);
-}
+        .taskbar img:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
 
-/* ========== CONTAINER - Phần nội dung chính ========== */
-.container-admin {
-margin-top: 80px;   /* Tránh đè navbar */
-margin-left: 100px;  /* Tránh đè taskbar */
-padding: 20px;
-overflow-x: hidden;
-background: #fdfdfd;
-min-height: calc(100vh - 60px);
-}
+        .container-admin {
+            margin-top: 80px;
+            margin-left: 100px;
+            padding: 20px;
+            overflow-x: hidden;
+            background: #fdfdfd;
+            min-height: calc(100vh - 60px);
+        }
 
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
 
+        h2 {
+            margin-bottom: 20px;
+        }
 
+        .status-paid {
+            color: green;
+            font-weight: bold;
+        }
 
-body {
-background-color: #f8f9fa;
-padding: 20px;
-}
+        .status-pending {
+            color: orange;
+            font-weight: bold;
+        }
 
-h2 {
-margin-bottom: 20px;
-}
+        .status-failed {
+            color: red;
+            font-weight: bold;
+        }
 
-.status-paid {
-color: green;
-font-weight: bold;
-}
-
-.status-pending {
-color: orange;
-font-weight: bold;
-}
-
-.status-failed {
-color: red;
-font-weight: bold;
-}
-
-.note-cell {
-max-width: 250px;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-}
-</style>
-<!-- Icon Font -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="/css/Style_QuanLyThanhToan.css">
+        .note-cell {
+            max-width: 250px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/Style_QuanLyThanhToan.css">
 
 </head>
+
 <body>
-<!-- ========== NAVBAR ========== -->
-<nav id="navbar">
-<div class="nav-left">
-<div class="logo-wrapper">
-<img src="/img/processed_no_white.png" alt="Logo" />
-<div class="logo-title">Gundam Shop</div>
-</div>
-</div>
-<div class="nav-right">
-<label for="">Tài khoản |</label>
-<a href="#">
-<img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Tài khoản"/>
-</a>
-</div>
-</nav>
+    <nav id="navbar" class="flex justify-between items-center px-6 py-3 bg-white shadow-md">
+        <div class="nav-left flex items-center">
+            <div class="logo-wrapper flex items-center">
+                <img src="/img/processed_no_white.png" alt="Logo" class="h-10 mr-2" />
+                <div class="logo-title text-xl font-bold">Gundam Shop</div>
+            </div>
+        </div>
 
-<!-- ========== TASKBAR ========== -->
-<div class="taskbar">
-<a href="/QuanLySanPham.html" title="Quản lý sản phẩm"><img src="/img/box.png" alt="" /></a>
-<a href="/QuanLyTaiKhoan.html" title="Quản lý tài khoản"><img src="/img/account.png" alt="" /></a>
-<a href="/QuanLyDonHang.html" title="Quản lý đơn hàng"><img src="/img/booking.png" alt="" /></a>
-<a href="#" title="Quản lý đánh giá"><img src="/img/review.png" alt="" /></a>
-<a href="/QuanLyBanner.html" title="Quản lý banner"><img src="/img/advertisement.png" alt="" /></a>
-<a href="/QuanLyThanhToan.html" title="Quản lý thanh toán"><img src="/img/credit-card.png" alt="" /></a>
-</div>
+        <div class="nav-right relative">
+            <button id="accountToggle" class="flex items-center space-x-2 focus:outline-none">
+                <span class="text-gray-700 font-medium">Tài khoản</span>
+                <img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Tài khoản"
+                    class="h-10 w-10 object-cover rounded-full" />
+            </button>
 
-<!-- ========== MAIN CONTAINER ========== -->
-<div class="container-admin">
+            <div id="accountMenu"
+                class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-10">
+                <a href="TrangCaNhan.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Thông tin cá
+                    nhân</a>
+                <a href="login.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Đăng xuất</a>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        const toggleBtn = document.getElementById('accountToggle');
+        const menu = document.getElementById('accountMenu');
+
+        toggleBtn.addEventListener('click', function () {
+            menu.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', function (event) {
+            if (!toggleBtn.contains(event.target) && !menu.contains(event.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+    </script>
+    <div class="taskbar">
+        <a href="/QuanLySanPham.html" title="Quản lý sản phẩm"><img src="/img/box.png" alt="" /></a>
+        <a href="/QuanLyTaiKhoan.html" title="Quản lý tài khoản"><img src="/img/account.png" alt="" /></a>
+        <a href="/QuanLyDonHang.html" title="Quản lý đơn hàng"><img src="/img/booking.png" alt="" /></a>
+        <a href="#" title="Quản lý đánh giá"><img src="/img/review.png" alt="" /></a>
+        <a href="/QuanLyBanner.html" title="Quản lý banner"><img src="/img/advertisement.png" alt="" /></a>
+        <a href="/QuanLyThanhToan.html" title="Quản lý thanh toán"><img src="/img/credit-card.png" alt="" /></a>
+    </div>
+
+    <div class="container-admin">
+
+        <h2 style="font-size: 20px; font-weight: bold; display: block; margin-bottom: 20px;">Quản lý thanh toán</h2>
+        <table class="table table-bordered table-hover text-center align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Mã TT</th>
+                    <th>Mã ĐH</th>
+                    <th>Số Tiền</th>
+                    <th>Ngày TT</th>
+                    <th>Phương Thức</th>
+                    <th>Trạng Thái</th>
+                    <th>Ghi Chú</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>TT001</td>
+                    <td>DH202307</td>
+                    <td>2,500,000₫</td>
+                    <td>2025-07-15</td>
+                    <td>COD</td>
+                    <td class="status-paid">Chưa thanh toán</td>
+                    <td class="note-cell" title="Thanh toán thành công bằng COD">Thanh toán thành công bằng COD</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
+                        <button class="btn btn-danger btn-sm">Xóa</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>TT002</td>
+                    <td>DH202307</td>
+                    <td>2,500,000₫</td>
+                    <td>2025-07-15</td>
+                    <td>COD</td>
+                    <td class="status-paid">Đã thanh toán</td>
+                    <td class="note-cell" title="Thanh toán thành công bằng COD">Thanh toán thành công bằng COD</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
+                        <button class="btn btn-danger btn-sm">Xóa</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>TT003</td>
+                    <td>DH202307</td>
+                    <td>2,500,000₫</td>
+                    <td>2025-07-15</td>
+                    <td>COD</td>
+                    <td class="status-paid">Chưa thanh toán</td>
+                    <td class="note-cell" title="Thanh toán thành công bằng COD">Thanh toán thành công bằng COD</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
+                        <button class="btn btn-danger btn-sm">Xóa</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>TT004</td>
+                    <td>DH202307</td>
+                    <td>2,500,000₫</td>
+                    <td>2025-07-15</td>
+                    <td>COD</td>
+                    <td class="status-paid">Đã thanh toán</td>
+                    <td class="note-cell" title="Thanh toán thành công bằng COD">Thanh toán thành công bằng COD</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
+                        <button class="btn btn-danger btn-sm">Xóa</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>TT005</td>
+                    <td>DH202307</td>
+                    <td>2,500,000₫</td>
+                    <td>2025-07-15</td>
+                    <td>COD</td>
+                    <td class="status-paid">Chưa thanh toán</td>
+                    <td class="note-cell" title="Thanh toán thành công bằng COD">Thanh toán thành công bằng COD</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
+                        <button class="btn btn-danger btn-sm">Xóa</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
 
-<h2>Quản lý thanh toán</h2>
-<table class="table table-bordered table-hover text-center align-middle">
-<thead class="table-dark">
-<tr>
-<th>Mã TT</th>
-<th>Mã ĐH</th>
-<th>Số Tiền</th>
-<th>Ngày TT</th>
-<th>Phương Thức</th>
-<th>Trạng Thái</th>
-<th>Ghi Chú</th>
-<th>Hành động</th>
-</tr>
-</thead>
-<tbody>
-<!-- Dòng dữ liệu mẫu, phần này sẽ được load từ server/backend -->
-<tr>
-<td>TT001</td>
-<td>DH202307</td>
-<td>2,500,000₫</td>
-<td>2025-07-15</td>
-<td>COD</td>
-<td class="status-paid">Chưa thanh toán</td>
-<td class="note-cell" title="Thanh toán thành công bằng COD">Thanh toán thành công bằng COD</td>
-<td>
-<button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
-<button class="btn btn-danger btn-sm">Xóa</button>
-</td>
-</tr>
-<!-- Lặp thêm dòng khác -->
-<tr>
-<td>TT002</td>
-<td>DH202307</td>
-<td>2,500,000₫</td>
-<td>2025-07-15</td>
-<td>COD</td>
-<td class="status-paid">Đã thanh toán</td>
-<td class="note-cell" title="Thanh toán thành công bằng COD">Thanh toán thành công bằng COD</td>
-<td>
-<button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
-<button class="btn btn-danger btn-sm">Xóa</button>
-</td>
-</tr>
-<!-- Lặp thêm dòng khác -->
-<tr>
-<td>TT003</td>
-<td>DH202307</td>
-<td>2,500,000₫</td>
-<td>2025-07-15</td>
-<td>COD</td>
-<td class="status-paid">Chưa thanh toán</td>
-<td class="note-cell" title="Thanh toán thành công bằng COD">Thanh toán thành công bằng COD</td>
-<td>
-<button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
-<button class="btn btn-danger btn-sm">Xóa</button>
-</td>
-</tr>
-<!-- Lặp thêm dòng khác -->
-<tr>
-<td>TT004</td>
-<td>DH202307</td>
-<td>2,500,000₫</td>
-<td>2025-07-15</td>
-<td>COD</td>
-<td class="status-paid">Đã thanh toán</td>
-<td class="note-cell" title="Thanh toán thành công bằng COD">Thanh toán thành công bằng COD</td>
-<td>
-<button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
-<button class="btn btn-danger btn-sm">Xóa</button>
-</td>
-</tr>
-<!-- Lặp thêm dòng khác -->
-<tr>
-<td>TT005</td>
-<td>DH202307</td>
-<td>2,500,000₫</td>
-<td>2025-07-15</td>
-<td>COD</td>
-<td class="status-paid">Chưa thanh toán</td>
-<td class="note-cell" title="Thanh toán thành công bằng COD">Thanh toán thành công bằng COD</td>
-<td>
-<button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
-<button class="btn btn-danger btn-sm">Xóa</button>
-</td>
-</tr>
-<!-- Lặp thêm dòng khác -->
-</tbody>
-</table>
 
 
 
 
 
 
+        <!-- FORM CHỈNH SỬA THÔNG TIN THANH TOÁN -->
+        <div id="editForm" class="mt-5 p-4 border rounded bg-white shadow" style="display: none;">
+            <h4 class="mb-3">Chỉnh sửa thanh toán</h4>
+            <form id="paymentEditForm">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="maTT" class="form-label">Mã Thanh Toán</label>
+                        <input type="text" class="form-control" id="maTT" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="maDH" class="form-label">Mã Đơn Hàng</label>
+                        <input type="text" class="form-control" id="maDH">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="soTien" class="form-label">Số Tiền</label>
+                        <input type="number" class="form-control" id="soTien">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="ngayTT" class="form-label">Ngày Thanh Toán</label>
+                        <input type="date" class="form-control" id="ngayTT">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="phuongThuc" class="form-label">Phương Thức TT</label>
+                        <select class="form-select" id="phuongThuc">
+                            <option value="COD">COD</option>
+                            <option value="Chuyển khoản">Chuyển khoản</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="trangThai" class="form-label">Trạng Thái</label>
+                        <select class="form-select" id="trangThai">
+                            <option value="Đã thanh toán">Đã thanh toán</option>
+                            <option value="Đang xử lý">Đang xử lý</option>
+                            <option value="Thất bại">Thất bại</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label for="ghiChu" class="form-label">Ghi Chú</label>
+                        <textarea class="form-control" id="ghiChu" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="mt-4 d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary me-2" onclick="hideEditForm()">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
 
+    </div>
 
-<!-- FORM CHỈNH SỬA THÔNG TIN THANH TOÁN -->
-<div id="editForm" class="mt-5 p-4 border rounded bg-white shadow" style="display: none;">
-<h4 class="mb-3">Chỉnh sửa thanh toán</h4>
-<form id="paymentEditForm">
-<div class="row g-3">
-<div class="col-md-4">
-<label for="maTT" class="form-label">Mã Thanh Toán</label>
-<input type="text" class="form-control" id="maTT" readonly>
-</div>
-<div class="col-md-4">
-<label for="maDH" class="form-label">Mã Đơn Hàng</label>
-<input type="text" class="form-control" id="maDH">
-</div>
-<div class="col-md-4">
-<label for="soTien" class="form-label">Số Tiền</label>
-<input type="number" class="form-control" id="soTien">
-</div>
-<div class="col-md-4">
-<label for="ngayTT" class="form-label">Ngày Thanh Toán</label>
-<input type="date" class="form-control" id="ngayTT">
-</div>
-<div class="col-md-4">
-<label for="phuongThuc" class="form-label">Phương Thức TT</label>
-<select class="form-select" id="phuongThuc">
-<option value="COD">COD</option>
-<option value="Chuyển khoản">Chuyển khoản</option>
-</select>
-</div>
-<div class="col-md-4">
-<label for="trangThai" class="form-label">Trạng Thái</label>
-<select class="form-select" id="trangThai">
-<option value="Đã thanh toán">Đã thanh toán</option>
-<option value="Đang xử lý">Đang xử lý</option>
-<option value="Thất bại">Thất bại</option>
-</select>
-</div>
-<div class="col-12">
-<label for="ghiChu" class="form-label">Ghi Chú</label>
-<textarea class="form-control" id="ghiChu" rows="2"></textarea>
-</div>
-</div>
-<div class="mt-4 d-flex justify-content-end">
-<button type="button" class="btn btn-secondary me-2" onclick="hideEditForm()">Hủy</button>
-<button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-</div>
-</form>
-</div>
+    <!-- SCRIPT xử lý sự kiện Sửa -->
+    <script>
+        function showEditForm(button) {
+            const row = button.closest("tr");
+            document.getElementById("editForm").style.display = "block";
 
-</div>
+            // Lấy dữ liệu từ hàng được chọn
+            document.getElementById("maTT").value = row.children[0].innerText;
+            document.getElementById("maDH").value = row.children[1].innerText;
 
-<!-- SCRIPT xử lý sự kiện Sửa -->
-<script>
-function showEditForm(button) {
-const row = button.closest("tr");
-document.getElementById("editForm").style.display = "block";
+            // Xử lý số tiền (loại bỏ ký tự không phải số)
+            const soTienRaw = row.children[2].innerText.replace(/[^0-9]/g, '');
+            document.getElementById("soTien").value = parseInt(soTienRaw);
 
-document.getElementById("maTT").value = row.children[0].innerText;
-document.getElementById("maDH").value = row.children[1].innerText;
+            document.getElementById("ngayTT").value = row.children[3].innerText;
+            document.getElementById("phuongThuc").value = row.children[4].innerText.trim();
+            document.getElementById("trangThai").value = row.children[5].innerText.trim();
+            document.getElementById("ghiChu").value = row.children[6].innerText;
+        }
 
-// 👉 Sửa dòng này:
-const soTienRaw = row.children[2].innerText.replace(/[^0-9]/g, '');
-document.getElementById("soTien").value = parseInt(soTienRaw);
+        function hideEditForm() {
+            document.getElementById("editForm").style.display = "none";
+        }
 
-document.getElementById("ngayTT").value = row.children[3].innerText;
+        // Xử lý submit form
+        document.getElementById("paymentEditForm").addEventListener("submit", function (e) {
+            e.preventDefault();
 
-document.getElementById("phuongThuc").value = row.children[4].innerText.trim();
-document.getElementById("trangThai").value = row.children[5].innerText.trim();
-document.getElementById("ghiChu").value = row.children[6].innerText;
-}
+            // Lấy dữ liệu từ form
+            const formData = {
+                maTT: document.getElementById("maTT").value,
+                maDH: document.getElementById("maDH").value,
+                soTien: document.getElementById("soTien").value,
+                ngayTT: document.getElementById("ngayTT").value,
+                phuongThuc: document.getElementById("phuongThuc").value,
+                trangThai: document.getElementById("trangThai").value,
+                ghiChu: document.getElementById("ghiChu").value
+            };
 
-function hideEditForm() {
-document.getElementById("editForm").style.display = "none";
-}
+            // Tìm hàng cần cập nhật
+            const rows = document.querySelectorAll("table tbody tr");
+            let targetRow = null;
 
-// Khi submit form
-document.getElementById("paymentEditForm").addEventListener("submit", function (e) {
-e.preventDefault();
-alert("Thông tin thanh toán đã được cập nhật (giả lập)");
-hideEditForm();
-// TODO: Gửi request cập nhật vào DB
-});
-</script>
+            rows.forEach(row => {
+                if (row.children[0].innerText === formData.maTT) {
+                    targetRow = row;
+                }
+            });
+
+            if (targetRow) {
+                // Cập nhật dữ liệu vào bảng
+                targetRow.children[1].innerText = formData.maDH;
+
+                // Format số tiền
+                const formattedMoney = new Intl.NumberFormat('vi-VN').format(formData.soTien) + '₫';
+                targetRow.children[2].innerText = formattedMoney;
+
+                targetRow.children[3].innerText = formData.ngayTT;
+                targetRow.children[4].innerText = formData.phuongThuc;
+
+                // Cập nhật trạng thái và class
+                const statusCell = targetRow.children[5];
+                statusCell.innerText = formData.trangThai;
+
+                // Xóa các class cũ và thêm class mới
+                statusCell.classList.remove('status-paid', 'status-pending', 'status-failed');
+                if (formData.trangThai === 'Đã thanh toán') {
+                    statusCell.classList.add('status-paid');
+                } else if (formData.trangThai === 'Đang xử lý') {
+                    statusCell.classList.add('status-pending');
+                } else {
+                    statusCell.classList.add('status-failed');
+                }
+
+                targetRow.children[6].innerText = formData.ghiChu;
+
+                // Ẩn form và thông báo
+                hideEditForm();
+                alert("Cập nhật thành công!");
+            } else {
+                alert("Không tìm thấy mã thanh toán!");
+            }
+        });
+    </script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,7 +20,6 @@
       color: #333;
     }
 
-    /* NAVBAR */
     #navbar {
       position: fixed;
       top: 0;
@@ -71,7 +71,6 @@
       border-radius: 50%;
     }
 
-    /* TASKBAR */
     .taskbar {
       position: fixed;
       top: 100px;
@@ -102,7 +101,6 @@
       transform: scale(1.1);
     }
 
-    /* MAIN CONTENT */
     .container-admin {
       margin-top: 100px;
       margin-left: 100px;
@@ -111,12 +109,6 @@
       background: #fdfdfd;
     }
 
-    .form-label label {
-      font-size: 20px;
-      font-weight: bold;
-      display: block;
-      margin-bottom: 20px;
-    }
 
     .tools {
       display: flex;
@@ -167,6 +159,7 @@
     }
 
     table {
+      text-align: center;
       width: 100%;
       border-collapse: collapse;
       background: white;
@@ -178,9 +171,11 @@
       background: #f1f5f9;
     }
 
-    th, td {
+    th,
+    td {
       padding: 14px;
-      text-align: left;
+      text-align: center;
+      vertical-align: middle;
       border-bottom: 1px solid #eee;
       font-size: 0.95rem;
     }
@@ -251,7 +246,8 @@
         width: 100%;
       }
 
-      .search input, .search select {
+      .search input,
+      .search select {
         width: 100%;
       }
 
@@ -261,22 +257,45 @@
     }
   </style>
 </head>
+
 <body>
-  <!-- NAVBAR -->
-  <nav id="navbar">
-    <div class="nav-left">
-      <div class="logo-wrapper">
-        <img src="/img/processed_no_white.png" alt="Logo" />
-        <div class="logo-title">Gundam Shop</div>
+  <nav id="navbar" class="flex justify-between items-center px-6 py-3 bg-white shadow-md">
+    <div class="nav-left flex items-center">
+      <div class="logo-wrapper flex items-center">
+        <img src="/img/processed_no_white.png" alt="Logo" class="h-10 mr-2" />
+        <div class="logo-title text-xl font-bold">Gundam Shop</div>
       </div>
     </div>
-    <div class="nav-right">
-      <label>Tài khoản |</label>
-      <img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Avatar" />
+
+    <div class="nav-right relative">
+      <button id="accountToggle" class="flex items-center space-x-2 focus:outline-none">
+        <span class="text-gray-700 font-medium">Tài khoản</span>
+        <img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Tài khoản"
+          class="h-10 w-10 object-cover rounded-full" />
+      </button>
+
+      <div id="accountMenu"
+        class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-10">
+        <a href="TrangCaNhan.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Thông tin cá nhân</a>
+        <a href="login.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Đăng xuất</a>
+      </div>
     </div>
   </nav>
 
-  <!-- TASKBAR -->
+  <script>
+    const toggleBtn = document.getElementById('accountToggle');
+    const menu = document.getElementById('accountMenu');
+
+    toggleBtn.addEventListener('click', function () {
+      menu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!toggleBtn.contains(event.target) && !menu.contains(event.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+  </script>
   <div class="taskbar">
     <a href="/QuanLySanPham.html" title="Quản lý sản phẩm"><img src="/img/box.png" alt="" /></a>
     <a href="/QuanLyTaiKhoan.html" title="Quản lý tài khoản"><img src="/img/account.png" alt="" /></a>
@@ -286,10 +305,9 @@
     <a href="QuanLyThanhToan.html" title="Quản lý thanh toán"><img src="/img/credit-card.png" alt="" /></a>
   </div>
 
-  <!-- MAIN CONTENT -->
   <div class="container-admin">
     <div class="form-label">
-      <label>Quản lý đơn hàng</label>
+      <h1 style="font-size: 20px; font-weight: bold; display: block; margin-bottom: 20px;">Quản lý đơn hàng</h1>
       <div class="tools">
         <div class="search">
           <input type="text" placeholder="Tìm kiếm đơn hàng..." />
@@ -311,15 +329,16 @@
       <table>
         <thead>
           <tr>
-            <th>ORDER ID</th>
-            <th>ORDER NUMBER</th>
-            <th>STATUS</th>
-            <th>ITEM</th>
-            <th>CUSTOMER NAME</th>
-            <th>SHIPPING SERVICE</th>
-            <th>TRACKING CODE</th>
-            <th>ACTION</th>
+            <th>ID Đơn hàng</th>
+            <th>Mã đơn hàng</th>
+            <th>Trạng thái</th>
+            <th>Số lượng</th>
+            <th>Tên khách hàng</th>
+            <th>Dịch vụ giao hàng</th>
+            <th>Mã vận đơn</th>
+            <th>Thao tác</th>
           </tr>
+
         </thead>
         <tbody>
           <tr>
@@ -327,20 +346,20 @@
             <td>59217342</td>
             <td><span class="status-label status-new">Đơn mới</span></td>
             <td>1</td>
-            <td>Cody Fisher</td>
+            <td>Huỳnh Công Nam</td>
             <td>Standard</td>
             <td>940010010936113003113</td>
-            <td><img class="action-btn" src="/img/Screenshot_2025-06-24_214212-removebg-preview.png" alt="Edit" /></td>
+            <td class="p-2 border"><button><i style="font-size:24px" class="fa">&#xf06e;</i></button></td>
           </tr>
           <tr>
             <td>59213</td>
             <td>59217343</td>
             <td><span class="status-label status-pending">Chờ xác nhận</span></td>
             <td>2</td>
-            <td>Kristin Watson</td>
+            <td>Alison Alaba</td>
             <td>Priority</td>
             <td>940010010936113003113</td>
-            <td><img class="action-btn" src="/img/Screenshot_2025-06-24_214212-removebg-preview.png" alt="Edit" /></td>
+            <td class="p-2 border"><button><i style="font-size:24px" class="fa">&#xf06e;</i></button></td>
           </tr>
         </tbody>
       </table>
@@ -354,5 +373,175 @@
       </div>
     </div>
   </div>
+
+  <div id="createModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999] hidden">
+    <form id="createForm" class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
+      <h2 class="text-xl font-bold mb-4">Tạo đơn hàng mới</h2>
+      <input id="newId" placeholder="ID Đơn hàng" class="w-full p-2 border mb-2 rounded" required />
+      <input id="newCode" placeholder="Mã đơn hàng" class="w-full p-2 border mb-2 rounded" required />
+      <select id="newStatus" class="w-full p-2 border mb-2 rounded" required>
+        <option value="Đơn mới">Đơn mới</option>
+        <option value="Chờ xác nhận">Chờ xác nhận</option>
+      </select>
+      <input id="newQuantity" type="number" placeholder="Số lượng" class="w-full p-2 border mb-2 rounded" required />
+      <input id="newCustomer" placeholder="Tên khách hàng" class="w-full p-2 border mb-2 rounded" required />
+      <input id="newShipping" placeholder="Dịch vụ giao hàng" class="w-full p-2 border mb-2 rounded" required />
+      <input id="newTracking" placeholder="Mã vận đơn" class="w-full p-2 border mb-2 rounded" required />
+      <div class="mt-4 text-right">
+        <button id="createClose" type="button"
+          class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-600">Hủy</button>
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-800">Tạo</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const searchInput = document.querySelector(".search input");
+      const statusSelect = document.querySelector(".search select");
+      const searchBtn = document.querySelector(".search-right button");
+      const orderRows = Array.from(document.querySelectorAll("tbody tr"));
+      const viewModal = document.getElementById("editModal");
+      const closeModalBtn = document.getElementById("closeModal");
+
+      const spanOrderId = document.getElementById("editOrderId");
+      const spanCustomerName = document.getElementById("editCustomerName");
+      const spanStatus = document.getElementById("editStatus");
+
+      const createBtn = document.querySelector(".add");
+      const paginationInfo = document.querySelector(".pagination-info");
+      const paginationButtons = document.querySelectorAll(".pagination-buttons button");
+
+      const itemsPerPage = 5;
+      let currentPage = 1;
+
+      function renderPage(page) {
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+
+        orderRows.forEach((row, index) => {
+          row.style.display = (index >= start && index < end) ? "" : "none";
+        });
+
+        paginationInfo.textContent = `Hiển thị ${start + 1} đến ${Math.min(end, orderRows.length)} trong ${orderRows.length} kết quả`;
+      }
+
+      paginationButtons[0].addEventListener("click", () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderPage(currentPage);
+        }
+      });
+
+      paginationButtons[1].addEventListener("click", () => {
+        if (currentPage < Math.ceil(orderRows.length / itemsPerPage)) {
+          currentPage++;
+          renderPage(currentPage);
+        }
+      });
+
+      renderPage(currentPage);
+
+      function filterOrders() {
+        const searchValue = searchInput.value.toLowerCase();
+        const statusValue = statusSelect.value;
+
+        orderRows.forEach((row) => {
+          const customerName = row.children[4].textContent.toLowerCase();
+          const statusText = row.children[2].textContent.trim();
+
+          const matchesSearch = customerName.includes(searchValue);
+          const matchesStatus = statusValue === "Trạng thái" || statusText === statusValue;
+
+          row.style.display = (matchesSearch && matchesStatus) ? "" : "none";
+        });
+      }
+
+      searchBtn.addEventListener("click", filterOrders);
+      searchInput.addEventListener("input", filterOrders);
+      statusSelect.addEventListener("change", filterOrders);
+
+      document.querySelectorAll("td .fa").forEach((icon) => {
+        icon.addEventListener("click", function () {
+          const row = this.closest("tr");
+          const orderId = row.children[0].textContent;
+          const customerName = row.children[4].textContent;
+          const status = row.children[2].textContent.trim();
+
+          spanOrderId.textContent = orderId;
+          spanCustomerName.textContent = customerName;
+          spanStatus.textContent = status;
+
+          viewModal.classList.remove("hidden");
+        });
+      });
+
+      closeModalBtn.addEventListener("click", () => {
+        viewModal.classList.add("hidden");
+      });
+
+      const createModal = document.getElementById("createModal");
+      const createForm = document.getElementById("createForm");
+      const createClose = document.getElementById("createClose");
+
+      createBtn.addEventListener("click", () => {
+        createModal.classList.remove("hidden");
+      });
+
+      createClose.addEventListener("click", () => {
+        createModal.classList.add("hidden");
+      });
+
+      createForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const id = document.getElementById("newId").value;
+        const code = document.getElementById("newCode").value;
+        const status = document.getElementById("newStatus").value;
+        const quantity = document.getElementById("newQuantity").value;
+        const customer = document.getElementById("newCustomer").value;
+        const shipping = document.getElementById("newShipping").value;
+        const tracking = document.getElementById("newTracking").value;
+
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+        <td>${id}</td>
+        <td>${code}</td>
+        <td><span class="status-label ${status === 'Đơn mới' ? 'status-new' : 'status-pending'}">${status}</span></td>
+        <td>${quantity}</td>
+        <td>${customer}</td>
+        <td>${shipping}</td>
+        <td>${tracking}</td>
+        <td class="p-2 border"><i style="font-size:24px" class="fa">&#xf06e;</i></td>
+      `;
+
+        newRow.querySelector(".fa").addEventListener("click", function () {
+          spanOrderId.textContent = id;
+          spanCustomerName.textContent = customer;
+          spanStatus.textContent = status;
+          viewModal.classList.remove("hidden");
+        });
+
+        document.querySelector("tbody").appendChild(newRow);
+        orderRows.push(newRow);
+
+        createModal.classList.add("hidden");
+        renderPage(currentPage);
+      });
+    });
+  </script>
+
+  <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999] hidden">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
+      <h2 class="text-xl font-bold mb-4">Chỉnh sửa đơn hàng</h2>
+      <p><strong>ID Đơn hàng:</strong> <span id="editOrderId"></span></p>
+      <p><strong>Tên khách hàng:</strong> <span id="editCustomerName"></span></p>
+      <p><strong>Trạng thái hiện tại:</strong> <span id="editStatus"></span></p>
+      <div class="mt-4 text-right">
+        <button id="closeModal" class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-600">Đóng</button>
+      </div>
+    </div>
+  </div>
 </body>
+
 </html>
