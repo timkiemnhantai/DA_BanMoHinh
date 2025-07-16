@@ -86,20 +86,16 @@
     }
 
     /* ================= CONTAINER ================= */
-     .container {
-    width: 93.5% !important;
-    position: fixed;
-    top: 100px;    
-    left: 100px;   
-    right: 0;
-    bottom: 0;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    overflow: auto; 
+    .container {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 120px;
+  margin-top: 120px;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
-
 
     h1 {
       color: #333;
@@ -246,7 +242,7 @@
 </div>
 
 <!-- MAIN CONTENT -->
-<div class="container">
+<div class="container" style="max-width: 1770px; width: 100%;">
   <h1>Quản Lý Banner</h1>
 
   <div class="search-section">
