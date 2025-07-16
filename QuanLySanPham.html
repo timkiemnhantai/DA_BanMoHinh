@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Quản lý sản phẩm</title>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+#navbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 100px;
+	background-color: #ffffff;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 25px;
+	z-index: 999;
+	border-bottom: 1px solid #ccc;
+}
+
+#navbar .logo-wrapper img {
+	height: 45px;
+	margin-right: 10px;
+}
+
+#navbar .logo-title {
+	font-size: 18px;
+	font-weight: bold;
+}
+
+#navbar .nav-right img {
+	height: 35px;
+	border-radius: 50%;
+}
+
+.taskbar {
+	position: fixed;
+	top: 100px;
+	left: 0;
+	width: 100px;
+	height: calc(100vh - 100px);
+	background-color: #f9f9f9;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-top: 20px;
+	border-right: 1px solid #ccc;
+	z-index: 998;
+}
+
+.taskbar a {
+	margin-bottom: 20px;
+}
+
+.taskbar img {
+	width: 28px;
+	opacity: 0.7;
+	transition: all 0.3s ease;
+}
+
+.taskbar img:hover {
+	opacity: 1;
+	transform: scale(1.1);
+}
+
+.container-admin {
+	margin-top: 100px;
+	margin-left: 100px;
+	padding: 20px;
+	background: #fdfdfd;
+	min-height: calc(100vh - 100px);
+}
+</style>
+</head>
+<body>
+	<!-- Navbar -->
+	<nav id="navbar">
+		<div class="nav-left">
+			<div class="logo-wrapper flex items-center">
+				<img src="/img/processed_no_white.png" alt="Logo" />
+				<div class="logo-title">Gundam Shop</div>
+			</div>
+		</div>
+		<div class="nav-right flex items-center">
+			<label>Tài khoản |</label> <a href="#"><img
+				src="/img/Screenshot_2025-06-19_220523-removebg-preview.png"
+				alt="Tài khoản" /></a>
+		</div>
+	</nav>
+
+	<!-- Taskbar -->
+  <div class="taskbar">
+    <a href="/QuanLySanPham.html" title="Quản lý sản phẩm"><img src="/img/box.png" alt="" /></a>
+    <a href="/QuanLyTaiKhoan.html" title="Quản lý tài khoản"><img src="/img/account.png" alt="" /></a>
+    <a href="/QuanLyDonHang.html" title="Quản lý đơn hàng"><img src="/img/booking.png" alt="" /></a>
+    <a href="QuanLyDanhGia.html" title="Quản lý đánh giá"><img src="/img/review.png" alt="" /></a>
+    <a href="/QuanLyBanner.html" title="Quản lý banner"><img src="/img/advertisement.png" alt="" /></a>
+    <a href="QuanLyThanhToan.html" title="Quản lý thanh toán"><img src="/img/credit-card.png" alt="" /></a>
+  </div>
+
+	<!-- Nội dung chính -->
+	<div class="container-admin">
+		<div class="bg-white rounded-lg shadow p-5">
+			<div class="flex justify-between items-center mb-4">
+				<h1 class="text-xl font-bold">Quản lý sản phẩm</h1>
+				<button
+					class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Thêm
+					sản phẩm</button>
+			</div>
+
+			<!-- Tìm kiếm -->
+			<div class="flex mb-4 gap-4">
+				<input type="text" placeholder="Tìm sản phẩm..."
+					class="flex-1 border px-3 py-2 rounded" /> <select
+					class="border px-3 py-2 rounded">
+					<option>Các hãng sản phẩm</option>
+					<option>Bandai</option>
+					<option>High Grade</option>
+					<option>Real Grade</option>
+					<option>Master Grade</option>
+					<option>Perfect Grade</option>
+					<option>MOSHOWTOYS</option>
+					<option>IN ERA+</option>
+					<option>SNAA</option>
+					<option>MOTOR NUCLEAR</option>
+				</select>
+				<button class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">
+					<i class="fas fa-search"></i>
+				</button>
+			</div>
+
+			<!-- Bảng sản phẩm -->
+			<div class="overflow-x-auto">
+				<table class="min-w-full border text-sm">
+					<thead class="bg-gray-100">
+						<tr>
+							<th class="p-2 border text-center">Mã SP</th>
+							<th class="p-2 border text-center">Tên sản phẩm</th>
+							<th class="p-2 border text-center">Ảnh</th>
+							<th class="p-2 border text-center">Loại</th>
+							<th class="p-2 border text-center">Hãng</th>
+							<th class="p-2 border text-center">Giá</th>
+							<th class="p-2 border text-center">Giảm giá</th>
+							<th class="p-2 border text-center">Tồn kho</th>
+							<th class="p-2 border text-center">Trạng thái</th>
+							<th class="p-2 border text-center">Hành động</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="hover:bg-gray-50 text-center">
+							<td class="p-2 border">SP001</td>
+							<td class="p-2 border">Gumdam No.1</td>
+							<td class="p-2 border"><img
+								src="/img/307f0218b0d4b365a93450f516056387.jpg"
+								class="w-[150px] h-[150px] object-cover rounded mx-auto" /></td>
+							<td class="p-2 border">Kim loại</td>
+							<td class="p-2 border"><span
+								class="px-2 py-1 bg-yellow-200 text-red-800 rounded-full text-xs"><strong>Bandai</strong></span></td>
+							<td class="p-2 border text-blue-600 font-semibold">1.500.000₫</td>
+							<td class="p-2 border">không giảm</td>
+							<td class="p-2 border">50</td>
+							<td class="p-2 border"><span
+								class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs"><strong>Còn
+										hàng</strong></span></td>
+							<td class="p-2 border"><i
+								class="fas fa-pen text-blue-600 cursor-pointer"></i></td>
+						</tr>
+
+						<tr class="hover:bg-gray-50 text-center">
+							<td class="p-2 border">SP001</td>
+							<td class="p-2 border">Gumdam No.1</td>
+							<td class="p-2 border"><img
+								src="/img/307f0218b0d4b365a93450f516056387.jpg"
+								class="w-[150px] h-[150px] object-cover rounded mx-auto" /></td>
+							<td class="p-2 border">Kim loại</td>
+							<td class="p-2 border"><span
+								class="px-2 py-1 bg-yellow-200 text-red-800 rounded-full text-xs"><strong>Bandai</strong></span></td>
+							<td class="p-2 border text-blue-600 font-semibold">1.500.000₫</td>
+							<td class="p-2 border">không giảm</td>
+							<td class="p-2 border">0</td>
+							<td class="p-2 border"><span
+								class="px-2 py-1 bg-red-400 text-red-800 rounded-full text-xs"><strong>Hết
+										hàng</strong></span></td>
+							<td class="p-2 border"><i
+								class="fas fa-pen text-blue-600 cursor-pointer"></i></td>
+						</tr>
+
+						<tr class="hover:bg-gray-50 text-center">
+							<td class="p-2 border">SP001</td>
+							<td class="p-2 border">Gumdam No.1</td>
+							<td class="p-2 border"><img
+								src="/img/307f0218b0d4b365a93450f516056387.jpg"
+								class="w-[150px] h-[150px] object-cover rounded mx-auto" /></td>
+							<td class="p-2 border">Kim loại</td>
+							<td class="p-2 border"><span
+								class="px-2 py-1 bg-yellow-200 text-red-800 rounded-full text-xs"><strong>Bandai</strong></span></td>
+							<td class="p-2 border text-blue-600 font-semibold">1.500.000₫</td>
+							<td class="p-2 border">không giảm</td>
+							<td class="p-2 border">250</td>
+							<td class="p-2 border"><span
+								class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs"><strong>Còn
+										hàng</strong></span></td>
+							<td class="p-2 border"><i
+								class="fas fa-pen text-blue-600 cursor-pointer"></i></td>
+						</tr>
+
+						<tr class="hover:bg-gray-50 text-center">
+							<td class="p-2 border">SP001</td>
+							<td class="p-2 border">Gumdam No.1</td>
+							<td class="p-2 border"><img
+								src="/img/307f0218b0d4b365a93450f516056387.jpg"
+								class="w-[150px] h-[150px] object-cover rounded mx-auto" /></td>
+							<td class="p-2 border">Kim loại</td>
+							<td class="p-2 border"><span
+								class="px-2 py-1 bg-yellow-200 text-red-800 rounded-full text-xs"><strong>Bandai</strong></span></td>
+							<td class="p-2 border text-blue-600 font-semibold">1.500.000₫</td>
+							<td class="p-2 border">không giảm</td>
+							<td class="p-2 border">50</td>
+							<td class="p-2 border"><span
+								class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs"><strong>Còn
+										hàng</strong></span></td>
+							<td class="p-2 border"><i
+								class="fas fa-pen text-blue-600 cursor-pointer"></i></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

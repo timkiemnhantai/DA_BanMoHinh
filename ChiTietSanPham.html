@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gundam Shop</title>
+    <link rel="stylesheet" href="/css/style_ChiTietSanPham.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        /* CSS cho Slider Ảnh Chính */
+        .product-image-slider {
+            position: relative;
+            width: 100%; /* Hoặc một chiều rộng cố định */
+            max-width: 500px; /* Tùy chỉnh kích thước ảnh chính */
+            overflow: hidden; /* Quan trọng để ẩn các ảnh không hiển thị */
+            margin: 0 auto;
+        }
+
+        .slider-images-wrapper {
+            display: flex;
+            transition: transform 0.5s ease-in-out; /* Hiệu ứng chuyển động */
+        }
+
+        .slider-images-wrapper img {
+            width: 100%;
+            flex-shrink: 0; /* Ngăn không cho ảnh co lại */
+            display: block;
+            object-fit: contain; /* Đảm bảo ảnh hiển thị đầy đủ */
+        }
+
+        .slider-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        .slider-button.prev {
+            left: 10px;
+        }
+
+        .slider-button.next {
+            right: 10px;
+        }
+
+        /* Thêm một số CSS cơ bản cho thumbnails nếu bạn muốn chúng hiển thị nhưng không click đổi ảnh chính */
+        .thumbnail-images {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            overflow-x: auto; /* Cho phép cuộn ngang nếu có nhiều thumbnails */
+            padding-bottom: 5px; /* Để tránh scrollbar che ảnh */
+        }
+
+        .thumbnail-images img {
+            width: 80px; /* Kích thước thumbnail */
+            height: 80px;
+            object-fit: cover;
+            border: 2px solid transparent;
+            cursor: pointer; /* Vẫn giữ cursor pointer để ngụ ý có thể tương tác */
+            transition: border-color 0.3s ease;
+        }
+
+        .thumbnail-images img.active {
+            border-color: #007bff; /* Màu viền cho ảnh đang hiển thị (nếu bạn muốn) */
+        }
+
+        /* Các style cũ từ code của bạn (có thể đã có trong style_ChiTietSanPham.css) */
+        .main-content-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .product-detail-container {
+            display: flex;
+            flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
+            gap: 40px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .product-image-gallery {
+            flex: 1;
+            min-width: 300px; /* Đảm bảo đủ không gian */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* ... (Thêm các CSS khác từ style_ChiTietSanPham.css vào đây nếu cần) */
+    </style>
+</head>
+<body>
+    <div class="body-nav">
+        <nav>
+            <div class="nav-logo">
+                <div class="stripe blue"></div>
+                <div class="stripe yellow"></div>
+                <div class="stripe red"></div>
+
+                <div class="logo-wrapper">
+                    <img src="/img/processed_no_white.png" alt="">
+                    <div class="logo-title">Gundam Shop</div>
+                </div>
+            </div>
+
+            <div class="nav-toolbar">
+                <div class="search">
+                    <div class="search-left">
+                        <input type="text" placeholder="Từ khóa..." onfocus="this.placeholder=''" onblur="this.placeholder='Từ khóa...'">
+                    </div>
+                    <div class="search-right">
+                        <button class="in">
+                            <img src="/img/search.png" alt="">
+                        </button>
+                    </div>
+                </div>
+
+                <div class="item">
+              <ul>
+                <li><a href="/index.html">Trang chủ</a></li>
+                <li><a href="/SanPham.html">Sản phẩm</a></li>
+                <li><a href="/HangGiamGia.html">Hàng giảm giá</a></li>
+                <li><a href="/DungCuPhuKien.html">Dụng cụ - Phụ kiện</a></li>
+                <li><a href="/LienHe.html">Liên Hệ</a></li>
+              </ul>
+            </div>
+            </div>
+
+            <div class="nav-account">
+                <div class="account-left">
+                    <label for="">Kết nối</label>
+                    <a href=""><img src="/img/facebook.png" alt=""></a>
+                    <a href=""><img src="/img/instagram.png" alt=""></a>
+                </div>
+                <div class="account-right">
+                    <a href="/login.html"><img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt=""></a>
+                    <a href="/GioHang.html"><img src="/img/Screenshot_2025-06-19_220342-removebg-preview.png" alt=""></a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="main-content-wrapper product-detail-page-wrapper">
+        <div class="product-detail-container">
+            <div class="product-image-gallery">
+                <div class="product-image-slider">
+                    <div class="slider-images-wrapper" id="sliderImagesWrapper">
+                        <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.png" alt="Mô Hình THUNDERBOLT 2.0 (Ảnh 1)">
+                        <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.1.png" alt="Mô Hình THUNDERBOLT 2.0 (Ảnh 2)">
+                        <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.2.png" alt="Mô Hình THUNDERBOLT 2.0 (Ảnh 3)">
+                        <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.3.png" alt="Mô Hình THUNDERBOLT 2.0 (Ảnh 4)">
+                        <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.4.png" alt="Mô Hình THUNDERBOLT 2.0 (Ảnh 5)">
+                        </div>
+                    <button class="slider-button prev" onclick="moveSlider(-1)">&#10094;</button>
+                    <button class="slider-button next" onclick="moveSlider(1)">&#10095;</button>
+                </div>
+                
+                <div class="thumbnail-images">
+                    <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.png" alt="Thumbnail 1" class="thumbnail active">
+                    <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.1.png" alt="Thumbnail 2" class="thumbnail">
+                    <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.2.png" alt="Thumbnail 3" class="thumbnail">
+                    <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.3.png" alt="Thumbnail 4" class="thumbnail">
+                    <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.4.png" alt="Thumbnail 5" class="thumbnail">
+
+                    </div>
+            </div>
+
+            <div class="product-info-section">
+                <h1>Mô Hình Lắp Ráp In Era+ THUNDERBOLT 2.0</h1>
+                <p class="product-version">PHIÊN BẢN</p>
+                <div class="price-section">
+                    <span class="original-price">$29.99</span>
+                    <span class="current-price">$19.99</span>
+                </div>
+                <div class="stock-indicator">
+                    <div class="stock-bar" style="width: 70%;"></div>
+                    <span class="stock-text">20 item left</span>
+                </div>
+
+                <div class="description-section">
+                    <h3>Mô tả</h3>
+                    <p>Sản phẩm đến từ Trung Quốc</p>
+                    <a href="#" class="read-more">Read more</a>
+                </div>
+
+                <div class="quantity-section">
+                    <h3>Số lượng</h3>
+                    <div class="quantity-control">
+                        <button class="quantity-btn minus">-</button>
+                        <input type="text" value="1" class="quantity-input">
+                        <button class="quantity-btn plus">+</button>
+                    </div>
+                    <p class="max-purchase">Maximum purchase 5</p>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="add-to-cart-btn"><i class="fas fa-shopping-bag"></i> Thêm vào giỏ hàng</button>
+                    <button class="add-to-wishlist-btn"><i class="far fa-heart"></i> Danh sách yêu thích</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="main-content-wrapper comments-page-wrapper">
+        <div class="comments-container">
+            <h2 class="comments-title">BÌNH LUẬN</h2>
+            <div class="comments-header">
+                <span class="comment-count">16 comments</span>
+                <div class="sort-by">
+                    <span>Sort by</span>
+                    <select>
+                        <option value="oldest">Oldest</option>
+                        <option value="newest">Newest</option>
+                        <option value="top">Top Comments</option>
+                    </select>
+                    <i class="fas fa-caret-down"></i>
+                </div>
+            </div>
+            <!--phần viết bình lận -->
+            <!-- <div class="add-comment-section">
+                <img src="/img/avatar1.jpg" alt="User Avatar" class="comment-avatar">
+                <div class="comment-input-area">
+                    <textarea placeholder="Add a comment..."></textarea>
+                    <div class="comment-actions">
+                        <img src="/img/avatar1.jpg" alt="Attach photo" class="attach-icon">
+                        <button class="post-comment-btn">Post</button>
+                    </div>
+                </div>
+            </div> -->
+           
+            <div class="comment-list">
+                <div class="comment-item">
+                    <img src="/img/avatar2.jpg" alt="User Avatar" class="comment-avatar">
+                    <div class="comment-content">
+                        <span class="comment-author">Courtney Henry</span>
+                        <p class="comment-text">Ultricies interdum dolor sodales. Vitae feugiat vitae quis id consectetur. Aenean urna, lectus enim suscipit eget. Tristique bibendum nibh enim dui.</p>
+                        <div class="comment-actions-row">
+                            <a href="#" class="comment-action-link">Like</a>
+                            <a href="#" class="comment-action-link">Reply</a>
+                            <span class="comment-time">20h</span>
+                        </div>
+
+                        <div class="reply-item">
+                            <img src="/img/avatar3.jpg" alt="Reply Avatar" class="reply-avatar">
+                            <div class="comment-content">
+                                <span class="comment-author">Ronald Richards</span>
+                                <p class="comment-text">Lorem fringilla pretium magna purus orci faucibus morbi.</p>
+                                <div class="comment-actions-row">
+                                    <a href="#" class="comment-action-link">Like</a>
+                                    <a href="#" class="comment-action-link">Reply</a>
+                                    <span class="comment-time">6h</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-item">
+                    <img src="/img/avatar4.jpg" alt="User Avatar" class="comment-avatar">
+                    <div class="comment-content">
+                        <span class="comment-author">Theresa Webb</span>
+                        <p class="comment-text">Donec sed sed feugiat sit. Enim, urna euismod magna enim. Sit cras eget id sagittis consequat at.</p>
+                        <div class="comment-actions-row">
+                            <a href="#" class="comment-action-link">Like</a>
+                            <a href="#" class="comment-action-link">Reply</a>
+                            <span class="comment-time">23h</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="load-more-comments-btn">Load 13 more comments</button>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <img src="/img/logo_gundam.png" alt="Gundam Shop Footer Logo">
+                    <span>Gundam Shop</span>
+                </div>
+                <h4>Liên hệ</h4>
+                <p>Địa chỉ: QTSC 9 Building, D. Tố Ký, Tân Chánh Hiệp, Quận 12, Hồ Chí Minh</p>
+                <p>Hotline: xxxx.xxxx.xxx</p>
+                <p>Email: abcyz@gmail.com</p>
+            </div>
+
+            <div class="footer-column">
+                <h4>Chính sách</h4>
+                <ul>
+                    <li>Chính sách bảo mật</li>
+                    <li>Chính sách đổi trả</li>
+                    <li>Chính sách vận chuyển</li>
+                    <li>Quy định sử dụng</li>
+                </ul>
+            </div>
+
+            <div class="footer-column payment-shipping-column">
+                <h4>Thanh toán</h4>
+                <div class="payment-methods">
+                    <img src="/img/1.png" alt="Visa">
+                    <img src="/img/2.png" alt="Mastercard">
+                    <img src="/img/3.png" alt="JCB">
+                    <img src="/img/4.png" alt="Amex">
+                    <img src="/img/5.png" alt="QR Code">
+                </div>
+                <h4>Đơn vị vận chuyển</h4>
+                <div class="shipping-methods">
+                    <img src="/img/6.png" alt="SPX Express">
+                    <img src="/img/7.png" alt="Giao Hang Tiet Kiem">
+                    <img src="/img/8.png" alt="J&T Express">
+                    <img src="/img/9.png" alt="Ninja Van">
+                    <img src="/img/12.png" alt="VNPost">
+                    <img src="/img/10.png" alt="Giao Hang Nhanh">
+                    <img src="/img/11.png" alt="Best Express">
+                </div>
+            </div>
+
+            <div class="footer-column map-column">
+                <h4>Map</h4>
+                <img src="/img/google_map.png" alt="Google Map" class="footer-map-image">
+            </div>
+
+            <div class="footer-column final-column">
+                <h4>Đề tài</h4>
+                <p>Website bán hàng mô hình lắp ráp</p>
+                <h4>Thành viên</h4>
+                <ul>
+                    <li>Tứ Ngọc Sơn</li>
+                    <li>Trần Phúc Duy Khang</li>
+                    <li>Võ Trường Giang</li>
+                    <li>Nguyễn Hoàng Gia Khang</li>
+                    <li>Phạm Minh Tân</li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+   <script>
+    const sliderWrapper = document.getElementById('sliderImagesWrapper');
+    const images = sliderWrapper ? sliderWrapper.querySelectorAll('img') : [];
+    let currentIndex = 0;
+    const totalImages = images.length;
+
+    // Di chuyển slider đến ảnh tương ứng
+    function moveSlider(direction) {
+        if (!sliderWrapper || totalImages === 0) return;
+
+        currentIndex += direction;
+
+        if (currentIndex < 0) {
+            currentIndex = totalImages - 1;
+        } else if (currentIndex >= totalImages) {
+            currentIndex = 0;
+        }
+
+        const offset = -currentIndex * 100;
+        sliderWrapper.style.transform = `translateX(${offset}%)`;
+
+        updateThumbnailActiveState();
+    }
+
+    // Cập nhật trạng thái active của thumbnail
+    function updateThumbnailActiveState() {
+        const thumbnails = document.querySelectorAll('.thumbnail-images .thumbnail');
+        if (thumbnails && thumbnails.length > 0) {
+            thumbnails.forEach((thumb, index) => {
+                if (index === currentIndex) {
+                    thumb.classList.add('active');
+                } else {
+                    thumb.classList.remove('active');
+                }
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateThumbnailActiveState();
+
+        // ==== Xử lý click vào thumbnail để đổi ảnh lớn ====
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach((thumb, index) => {
+            thumb.setAttribute('data-index', index); // Gắn index cho từng thumbnail
+
+            thumb.addEventListener('click', () => {
+                currentIndex = parseInt(thumb.getAttribute('data-index'));
+                moveSlider(0); // Gọi lại để cập nhật slider đúng vị trí
+            });
+        });
+
+        // ==== Xử lý nút tăng giảm số lượng ====
+        const quantityInput = document.querySelector('.quantity-input');
+        const decreaseBtn = document.querySelector('.quantity-btn.minus');
+        const increaseBtn = document.querySelector('.quantity-btn.plus');
+        const maxPurchaseElement = document.querySelector('.max-purchase');
+
+        let maxPurchase = 5;
+        if (maxPurchaseElement) {
+            const match = maxPurchaseElement.textContent.match(/Maximum purchase (\d+)/);
+            if (match && match[1]) {
+                maxPurchase = parseInt(match[1]);
+            }
+        }
+
+        if (decreaseBtn && increaseBtn && quantityInput) {
+            decreaseBtn.addEventListener('click', () => {
+                let currentValue = parseInt(quantityInput.value);
+                if (isNaN(currentValue) || currentValue < 1) currentValue = 1;
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            });
+
+            increaseBtn.addEventListener('click', () => {
+                let currentValue = parseInt(quantityInput.value);
+                if (isNaN(currentValue) || currentValue < 1) currentValue = 1;
+                if (currentValue < maxPurchase) {
+                    quantityInput.value = currentValue + 1;
+                }
+            });
+
+            quantityInput.addEventListener('change', () => {
+                let value = parseInt(quantityInput.value);
+                if (isNaN(value) || value < 1) {
+                    quantityInput.value = 1;
+                } else if (value > maxPurchase) {
+                    quantityInput.value = maxPurchase;
+                }
+            });
+        }
+
+     
+    });
+</script>
+
+
+</body>
+</html>

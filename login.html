@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Đăng Nhập</title>
+ <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .background-image {
+      position: fixed;
+      inset: 0;
+      background: url('/img/nu-vs-sazabi-v0-haxzkgu24scb1.webp') no-repeat center center/cover;
+      filter: brightness(0.55);
+      z-index: -1;
+    }
+
+    .center-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 1rem;
+    }
+
+    .glass-container {
+      background: rgba(30, 30, 30, 0.6);
+      border: 1.5px solid rgba(100, 255, 255, 0.25);
+      border-radius: 12px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 30px rgba(0, 255, 255, 0.1);
+      max-width: 400px;
+      width: 100%;
+      padding: 2rem;
+      color: #e0f7fa;
+    }
+
+    h2 {
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin: 0.5rem 0 1rem;
+      letter-spacing: 0.02em;
+      text-align: center;
+      color: #aeefff;
+    }
+
+    p {
+      margin: 0.5rem 0;
+    }
+
+    .label-text {
+      font-size: 0.9rem;
+      color: #b2ebf2;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 0.4rem;
+      margin-left: 2px;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 0.65rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1.5px solid rgba(100, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      color: #e0f7fa;
+      margin-bottom: 1.2rem;
+      box-sizing: border-box;
+    }
+
+    .input-field::placeholder {
+      color: rgba(224, 247, 250, 0.5);
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #00e5ff;
+      box-shadow: 0 0 4px 2px rgba(0, 229, 255, 0.5);
+    }
+
+    .sub-heading {
+      font-size: 0.9rem;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 1.8rem;
+    }
+
+    .link-login {
+      color: #00e5ff;
+      text-decoration: underline;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .password-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .toggle-password {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 16px;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      user-select: none;
+      font-weight: 500;
+    }
+
+    .info-text {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 0.3rem;
+      margin-bottom: 1.5rem;
+      text-align: left;
+      margin-left: 2px;
+    }
+
+    .btn{
+      background: #00e5ff;
+      color: #003c42;
+      font-weight: 600;
+      width: 100%;
+      padding: 0.9rem 0;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+
+    .btn:hover {
+      background: #00bcd4;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 440px) {
+      .glass-container {
+        padding: 1.5rem;
+      }
+      h2 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+	<div class="background-image" aria-hidden="true"></div>
+	<section class="center-screen">
+		<form  th:action="@{/login}" class="glass-container" autocomplete="off" spellcheck="false" novalidate method="post">
+			<h2>ĐĂNG NHẬP</h2>
+			<p class="sub-heading">
+				Chưa có tài khoản? <a href="/signup.html" class="link-login">Đăng ký</a>
+			</p>
+
+			<label for="name" class="label-text">Email hoặc Tên tài khoản </label>
+			<input id="email" name="username"  type="text" placeholder="Your name" class="input-field" required autocomplete="name" />
+
+			<label for="password" class="label-text">Mật khẩu</label>
+			<div class="password-wrapper">
+				<input id="password" name="password" type="password" placeholder="Enter password" class="input-field" required autocomplete="new-password" aria-describedby="passwordHelp" />
+			</div>
+						<button type="submit" class="btn">Đăng nhập</button>
+		</form>
+	</section>
+</body>
+</html>
+

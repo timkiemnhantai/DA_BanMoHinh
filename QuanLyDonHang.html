@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản lý đơn hàng - Gundam Shop</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9fafb;
+      color: #333;
+    }
+
+    /* NAVBAR */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100px;
+      background-color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 25px;
+      z-index: 999;
+      border-bottom: 1px solid #ccc;
+    }
+
+    #navbar .nav-left {
+      display: flex;
+      align-items: center;
+    }
+
+    #navbar .logo-wrapper {
+      display: flex;
+      align-items: center;
+    }
+
+    #navbar .logo-wrapper img {
+      height: 45px;
+      margin-right: 10px;
+    }
+
+    #navbar .logo-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #000;
+    }
+
+    #navbar .nav-right {
+      display: flex;
+      align-items: center;
+    }
+
+    #navbar .nav-right label {
+      margin-right: 10px;
+      font-weight: 500;
+    }
+
+    #navbar .nav-right img {
+      height: 35px;
+      border-radius: 50%;
+    }
+
+    /* TASKBAR */
+    .taskbar {
+      position: fixed;
+      top: 100px;
+      left: 0;
+      width: 100px;
+      height: calc(100vh - 100px);
+      background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      border-right: 1px solid #ccc;
+      z-index: 998;
+    }
+
+    .taskbar a {
+      margin-bottom: 20px;
+    }
+
+    .taskbar img {
+      width: 28px;
+      opacity: 0.7;
+      transition: all 0.3s ease;
+    }
+
+    .taskbar img:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    /* MAIN CONTENT */
+    .container-admin {
+      margin-top: 100px;
+      margin-left: 100px;
+      padding: 20px;
+      min-height: calc(100vh - 100px);
+      background: #fdfdfd;
+    }
+
+    .form-label label {
+      font-size: 20px;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .tools {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .search {
+      display: flex;
+      flex-grow: 1;
+      gap: 10px;
+    }
+
+    .search input,
+    .search select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 200px;
+    }
+
+    .search-right button {
+      background: #007bff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .search-right button:hover {
+      background: #0056b3;
+    }
+
+    .add {
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .add:hover {
+      background: #e55c27;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    thead {
+      background: #f1f5f9;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      font-size: 0.95rem;
+    }
+
+    tbody tr:hover {
+      background: #f6fafe;
+    }
+
+    .status-label {
+      padding: 4px 10px;
+      border-radius: 20px;
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-new {
+      background: #2196f3;
+    }
+
+    .status-pending {
+      background: #f0ad4e;
+    }
+
+    .action-btn {
+      cursor: pointer;
+      width: 22px;
+      transition: transform 0.2s ease;
+    }
+
+    .action-btn:hover {
+      transform: scale(1.15);
+    }
+
+    .navigation {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pagination-info {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .pagination-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .pagination-buttons button {
+      padding: 6px 12px;
+      background: #e0e0e0;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .pagination-buttons button:hover {
+      background: #007bff;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .search {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .search input, .search select {
+        width: 100%;
+      }
+
+      .container-admin {
+        margin-left: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="nav-left">
+      <div class="logo-wrapper">
+        <img src="/img/processed_no_white.png" alt="Logo" />
+        <div class="logo-title">Gundam Shop</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <label>Tài khoản |</label>
+      <img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Avatar" />
+    </div>
+  </nav>
+
+  <!-- TASKBAR -->
+  <div class="taskbar">
+    <a href="/QuanLySanPham.html" title="Quản lý sản phẩm"><img src="/img/box.png" alt="" /></a>
+    <a href="/QuanLyTaiKhoan.html" title="Quản lý tài khoản"><img src="/img/account.png" alt="" /></a>
+    <a href="/QuanLyDonHang.html" title="Quản lý đơn hàng"><img src="/img/booking.png" alt="" /></a>
+    <a href="QuanLyDanhGia.html" title="Quản lý đánh giá"><img src="/img/review.png" alt="" /></a>
+    <a href="/QuanLyBanner.html" title="Quản lý banner"><img src="/img/advertisement.png" alt="" /></a>
+    <a href="QuanLyThanhToan.html" title="Quản lý thanh toán"><img src="/img/credit-card.png" alt="" /></a>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="container-admin">
+    <div class="form-label">
+      <label>Quản lý đơn hàng</label>
+      <div class="tools">
+        <div class="search">
+          <input type="text" placeholder="Tìm kiếm đơn hàng..." />
+          <select>
+            <option>Trạng thái</option>
+            <option>Đơn mới</option>
+            <option>Chờ xác nhận</option>
+            <option>Đang xử lý</option>
+            <option>Đang giao hàng</option>
+            <option>Hủy</option>
+          </select>
+          <div class="search-right">
+            <button><i class="fas fa-search"></i></button>
+          </div>
+        </div>
+        <button class="add">Tạo đơn hàng</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ORDER ID</th>
+            <th>ORDER NUMBER</th>
+            <th>STATUS</th>
+            <th>ITEM</th>
+            <th>CUSTOMER NAME</th>
+            <th>SHIPPING SERVICE</th>
+            <th>TRACKING CODE</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>59217</td>
+            <td>59217342</td>
+            <td><span class="status-label status-new">Đơn mới</span></td>
+            <td>1</td>
+            <td>Cody Fisher</td>
+            <td>Standard</td>
+            <td>940010010936113003113</td>
+            <td><img class="action-btn" src="/img/Screenshot_2025-06-24_214212-removebg-preview.png" alt="Edit" /></td>
+          </tr>
+          <tr>
+            <td>59213</td>
+            <td>59217343</td>
+            <td><span class="status-label status-pending">Chờ xác nhận</span></td>
+            <td>2</td>
+            <td>Kristin Watson</td>
+            <td>Priority</td>
+            <td>940010010936113003113</td>
+            <td><img class="action-btn" src="/img/Screenshot_2025-06-24_214212-removebg-preview.png" alt="Edit" /></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="navigation">
+        <div class="pagination-info">Hiển thị 1 đến 10 trong 97 kết quả</div>
+        <div class="pagination-buttons">
+          <button>Trước</button>
+          <button>Tiếp</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

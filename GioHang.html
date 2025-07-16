@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/style_GioHang.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <!-- menu -->
+    <div class="body-nav">
+    <nav>
+        <div class="nav-logo">
+          <div class="stripe blue"></div>
+          <div class="stripe yellow"></div>
+          <div class="stripe red"></div>
+
+          <div class="logo-wrapper">
+            <img src="/img/processed_no_white.png" alt="">
+            <div class="logo-title">Gundam Shop</div>
+          </div>
+        </div>
+
+          <div class="nav-toolbar">
+            <div class="search">
+              <div class="search-left">
+                <input type="text" placeholder="Từ khóa..."   onfocus="this.placeholder=''" onblur="this.placeholder='Từ khóa...'">
+              </div>
+              <div class="search-right">
+                <button class="in">
+                  <img src="/img/search.png" alt="">
+                </button>
+              </div>
+            </div>
+
+
+            <div class="item">
+              <ul>
+                <li><a href="/index.html">Trang chủ</a></li>
+                <li><a href="/SanPham.html">Sản phẩm</a></li>
+                <li><a href="/HangGiamGia.html">Hàng giảm giá</a></li>
+                <li><a href="/DungCuPhuKien.html">Dụng cụ - Phụ kiện</a></li>
+                <li><a href="/LienHe.html">Liên Hệ</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="nav-account">
+            <div class="account-left">
+              <label for="">Kết nối</label>
+              <a href=""><img src="/img/facebook.png" alt=""></a>
+              <a href=""><img src="/img/instagram.png" alt=""></a>           
+            </div>
+            <div class="account-right">
+              <a href=""><img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt=""></a>    
+              <a href="/GioHang.html"><img src="/img/Screenshot_2025-06-19_220342-removebg-preview.png" alt=""></a>    
+            </div>
+          </div>
+      </nav>
+</div>
+
+ <!-- phần giỏ hàng -->
+
+
+
+ <div class="main-content-wrapper cart-page-wrapper">
+        <div class="cart-container">
+            <div class="cart-header">
+              
+                <div class="header-item product-header">Sản phẩm</div>
+                <div class="header-item price-header">Đơn giá</div>
+                <div class="header-item quantity-header">Số lượng</div>
+                <div class="header-item total-header">Số tiền</div>
+                <div class="header-item action-header">Thao tác</div>
+            </div>
+
+            <div class="shop-item">
+                <div class="shop-info">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="check-atino" class="shop-checkbox">
+                        <label for="check-atino"></label>
+                    </div>
+                    <span class="favorite-tag">Yêu thích</span>
+                    <span class="shop-name">Gundam Shop</span>
+                </div>
+
+                <div class="product-item">
+                    <div class="product-selection-box">
+                        <input type="checkbox" id="check-product-atino-1" class="product-checkbox">
+                        <label for="check-product-atino-1"></label>
+                        <img src="/img/vn-11134207-7ra0g-m84y9wcskbji74.jpg" alt="Áo Thun Ngắn Tay" class="product-img">
+                        <div class="product-details">
+                            <p class="product-name">Mô Hình Lắp Ráp In Era+ THUNDERBOLT 2.0</p>
+                            <div class="product-tag-row">
+                                <span class="tag-hot-deal">25.6k+</span>
+                                <span class="tag-flash-sale">Flash Sale</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-type">Phân Loại Hàng: <br> made in china</div>
+                    <div class="product-price">
+                        <span class="original-price-strikethrough">₫1.200.000</span>
+                        <span class="current-price">₫980.000đ</span>
+                    </div>
+                    <div class="product-quantity-control">
+                        <button class="quantity-btn minus">-</button>
+                        <input type="text" value="1" class="quantity-input">
+                        <button class="quantity-btn plus">+</button>
+                    </div>
+                    <div class="product-total-price">₫980.000đ</div>
+                    <div class="product-actions">
+                        <button class="delete-btn">Xóa</button>
+                      
+                    </div>
+                </div>
+                <div class="shop-note">Mua ngay giá ₫980.000đ</div>
+                
+            </div>
+
+            <div class="shop-item">
+                <div class="shop-info">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="check-tomen" class="shop-checkbox">
+                        <label for="check-tomen"></label>
+                    </div>
+                    <span class="favorite-tag">Yêu thích</span>
+                    <span class="shop-name">Gundam Shop</span>
+                </div>
+
+                <div class="product-item">
+                    <div class="product-selection-box">
+                        <input type="checkbox" id="check-product-tomen-1" class="product-checkbox">
+                        <label for="check-product-tomen-1"></label>
+                        <img src="/img/vn-11134207-7ra0g-m84y9wcskbji74.jpg" alt="Áo Thun Nam Nữ" class="product-img">
+                        <div class="product-details">
+                            <p class="product-name">Mô Hình Lắp Ráp In Era+ THUNDERBOLT 2.0</p>
+                        </div>
+                    </div>
+                    <div class="product-type">Phân Loại Hàng: <br> made in china</div>
+                    <div class="product-price">
+                        <span class="original-price-strikethrough">₫1.200.000</span>
+                        <span class="current-price">₫980.000đ</span>
+                    </div>
+                    <div class="product-quantity-control">
+                        <button class="quantity-btn minus">-</button>
+                        <input type="text" value="1" class="quantity-input">
+                        <button class="quantity-btn plus">+</button>
+                    </div>
+                    <div class="product-total-price">₫980.000đ</div>
+                    <div class="product-actions">
+                        <button class="delete-btn">Xóa</button>
+                        
+                    </div>
+                </div>
+                <div class="shop-note">Mua ngay giá ₫980.000đ</div>
+                
+            </div>
+
+            <div class="shop-item">
+                <div class="shop-info">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="check-pn" class="shop-checkbox">
+                        <label for="check-pn"></label>
+                    </div>
+                    <span class="hot-tag">Hot</span>
+                    <span class="shop-name">Gundam Shop</span>
+                </div>
+
+                <div class="product-item">
+                    <div class="product-selection-box">
+                        <input type="checkbox" id="check-product-pn-1" class="product-checkbox">
+                        <label for="check-product-pn-1"></label>
+                        <img src="/img/vn-11134207-7ra0g-m84y9wcskbji74.jpg" alt="Áo Thun Nữ PN STORE" class="product-img">
+                        <div class="product-details">
+                            <p class="product-name">Mô Hình Lắp Ráp In Era+ THUNDERBOLT 2.0</p>
+                            <div class="product-tag-row">
+                                <span class="tag-hot-deal">25.6k+</span>
+                                <span class="tag-flash-sale">Flash Sale</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-type">Phân Loại Hàng: <br> made in china</div>
+                    <div class="product-price">
+                        <span class="original-price-strikethrough">₫1.200.000</span>
+                        <span class="current-price">₫980.000đ</span>
+                    </div>
+                    <div class="product-quantity-control">
+                        <button class="quantity-btn minus">-</button>
+                        <input type="text" value="1" class="quantity-input">
+                        <button class="quantity-btn plus">+</button>
+                    </div>
+                    <div class="product-total-price">₫980.000đ</div>
+                    <div class="product-actions">
+                        <button class="delete-btn">Xóa</button>
+                        
+                    </div>
+                </div>
+                <div class="shop-note">Mua ngay giá ₫980.000đ</div>
+                
+            </div>
+
+            <div class="voucher-and-summary-section">
+                <div class="shopee-voucher-row">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Gundam Voucher</span>
+                    <button class="apply-voucher-btn">Chọn hoặc nhập mã</button>
+                </div>
+                <div class="selected-products-summary">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="check-all-products" class="master-checkbox">
+                        <label for="check-all-products"></label>
+                    </div>
+                    <span class="select-all-text">Chọn Tất Cả (3)</span>
+                    <a href="#" class="delete-selected-link">Xóa</a>
+                    <a href="#" class="move-to-wishlist-link">Lưu vào mục Đã thích</a>
+                    <div class="total-info">
+                        <span class="total-text">Tổng cộng (0 Sản phẩm): </span>
+                        <span class="total-price">₫0</span>
+                       <a href="/ThanhToan.html" class="checkout-btn">Mua Hàng</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+
+<footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <img src="/img/logo_gundam.png" alt="Gundam Shop Footer Logo">
+                    <span>Gundam Shop</span>
+                </div>
+                <h4>Liên hệ</h4>
+                <p>Địa chỉ: QTSC 9 Building, D. Tố Ký, Tân Chánh Hiệp, Quận 12, Hồ Chí Minh</p>
+                <p>Hotline: xxxx.xxxx.xxx</p>
+                <p>Email: abcyz@gmail.com</p>
+            </div>
+
+            <div class="footer-column">
+                <h4>Chính sách</h4>
+                <ul>
+                    <li>Chính sách bảo mật</li>
+                    <li>Chính sách đổi trả</li>
+                    <li>Chính sách vận chuyển</li>
+                    <li>Quy định sử dụng</li>
+                </ul>
+            </div>
+
+            <div class="footer-column payment-shipping-column">
+                <h4>Thanh toán</h4>
+                <div class="payment-methods">
+                    <img src="/img/1.png" alt="Visa">
+                    <img src="/img/2.png" alt="Mastercard">
+                    <img src="/img/3.png" alt="JCB">
+                    <img src="/img/4.png" alt="Amex">
+                    <img src="/img/5.png" alt="QR Code">
+                </div>
+                <h4>Đơn vị vận chuyển</h4>
+                <div class="shipping-methods">
+                    <img src="/img/6.png" alt="SPX Express">
+                    <img src="/img/7.png" alt="Giao Hang Tiet Kiem">
+                    <img src="/img/8.png" alt="J&T Express">
+                    <img src="/img/9.png" alt="Ninja Van">
+                    <img src="/img/12.png" alt="VNPost">
+                    <img src="/img/10.png" alt="Giao Hang Nhanh">
+                    <img src="/img/11.png" alt="Best Express">           
+                </div>               
+            </div>
+
+            <div class="footer-column map-column">
+                <h4>Map</h4>
+                <img src="/img/google_map.png" alt="Google Map" class="footer-map-image">
+            </div>
+
+            <div class="footer-column final-column">
+                <h4>Đề tài</h4>
+                <p>Website bán hàng mô hình lắp ráp</p>
+                <h4>Thành viên</h4>
+                <ul>
+                    <li>Tứ Ngọc Sơn</li>
+                    <li>Trần Phúc Duy Khang</li>
+                    <li>Võ Trường Giang</li>
+                    <li>Nguyễn Hoàng Gia Khang</li>
+                    <li>Phạm Minh Tân</li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+
+
+</html>
