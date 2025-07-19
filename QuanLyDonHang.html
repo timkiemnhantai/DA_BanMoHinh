@@ -192,14 +192,6 @@
       font-weight: 500;
     }
 
-    .status-new {
-      background: #2196f3;
-    }
-
-    .status-pending {
-      background: #f0ad4e;
-    }
-
     .action-btn {
       cursor: pointer;
       width: 22px;
@@ -254,6 +246,42 @@
       .container-admin {
         margin-left: 60px;
       }
+    }
+
+    .status-label {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      min-width: 120px;
+      text-align: center;
+    }
+
+    .status-new {
+      background-color: #d1e7dd;
+      color: #0f5132;
+    }
+
+    .status-pending {
+      background-color: #fff3cd;
+      color: #664d03;
+    }
+
+
+    .status-processing {
+      background-color: #cff4fc;
+      color: #055160;
+    }
+
+    .status-shipping {
+      background-color: #cfe2ff;
+      color: #084298;
+    }
+
+    .status-cancelled {
+      background-color: #f8d7da;
+      color: #842029;
     }
   </style>
 </head>
@@ -323,42 +351,77 @@
             <button><i class="fas fa-search"></i></button>
           </div>
         </div>
-        <button class="add">Tạo đơn hàng</button>
       </div>
 
       <table>
         <thead>
           <tr>
             <th>ID Đơn hàng</th>
-            <th>Mã đơn hàng</th>
-            <th>Trạng thái</th>
-            <th>Số lượng</th>
             <th>Tên khách hàng</th>
-            <th>Dịch vụ giao hàng</th>
-            <th>Mã vận đơn</th>
+            <th>Địa chỉ</th>
+            <th>Số lượng</th>
+            <th>Ngày giao hàng dự kiến</th>
+            <th>ghi chú</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
             <th>Thao tác</th>
           </tr>
 
         </thead>
         <tbody>
           <tr>
-            <td>59217</td>
-            <td>59217342</td>
-            <td><span class="status-label status-new">Đơn mới</span></td>
-            <td>1</td>
+            <td>DH001</td>
             <td>Huỳnh Công Nam</td>
-            <td>Standard</td>
-            <td>940010010936113003113</td>
+            <td>Hồ Chí Minh</td>
+            <td>3</td>
+            <td>23/8/2012</td>
+            <td>hàng gói theo kiểu trung hoa</td>
+            <td>100 triệu</td>
+            <td><span class="status-label status-new">Đơn mới</span></td>
             <td class="p-2 border"><button><i style="font-size:24px" class="fa">&#xf06e;</i></button></td>
           </tr>
           <tr>
-            <td>59213</td>
-            <td>59217343</td>
+            <td>DH001</td>
+            <td>Huỳnh Công Nam</td>
+            <td>Hồ Chí Minh</td>
+            <td>1</td>
+            <td>23/8/2012</td>
+            <td>hàng gói theo kiểu trung hoa</td>
+            <td>10 triệu</td>
             <td><span class="status-label status-pending">Chờ xác nhận</span></td>
-            <td>2</td>
-            <td>Alison Alaba</td>
-            <td>Priority</td>
-            <td>940010010936113003113</td>
+            <td class="p-2 border"><button><i style="font-size:24px" class="fa">&#xf06e;</i></button></td>
+          </tr>
+          <tr>
+            <td>DH001</td>
+            <td>Huỳnh Công Nam</td>
+            <td>Hồ Chí Minh</td>
+            <td>1</td>
+            <td>23/8/2012</td>
+            <td>hàng gói theo kiểu trung hoa</td>
+            <td>10 triệu</td>
+            <td><span class="status-label status-processing">Đang xử lý</span></td>
+            <td class="p-2 border"><button><i style="font-size:24px" class="fa">&#xf06e;</i></button></td>
+          </tr>
+          <tr>
+            <td>DH001</td>
+            <td>Huỳnh Công Nam</td>
+            <td>Hồ Chí Minh</td>
+            <td>1</td>
+            <td>23/8/2012</td>
+            <td>hàng gói theo kiểu trung hoa</td>
+            <td>10 triệu</td>
+            <td><span class="status-label status-shipping">Đang giao hàng</span></td>
+            <td class="p-2 border"><button><i style="font-size:24px" class="fa">&#xf06e;</i></button></td>
+          </tr>
+          <tr>
+            <td>DH001</td>
+            <td>Huỳnh Công Nam</td>
+            <td>Hồ Chí Minh</td>
+            <td>1</td>
+            <td>23/8/2012</td>
+            <td>hàng gói theo kiểu trung hoa</td>
+            <td>10 triệu</td>
+            <td><span class="status-label status-cancelled">Hủy</span></td>
             <td class="p-2 border"><button><i style="font-size:24px" class="fa">&#xf06e;</i></button></td>
           </tr>
         </tbody>
@@ -372,27 +435,6 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <div id="createModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999] hidden">
-    <form id="createForm" class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
-      <h2 class="text-xl font-bold mb-4">Tạo đơn hàng mới</h2>
-      <input id="newId" placeholder="ID Đơn hàng" class="w-full p-2 border mb-2 rounded" required />
-      <input id="newCode" placeholder="Mã đơn hàng" class="w-full p-2 border mb-2 rounded" required />
-      <select id="newStatus" class="w-full p-2 border mb-2 rounded" required>
-        <option value="Đơn mới">Đơn mới</option>
-        <option value="Chờ xác nhận">Chờ xác nhận</option>
-      </select>
-      <input id="newQuantity" type="number" placeholder="Số lượng" class="w-full p-2 border mb-2 rounded" required />
-      <input id="newCustomer" placeholder="Tên khách hàng" class="w-full p-2 border mb-2 rounded" required />
-      <input id="newShipping" placeholder="Dịch vụ giao hàng" class="w-full p-2 border mb-2 rounded" required />
-      <input id="newTracking" placeholder="Mã vận đơn" class="w-full p-2 border mb-2 rounded" required />
-      <div class="mt-4 text-right">
-        <button id="createClose" type="button"
-          class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-600">Hủy</button>
-        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-800">Tạo</button>
-      </div>
-    </form>
   </div>
 
   <script>
@@ -533,7 +575,7 @@
 
   <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999] hidden">
     <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
-      <h2 class="text-xl font-bold mb-4">Chỉnh sửa đơn hàng</h2>
+      <h2 class="text-xl font-bold mb-4">Kiểm tra đơn hàng</h2>
       <p><strong>ID Đơn hàng:</strong> <span id="editOrderId"></span></p>
       <p><strong>Tên khách hàng:</strong> <span id="editCustomerName"></span></p>
       <p><strong>Trạng thái hiện tại:</strong> <span id="editStatus"></span></p>
@@ -542,6 +584,8 @@
       </div>
     </div>
   </div>
+
+
 </body>
 
 </html>
