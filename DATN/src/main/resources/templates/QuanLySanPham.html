@@ -1,0 +1,105 @@
+	<link rel="stylesheet" href="/css/Style_QuanLyThanhToan.css">
+	<div class="container-admin">
+		<div class="bg-white rounded-lg shadow p-5">
+			<div class="flex justify-between items-center mb-4">
+				<h1 class="text-xl font-bold">Quản lý sản phẩm</h1>
+				<a th:href="@{'/QuanLySanPham/create'}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Thêm sản phẩm</a>
+			</div>
+
+			<!-- Form tìm kiếm -->
+			<form method="get" th:action="@{/QuanLySanPham/search}" class="flex mb-4 gap-4 flex-wrap">
+				<input type="text" name="keyword" placeholder="Tìm sản phẩm..." 
+					class="flex-1 border px-3 py-2 rounded" th:value="${keyword}"/>
+
+				<select name="loaiKeyword" class="border px-3 py-2 rounded">
+					<option value="">Tất cả loại</option>
+					<option value="Bandai" th:selected="${loaiKeyword == 'Bandai'}">Bandai</option>
+					<option value="High Grade" th:selected="${loaiKeyword == 'High Grade'}">High Grade</option>
+					<option value="Real Grade" th:selected="${loaiKeyword == 'Real Grade'}">Real Grade</option>
+					<option value="Master Grade" th:selected="${loaiKeyword == 'Master Grade'}">Master Grade</option>
+					<option value="Perfect Grade" th:selected="${loaiKeyword == 'Perfect Grade'}">Perfect Grade</option>
+					<option value="MOSHOWTOYS" th:selected="${loaiKeyword == 'MOSHOWTOYS'}">MOSHOWTOYS</option>
+					<option value="IN ERA+" th:selected="${loaiKeyword == 'IN ERA+'}">IN ERA+</option>
+					<option value="SNAA" th:selected="${loaiKeyword == 'SNAA'}">SNAA</option>
+					<option value="MOTOR NUCLEAR" th:selected="${loaiKeyword == 'MOTOR NUCLEAR'}">MOTOR NUCLEAR</option>
+				</select>
+
+				<select name="sapXep" class="border px-3 py-2 rounded">
+					<option value="">Sắp xếp</option>
+					<option value="banchay" th:selected="${sapXep == 'banchay'}">Bán chạy</option>
+					<option value="giathap" th:selected="${sapXep == 'giathap'}">Giá thấp</option>
+					<option value="giacao" th:selected="${sapXep == 'giacao'}">Giá cao</option>
+				</select>
+
+				<label class="flex items-center gap-1">
+					<input type="checkbox" name="giamGia" th:checked="${giamGia != null}" />
+					Giảm giá
+				</label>
+
+				<button type="submit" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">
+					<i class="fas fa-search"></i>
+				</button>
+			</form>
+
+			<!-- Bảng sản phẩm -->
+			<div class="overflow-x-auto">
+				<table class="min-w-full border text-sm">
+					<thead class="bg-gray-100">
+						<tr>
+							<th class="p-2 border text-center">Mã SP</th>
+							<th class="p-2 border text-center">Tên sản phẩm</th>
+							<th class="p-2 border text-center">Ảnh</th>
+							<th class="p-2 border text-center">Loại</th>
+							<th class="p-2 border text-center">Hãng</th>
+							<th class="p-2 border text-center">Giá</th>
+							<th class="p-2 border text-center">Giảm giá</th>
+							<th class="p-2 border text-center">Tồn kho</th>
+							<th class="p-2 border text-center">Trạng thái</th>
+							<th class="p-2 border text-center">Hành động</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="spDTO : ${danhSachSanPham}" class="hover:bg-gray-50 text-center">
+							<td class="p-2 border" th:text="${spDTO.sanPham.maSP}"></td>
+							<td class="p-2 border" th:text="${spDTO.sanPham.tenSP}"></td>
+							<td class="p-2 border">
+								<img th:src="@{${spDTO.sanPham.anhSanPham[0].urlAnhSP}}" 
+								     class="w-[150px] h-[150px] object-cover rounded mx-auto"/>
+							</td>
+							<td class="p-2 border" th:text="${spDTO.sanPham.loaiSanPham.tenLoaiSanPham}"></td>
+							<td class="p-2 border">
+								<span class="px-2 py-1 bg-yellow-200 text-red-800 rounded-full text-xs">
+									<strong th:text="${spDTO.sanPham.thuongHieu}"></strong>
+								</span>
+							</td>
+							<td class="p-2 border text-blue-600 font-semibold" 
+							    th:text="${#numbers.formatDecimal(spDTO.giaSauGiam, 0, 'POINT', 0, 'COMMA')} + '₫'"></td>
+							<td class="p-2 border" 
+							    th:text="${spDTO.phanTramGiam != null ? spDTO.phanTramGiam + '%' : 'không giảm'}"></td>
+							<td class="p-2 border" th:text="${spDTO.sanPham.bienTheSanPham[0].soLuongTonKho}"></td>
+							<td class="p-2 border">
+								<span th:if="${spDTO.sanPham.bienTheSanPham[0].soLuongTonKho > 0}"
+									  class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs">
+									<strong>Còn hàng</strong>
+								</span>
+								<span th:if="${spDTO.sanPham.bienTheSanPham[0].soLuongTonKho == 0}"
+									  class="px-2 py-1 bg-red-400 text-red-800 rounded-full text-xs">
+									<strong>Hết hàng</strong>
+								</span>
+							</td>
+							<td class="p-2 border">
+							    <a th:href="@{'/QuanLySanPham/edit/' + ${spDTO.sanPham.maSP}}">
+							        <i class="fas fa-pen text-blue-600 cursor-pointer"></i>
+							    </a>
+							    <a th:href="@{'/QuanLySanPham/delete/' + ${spDTO.sanPham.maSP}}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+							        <i class="fas fa-trash text-red-600 cursor-pointer ml-2"></i>
+							    </a>
+							</td>
+
+						</tr>
+					</tbody>
+
+				</table>
+			</div>
+		</div>
+	</div>

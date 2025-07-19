@@ -1,0 +1,336 @@
+
+/* Container cho toàn bộ phần nội dung (banner và danh mục) */
+.content-container {
+	display: flex; /* Dùng Flexbox để chia 2 cột */
+	justify-content: center; /* Căn giữa nội dung */
+	gap: 20px; /* Khoảng cách giữa các cột */
+	padding: 20px;
+	max-width: 1240px;
+	margin: 20px auto; /* Khoảng cách trên dưới và căn giữa */
+	background-color: #fff; /* Nền trắng */
+	border-radius: 8px; /* Bo tròn góc */
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+}
+
+/* Phần banner chính bên trái */
+.main-banner {
+	flex: 2; /* Chiếm 2 phần không gian (to hơn phần danh mục) */
+	position: relative; /* Quan trọng cho watermark */
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	overflow: hidden; /* Đảm bảo ảnh không tràn ra ngoài */
+}
+
+.banner-image {
+	width: 100%; /* Ảnh chiếm toàn bộ chiều rộng của banner */
+	height: auto;
+	display: block;
+	object-fit: cover;
+	/* Đảm bảo ảnh che phủ hết khu vực mà không bị biến dạng */
+	min-height: 400px; /* Chiều cao tối thiểu của banner */
+	/* Ảnh thực tế sẽ được đặt qua thuộc tính background-image trong file CSS này để dễ dàng quản lý hơn */
+ /* Đặt ảnh banner vào đây */
+	background-size: cover; /* Ảnh sẽ bao phủ toàn bộ phần tử */
+	background-position: center; /* Căn giữa ảnh */
+}
+
+/* .watermark-moshowtoys {
+    position: absolute;  Định vị tuyệt đối 
+    bottom: 10px;  Cách đáy 10px 
+    right: 10px;  Cách phải 10px 
+    background-color: rgba(0, 0, 0, 0.5);  Nền đen mờ 
+    color: white;  Chữ trắng 
+    padding: 5px 10px;  Khoảng đệm 
+    border-radius: 5px;  Bo tròn góc 
+    font-size: 0.9em;
+}  */
+/* Đường kẻ chia giữa banner và danh mục */
+.divider-line {
+	width: 5px; /* Chiều rộng của đường kẻ */
+	background-color: #5f5454; /* Màu đen */
+	/* Hoặc bạn có thể dùng màu #000 */
+	margin: 0 5px; /* Khoảng cách hai bên của đường kẻ */
+	align-self: stretch;
+	/* Đảm bảo đường kẻ kéo dài theo chiều cao của container cha */
+	min-height: 100%;
+	/* Đảm bảo đường kẻ kéo dài tối thiểu bằng chiều cao của container chứa nó */
+}
+
+/* Phần danh mục nổi bật bên phải */
+.featured-categories {
+	flex: 1; /* Chiếm 1 phần không gian */
+	border: 3px solid red;
+	border-radius: 8px;
+	padding: 20px;
+	background-color: #f9f9f9; /* Nền xám nhạt hơn */
+}
+
+.featured-categories h2 {
+	text-align: center; /* Căn giữa tiêu đề */
+	color: #333;
+	margin-top: 0;
+	margin-bottom: 20px;
+	font-size: 1.3em;
+}
+
+/* Lưới (Grid) cho các mục danh mục */
+.categories-grid {
+	display: grid; /* Dùng Grid để tạo lưới */
+	grid-template-columns: repeat(3, 1fr); /* 3 cột bằng nhau */
+	gap: 15px; /* Khoảng cách giữa các mục */
+	text-align: center;
+}
+
+.category-item {
+	display: flex;
+	flex-direction: column; /* Sắp xếp ảnh và chữ theo chiều dọc */
+	align-items: center; /* Căn giữa theo chiều ngang */
+	cursor: pointer;
+	padding: 10px;
+	border: 1px solid #eee;
+	border-radius: 8px;
+	background-color: #fff;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ */
+}
+
+.category-item:hover {
+	border-color: #007bff; /* Đổi màu viền khi di chuột */
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Đổ bóng rõ hơn */
+}
+
+.category-item a img {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%; /* Bo tròn ảnh */
+	margin-bottom: 8px;
+	/* background-color: #e0e0e0; Màu nền placeholder */
+}
+
+.category-item span {
+	font-size: 0.9em;
+	color: #555;
+	text-align: center;
+}
+
+/* Phần chân của danh mục với 2 robot và đường kẻ */
+.category-footer-images {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 20px;
+	padding-top: 15px;
+	border-top: 1px solid #eee; /* Đường viền trên */
+}
+
+.category-footer-images img {
+	width: 80px;
+	height: 80px;
+	/* background-color: #e0e0e0; Màu nền placeholder */
+	border-radius: 50%;
+	margin: 0 10px;
+}
+
+.horizontal-line {
+	flex-grow: 1; /* Đường kẻ mở rộng hết mức có thể */
+	height: 2px;
+	background-color: #ddd;
+	margin: 0 10px;
+}
+
+/* Để hình ảnh hiển thị đúng, bạn cần thay thế các URL placeholder bằng URL của hình ảnh thật của bạn.
+   Ví dụ, nếu bạn có ảnh logo gundam là 'gundam-logo.png', bạn sẽ thay:
+   .gundam-logo { background-image: url('gundam-logo.png'); }
+   Tương tự cho các icon khác và ảnh banner.
+*/
+
+/* Phần Sản phẩm mới nhất */
+.latest-products-section {
+	max-width: 1200px;
+	margin: 5px auto 20px auto;
+	/* Khoảng cách trên, căn giữa, khoảng cách dưới */
+	background-color: #fff;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	border: 1px solid #007bff; /* Viền màu xanh tương tự ảnh */
+	padding: 20px;
+}
+
+.section-header {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding-bottom: 15px;
+	margin-bottom: 20px;
+	border-bottom: 2px solid #007bff; /* Đường gạch chân màu xanh */
+	position: relative; /* Để tạo hiệu ứng bo góc */
+	margin-top: -20px; /* Kéo lên trên để dính vào viền trên */
+	margin-left: -20px; /* Kéo sang trái */
+	margin-right: -20px; /* Kéo sang phải */
+	padding-left: 20px; /* Bù lại padding bên trái */
+	background-color: #f0f2f5; /* Màu nền cho header */
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+	border-bottom-left-radius: 0; /* Bỏ bo góc dưới trái */
+	border-bottom-right-radius: 0; /* Bỏ bo góc dưới phải */
+}
+
+/* Hiệu ứng bo góc cho header - Sử dụng pseudo-element */
+.section-header::before {
+	content: "";
+	position: absolute;
+	bottom: -1px; /* Đặt dưới đường gạch chân */
+	left: 0;
+	width: 100%;
+	height: 10px; /* Chiều cao giả để tạo đường cong */
+	background: linear-gradient(to right, transparent 50%, #f0f2f5 50%);
+	/* Gradient trong suốt để giả lập đường cong */
+	background-size: 20px 2px; /* Kích thước từng "răng cưa" */
+	background-repeat: repeat-x;
+}
+
+.section-header h3 {
+	margin: 0;
+	color: #333;
+	font-size: 1.4em;
+}
+
+.header-robot-icon {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	/* background-color: #ccc; Placeholder */
+}
+
+.products-carousel {
+	display: flex; /* Dùng Flexbox để sắp xếp các sản phẩm */
+	overflow-x: auto; /* Cho phép cuộn ngang nếu có nhiều sản phẩm */
+	gap: 20px; /* Khoảng cách giữa các thẻ sản phẩm */
+	padding-bottom: 15px; /* Khoảng đệm dưới cho thanh cuộn */
+	-webkit-overflow-scrolling: touch; /* Cuộn mượt trên iOS */
+	scroll-snap-type: x mandatory; /* Giúp "bắt dính" khi cuộn */
+}
+
+/* Ẩn thanh cuộn mặc định (tùy chọn) */
+.products-carousel::-webkit-scrollbar {
+	height: 8px;
+}
+
+.products-carousel::-webkit-scrollbar-thumb {
+	background-color: #007bff;
+	border-radius: 10px;
+}
+
+.products-carousel::-webkit-scrollbar-track {
+	background-color: #f0f2f5;
+}
+
+.product-card {
+	flex: 0 0 auto; /* Ngăn không cho thẻ co lại, giữ kích thước ban đầu */
+	width: 180px; /* Chiều rộng cố định của mỗi thẻ */
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 15px;
+	text-align: center;
+	background-color: #fff;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+	scroll-snap-align: start; /* Giúp bắt dính đầu thẻ khi cuộn */
+	min-height: 320px; /* Đảm bảo chiều cao nhất quán */
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	position: relative;
+	/* Đẩy nội dung lên trên, stats xuống dưới */
+}
+.discount-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: red;
+  color: white;
+  padding: 4px 8px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 4px;
+  z-index: 1;
+}
+.product-card img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 5px;
+	margin-bottom: 10px;
+	background-color: #e0e0e0; /* Placeholder */
+}
+
+.product-card h4 {
+	font-size: 1.1em;
+	color: #333;
+	margin: 10px 0;
+	line-height: 1.3;
+	min-height: 40px; /* Đảm bảo chiều cao cho tiêu đề */
+}
+
+.product-card .price {
+	color: #e44d26; /* Màu đỏ cho giá */
+	font-weight: bold;
+	font-size: 1.2em;
+	margin-bottom: 10px;
+}
+
+.product-stats {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	border-top: 1px solid #eee;
+	padding-top: 10px;
+	margin-top: 10px;
+}
+
+.product-stats span {
+	color: #666;
+	font-size: 0.9em;
+}
+
+.product-stats .rating i {
+	color: #ffc107; /* Màu vàng cho sao */
+	margin-right: 5px;
+}
+
+/* Icon robot cho header sản phẩm mới nhất (nếu có ảnh thật) */
+.header-robot-icon {
+	height: 40px;
+	width: 50px;
+}
+
+/* Phần 2 ảnh banner dưới sản phẩm mới nhất */
+.two-banners-section {
+	max-width: 1240px;
+	margin: 20px auto 20px auto;
+	/* Khoảng cách trên, căn giữa, khoảng cách dưới */
+	display: flex; /* Dùng Flexbox để đặt 2 banner cạnh nhau */
+	gap: 2px; /* Khoảng cách giữa 2 banner */
+	justify-content: center;
+	/* Căn giữa nếu tổng chiều rộng nhỏ hơn max-width */
+	padding: 0 10px;
+	/* Thêm padding ngang để tránh dính sát mép trình duyệt */
+}
+
+.banner-item-bottom {
+	flex: 1; /* Mỗi banner sẽ chiếm một phần bằng nhau */
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	overflow: hidden; /* Đảm bảo ảnh không tràn ra ngoài */
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	background-color: #fff; /* Nền trắng */
+	display: flex; /* Dùng flex để căn chỉnh ảnh nếu cần */
+	align-items: center; /* Căn giữa ảnh theo chiều dọc */
+	justify-content: center; /* Căn giữa ảnh theo chiều ngang */
+}
+
+.banner-item-bottom img {
+	width: 100%; /* Ảnh chiếm toàn bộ chiều rộng của container */
+	height: auto; /* Chiều cao tự động */
+	display: block;
+	object-fit: cover;
+	/* Đảm bảo ảnh bao phủ diện tích mà không bị biến dạng */
+	min-height: 180px; /* Đảm bảo chiều cao tối thiểu cho banner */
+}

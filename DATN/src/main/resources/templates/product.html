@@ -1,0 +1,118 @@
+<link rel="stylesheet" href="/css/style_SanPham.css" />
+
+<div class="main-content-wrapper products-page-wrapper">
+	<div class="products-page-container">
+		<aside class="sidebar">
+			<div class="sidebar-header">
+				<i class="fas fa-bars"></i> <span>Danh mục</span>
+			</div>
+			<div class="sidebar-category">
+				<h4>
+					<i class="fas fa-caret-right"></i> Sản phẩm
+				</h4>
+				<ul>
+					<li><a th:href="@{/product(loai='Bandai')}">Bandai</a></li>
+					<li><a th:href="@{/product(loai='Bandai HG')}">HG Gundam
+							(High Grade 1/144)</a></li>
+					<li><a th:href="@{/product(loai='Bandai RG')}">RG Gundam
+							(Real Grade 1/144)</a></li>
+					<li><a th:href="@{/product(loai='Bandai MG')}">MG Gundam
+							(Master Grade 1/100)</a></li>
+					<li><a th:href="@{/product(loai='Bandai PG')}">PG Gundam
+							(Perfect Grade 1/60)</a></li>
+					<li><a th:href="@{/product(loai='MOSHOW TOYS')}">MOSHOW
+							TOYS</a></li>
+					<li><a th:href="@{/product(loai='IN ERA+')}">IN ERA+</a></li>
+					<li><a th:href="@{/product(loai='SNAA')}">SNAA</a></li>
+					<li><a th:href="@{/product(loai='MOTOR NUCLEAR')}">MOTOR
+							NUCLEAR</a></li>
+					<li><a th:href="@{/product(loai='Phụ kiện')}">Phụ kiện</a></li>
+					<li><a th:href="@{/product(loai='Dụng cụ')}">Dụng cụ</a></li>
+					<li><a th:href="@{/product(loai='Khác')}">Sản phẩm khác</a></li>
+				</ul>
+		</aside>
+
+		<main class="product-main-content">
+			<div class="sort-options">
+				<img src="/img/a412809e21ce6a635a215eb916fe4204.jpg"
+					alt="Robot Icon" class="sort-robot-icon"> <span>Sắp
+					xếp theo:</span> <a
+					th:href="@{/product(
+					    keyword=${tuKhoa},
+					    loai=${loaiDangChon},
+						giamGia=${danggiamgia},
+					    sapXep='moinhat')}"
+					class="sort-button " data-sort="moinhat"> Mới nhất </a> <a
+					th:href="@{/product(
+					    keyword=${tuKhoa},
+					    loai=${loaiDangChon},
+					    		giamGia=${danggiamgia},
+					    sapXep='banchay')}"
+					class="sort-button " data-sort="banchay"> Bán chạy </a>
+				<div class="dropdown-sort">
+					<button class="dropdown-button">
+						Giá <i class="fas fa-chevron-down"></i>
+					</button>
+					<div class="dropdown-content">
+						<a
+							th:href="@{/product(
+					    keyword=${tuKhoa},
+					    loai=${loaiDangChon},
+					giamGia=${danggiamgia},
+					    sapXep='giacao')}">Cao
+							tới thấp</a> <a
+							th:href="@{/product(
+					    keyword=${tuKhoa},
+					    loai=${loaiDangChon},
+						giamGia=${danggiamgia},
+					    sapXep='giathap')}">Thấp
+							tới cao</a>
+					</div>
+				</div>
+				<img
+					src="/img/dcfd00d1fbecc781565321be2951de9d-removebg-preview.png"
+					alt="Robot Icon" class="sort-robot-icon">
+			</div>
+
+			<div class="products-carousel">
+				<th:block th:each="sp, iterStat : ${danhsachSP}">
+					<div class="product-card" th:if="${iterStat.index > -1}">
+						<div class="discount-badge"
+							th:if="${sp.phanTramGiam != null or sp.giaGiam != null}">
+							<span
+								th:text="${
+  sp.phanTramGiam != null ? '-' + sp.phanTramGiam + '%' :
+  (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam) + 'đ' : '')
+}"></span>
+						</div>
+						<a
+							th:href="@{/chi-tiet-san-pham/{id}(id=${sp.sanPham.maSP}, ${sp.sanPham.tenSP})}">
+							<img th:src="${sp.sanPham.anhSanPham[0].urlAnhSP}" alt="" />
+							<h4 th:text="${sp.sanPham.tenSP}"></h4>
+						</a>
+						<p
+							th:text="${#numbers.formatDecimal(sp.giaSauGiam, 0, 'POINT', 0, 'COMMA')} + ' VND'"></p>
+						<div class="product-stats">
+							<span class="rating"> <i class="fas fa-star"
+								style="color: #ffc107;"></i> <span
+								th:text="${sp.diemTrungBinhDanhGia}">0.0</span>
+							</span> <span class="sold" th:text="'Đã bán: ' + ${sp.tongSoLuongBan}"></span>
+						</div>
+					</div>
+				</th:block>
+			</div>
+		</main>
+	</div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const params = new URLSearchParams(window.location.search);
+    const sapXep = params.get("sapXep") || "moinhat"; // Nếu không có thì mặc định là "moinhat"
+
+    if (sapXep === "moinhat" || sapXep === "banchay") {
+      document.querySelectorAll('#sort-options a').forEach(link => {
+        link.classList.toggle("active", link.dataset.sort === sapXep);
+      });
+    }
+  });
+</script>
