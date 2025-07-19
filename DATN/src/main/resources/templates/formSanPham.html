@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thêm/Sửa Sản Phẩm</title>
+</head>
+<body>
+    <h1 th:text="${sanPham.maSP == null ? 'Thêm mới sản phẩm' : 'Cập nhật sản phẩm'}"></h1>
+
+    <form th:action="@{${sanPham.maSP == null} ? '/QuanLySanPham/create' : '/QuanLySanPham/edit/' + ${sanPham.maSP}}" 
+          th:object="${sanPham}" method="post">
+
+        <label>Tên Sản Phẩm:</label>
+        <input type="text" th:field="*{tenSP}" required/><br>
+
+        <label>Thương Hiệu:</label>
+        <input type="text" th:field="*{thuongHieu}" /><br>
+
+        <label>Mô Tả Chung:</label>
+        <textarea th:field="*{moTaChung}"></textarea><br>
+
+        <label>Loại Sản Phẩm:</label>
+        <select th:field="*{loaiSanPham.maLoaiSanPham}">
+            <option th:each="loai : ${loaiSanPhamList}"
+                    th:value="${loai.maLoaiSanPham}"
+                    th:text="${loai.tenLoaiSanPham}"
+                    th:selected="${loai.maLoaiSanPham == sanPham.loaiSanPham?.maLoaiSanPham}">
+            </option>
+        </select><br>
+
+        <button type="submit">Lưu</button>
+    </form>
+</body>
+</html>
