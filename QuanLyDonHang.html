@@ -437,159 +437,191 @@
     </div>
   </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  // Elements
-  const searchInput = document.querySelector(".search input");
-  const statusSelect = document.querySelector(".search select");
-  const searchBtn = document.querySelector(".search-right button");
-  const orderRows = Array.from(document.querySelectorAll("tbody tr"));
-  const paginationInfo = document.querySelector(".pagination-info");
-  const paginationButtons = document.querySelectorAll(".pagination-buttons button");
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const searchInput = document.querySelector(".search input");
+      const statusSelect = document.querySelector(".search select");
+      const searchBtn = document.querySelector(".search-right button");
+      const orderRows = Array.from(document.querySelectorAll("tbody tr"));
+      const paginationInfo = document.querySelector(".pagination-info");
+      const paginationButtons = document.querySelectorAll(".pagination-buttons button");
 
-  // Modal elements
-  const viewModal = document.getElementById("editModal");
-  const closeModalBtn = document.getElementById("closeModal");
-  const spanOrderId = document.getElementById("editMaDH");
-  const spanCustomerName = document.getElementById("editTenKH");
-  const spanStatus = document.getElementById("editTrangThai");
-  const spanNote = document.getElementById("editGhiChu");
-  const spanTotal = document.getElementById("editThanhTien");
+      const viewModal = document.getElementById("editModal");
+      const closeModalBtn = document.getElementById("closeModal");
+      const confirmOrderBtn = document.getElementById("confirmOrder");
+      const spanOrderId = document.getElementById("editMaDH");
+      const spanCustomerName = document.getElementById("editTenKH");
+      const spanStatus = document.getElementById("editTrangThai");
+      const spanNote = document.getElementById("editGhiChu");
+      const spanTotal = document.getElementById("editThanhTien");
 
-  // Pagination
-  const itemsPerPage = 5;
-  let currentPage = 1;
-  let filteredRows = orderRows.slice();
+      const itemsPerPage = 5;
+      let currentPage = 1;
+      let filteredRows = orderRows.slice();
 
-  function renderPage(page) {
-    const start = (page - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    filteredRows.forEach((row, idx) => {
-      row.style.display = (idx >= start && idx < end) ? "" : "none";
+      function renderPage(page) {
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        filteredRows.forEach((row, idx) => {
+          row.style.display = (idx >= start && idx < end) ? "" : "none";
+        });
+        paginationInfo.textContent = `Hiển thị ${filteredRows.length === 0 ? 0 : start + 1} đến ${Math.min(end, filteredRows.length)} trong ${filteredRows.length} kết quả`;
+      }
+
+      paginationButtons[0].addEventListener("click", () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderPage(currentPage);
+        }
+      });
+
+      paginationButtons[1].addEventListener("click", () => {
+        if (currentPage < Math.ceil(filteredRows.length / itemsPerPage)) {
+          currentPage++;
+          renderPage(currentPage);
+        }
+      });
+
+      function filterOrders() {
+        const searchValue = searchInput.value.toLowerCase();
+        const statusValue = statusSelect.value;
+        filteredRows = orderRows.filter(row => {
+          const customerName = row.children[1].textContent.toLowerCase();
+          const statusText = row.children[7].textContent.trim();
+          const matchesSearch = customerName.includes(searchValue);
+          const matchesStatus = statusValue === "Trạng thái" || statusText.includes(statusValue);
+          return matchesSearch && matchesStatus;
+        });
+        orderRows.forEach(row => row.style.display = "none");
+        currentPage = 1;
+        renderPage(currentPage);
+      }
+
+      searchBtn.addEventListener("click", filterOrders);
+      searchInput.addEventListener("input", filterOrders);
+      statusSelect.addEventListener("change", filterOrders);
+
+      document.querySelectorAll("td .fa").forEach((icon) => {
+        icon.addEventListener("click", function () {
+          const row = this.closest("tr");
+          spanOrderId.textContent = row.children[0].textContent;
+          spanCustomerName.textContent = row.children[1].textContent;
+          spanStatus.textContent = row.children[7].textContent.trim();
+          spanNote.textContent = row.children[5].textContent;
+          spanTotal.textContent = row.children[6].textContent;
+          viewModal.classList.remove("hidden");
+        });
+      });
+
+      closeModalBtn.addEventListener("click", () => {
+        viewModal.classList.add("hidden");
+      });
+      confirmOrderBtn.addEventListener("click", function () {
+        alert("Xác nhận đơn hàng thành công!");
+        viewModal.classList.add("hidden");
+      });
+      filterOrders();
     });
-    paginationInfo.textContent = `Hiển thị ${filteredRows.length === 0 ? 0 : start + 1} đến ${Math.min(end, filteredRows.length)} trong ${filteredRows.length} kết quả`;
-  }
+  </script>
 
-  paginationButtons[0].addEventListener("click", () => {
-    if (currentPage > 1) {
-      currentPage--;
-      renderPage(currentPage);
-    }
-  });
+  <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999] hidden">
+    <div class="bg-white rounded-xl p-8 w-full max-w-3xl shadow-2xl relative transition-all duration-300">
+      <h2 class="text-2xl font-bold mb-6 text-blue-700">Kiểm tra đơn hàng</h2>
 
-  paginationButtons[1].addEventListener("click", () => {
-    if (currentPage < Math.ceil(filteredRows.length / itemsPerPage)) {
-      currentPage++;
-      renderPage(currentPage);
-    }
-  });
-
-  function filterOrders() {
-    const searchValue = searchInput.value.toLowerCase();
-    const statusValue = statusSelect.value;
-    filteredRows = orderRows.filter(row => {
-      const customerName = row.children[1].textContent.toLowerCase();
-      const statusText = row.children[7].textContent.trim();
-      const matchesSearch = customerName.includes(searchValue);
-      const matchesStatus = statusValue === "Trạng thái" || statusText.includes(statusValue);
-      return matchesSearch && matchesStatus;
-    });
-    orderRows.forEach(row => row.style.display = "none");
-    currentPage = 1;
-    renderPage(currentPage);
-  }
-
-  searchBtn.addEventListener("click", filterOrders);
-  searchInput.addEventListener("input", filterOrders);
-  statusSelect.addEventListener("change", filterOrders);
-
-  // Modal logic
-  document.querySelectorAll("td .fa").forEach((icon) => {
-    icon.addEventListener("click", function () {
-      const row = this.closest("tr");
-      spanOrderId.textContent = row.children[0].textContent;
-      spanCustomerName.textContent = row.children[1].textContent;
-      spanStatus.textContent = row.children[7].textContent.trim();
-      spanNote.textContent = row.children[5].textContent;
-      spanTotal.textContent = row.children[6].textContent;
-      viewModal.classList.remove("hidden");
-    });
-  });
-
-  closeModalBtn.addEventListener("click", () => {
-    viewModal.classList.add("hidden");
-  });
-
-  // Initial render
-  filterOrders();
-});
-</script>
-
-<div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999] hidden">
-  <div class="bg-white rounded-lg p-6 w-full max-w-xl shadow-lg relative">
-    <h2 class="text-xl font-bold mb-4">Kiểm tra đơn hàng</h2>
-
-    <div class="mb-4 space-y-1">
-      <div class="flex justify-between">
-        <p><strong>ID Đơn hàng:</strong> <span id="editMaDH" class="text-blue-600 cursor-pointer">DH001</span></p>
-        <p><strong>Tên khách hàng:</strong> <span id="editTenKH">23/8/2012</span></p>
+      <div class="mb-6 space-y-2">
+        <div class="flex justify-between items-center">
+          <p><strong>ID Đơn hàng:</strong> <span id="editMaDH" class="text-blue-600 font-semibold">DH001</span></p>
+          <p><strong>Tên khách hàng:</strong> <span id="editTenKH" class="font-semibold">23/8/2012</span></p>
+        </div>
+        <p>
+          <strong>Trạng thái hiện tại:</strong>
+          <span id="editTrangThai" class="bg-yellow-200 text-yellow-800 px-3 py-1 rounded font-semibold">Hồ Chí
+            Minh</span>
+        </p>
       </div>
-      <p>
-        <strong>Trạng thái hiện tại:</strong>
-        <span id="editTrangThai" class="bg-yellow-200 text-yellow-800 px-2 py-0.5 rounded">Hồ Chí Minh</span>
-      </p>
-    </div>
 
-    <div class="border-t pt-4">
-      <h3 class="font-semibold mb-2">Sản phẩm đã đặt</h3>
+      <div class="border-t pt-6">
+        <h3 class="font-semibold mb-4 text-lg text-gray-800">Sản phẩm đã đặt</h3>
+        <div class="space-y-4 max-h-[340px] overflow-y-auto pr-2">
+          <!-- Sản phẩm 1 -->
+          <div class="flex gap-5 border rounded-xl p-4 items-center bg-gray-50 shadow-sm">
+            <div class="w-20 h-20 bg-gray-100 flex items-center justify-center rounded-lg overflow-hidden">
+              <img src="img/8842b9f27ea29b490b02a3414f0437a5.jpg" alt="Ảnh sản phẩm"
+                class="w-full h-full object-cover" />
+            </div>
+            <div class="flex-1">
+              <p class="mb-1"><strong>Mã SP:</strong> <span id="editMaCTSP"
+                  class="text-blue-600 font-semibold">PROD-001</span></p>
+              <p id="editTenSP" class="text-gray-700 font-medium">Gumdam No.1</p>
+            </div>
+            <div class="text-right min-w-[120px]">
+              <p class="font-bold text-blue-700"><span id="editDonGia">250.000</span> ₫</p>
+              <p class="text-sm text-gray-500">Số lượng: <span id="editSoLuongSP">2</span></p>
+            </div>
+          </div>
+          <!-- Sản phẩm 2 -->
+          <div class="flex gap-5 border rounded-xl p-4 items-center bg-gray-50 shadow-sm">
+            <div class="w-20 h-20 bg-gray-100 flex items-center justify-center rounded-lg overflow-hidden">
+              <img src="img/4b88110cf772c288d954f9fa17386839.jpg" alt="Ảnh sản phẩm"
+                class="w-full h-full object-cover" />
+            </div>
+            <div class="flex-1">
+              <p class="mb-1"><strong>Mã SP:</strong> <span class="text-blue-600 font-semibold">PROD-002</span></p>
+              <p class="text-gray-700 font-medium">Gumdam No.2</p>
+            </div>
+            <div class="text-right min-w-[120px]">
+              <p class="font-bold text-blue-700">500.000 ₫</p>
+              <p class="text-sm text-gray-500">Số lượng: 1</p>
+            </div>
+          </div>
 
-      <div class="space-y-3">
-        <div class="flex gap-3 border rounded-lg p-3 items-center">
-          <div class="w-16 h-16 bg-gray-100 flex items-center justify-center">
-            <img src="img/8842b9f27ea29b490b02a3414f0437a5.jpg" alt="Ảnh sản phẩm" class="w-full h-full object-cover" />
+          <div class="flex gap-3 border rounded-lg p-3 items-center">
+            <div class="w-16 h-16 bg-gray-100 flex items-center justify-center">
+              <img src="img/4b88110cf772c288d954f9fa17386839.jpg" alt="Ảnh sản phẩm"
+                class="w-full h-full object-cover" />
+            </div>
+            <div class="flex-1">
+              <p><strong>Mã SP:</strong> <span class="text-blue-600 cursor-pointer">PROD-002</span></p>
+              <p class="text-gray-700">Gumdam No.2</p>
+            </div>
+            <div class="text-right">
+              <p>500.000 ₫</p>
+              <p class="text-sm text-gray-500">Số lượng: 1</p>
+            </div>
           </div>
-          <div class="flex-1">
-            <p><strong>Mã SP:</strong> <span id="editMaCTSP" class="text-blue-600 cursor-pointer">PROD-001</span></p>
-            <p id="editTenSP" class="text-gray-700">Gumdam No.1</p>
-          </div>
-          <div class="text-right">
-            <p><span id="editDonGia">250.000</span> ₫</p>
-            <p class="text-sm text-gray-500">Số lượng: <span id="editSoLuongSP">2</span></p>
+          <div class="flex gap-3 border rounded-lg p-3 items-center">
+            <div class="w-16 h-16 bg-gray-100 flex items-center justify-center">
+              <img src="img/4b88110cf772c288d954f9fa17386839.jpg" alt="Ảnh sản phẩm"
+                class="w-full h-full object-cover" />
+            </div>
+            <div class="flex-1">
+              <p><strong>Mã SP:</strong> <span class="text-blue-600 cursor-pointer">PROD-002</span></p>
+              <p class="text-gray-700">Gumdam No.2</p>
+            </div>
+            <div class="text-right">
+              <p>500.000 ₫</p>
+              <p class="text-sm text-gray-500">Số lượng: 1</p>
+            </div>
           </div>
         </div>
-
-        <div class="flex gap-3 border rounded-lg p-3 items-center">
-          <div class="w-16 h-16 bg-gray-100 flex items-center justify-center">
-            <img src="img/4b88110cf772c288d954f9fa17386839.jpg" alt="Ảnh sản phẩm" class="w-full h-full object-cover" />
-          </div>
-          <div class="flex-1">
-            <p><strong>Mã SP:</strong> <span class="text-blue-600 cursor-pointer">PROD-002</span></p>
-            <p class="text-gray-700">Gumdam No.2</p>
-          </div>
-          <div class="text-right">
-            <p>500.000 ₫</p>
-            <p class="text-sm text-gray-500">Số lượng: 1</p>
-          </div>
-        </div>
       </div>
-    </div>
 
-    <div class="mt-6 space-y-1 text-sm">
-      <p><strong>Mã chi tiết đơn hàng:</strong> <span id="editMaCTDH">CTDH001</span></p>
-      <p><strong>Giảm giá thực tế:</strong> <span id="editGiamGiaThucTe">0</span> VNĐ</p>
-      <p><strong>Thành tiền:</strong> <span id="editThanhTien">1.850.000</span> VNĐ</p>
-      <p><strong>Ghi chú:</strong> <span id="editGhiChu">Không có</span></p>
-    </div>
+      <div class="mt-8 space-y-2 text-base">
+        <p><strong>Mã chi tiết đơn hàng:</strong> <span id="editMaCTDH" class="font-semibold">CTDH001</span></p>
+        <p><strong>Giảm giá thực tế:</strong> <span id="editGiamGiaThucTe" class="font-semibold">0</span> VNĐ</p>
+        <p><strong>Thành tiền:</strong> <span id="editThanhTien" class="font-bold text-blue-700">1.850.000</span> VNĐ
+        </p>
+        <p><strong>Ghi chú:</strong> <span id="editGhiChu" class="italic">Không có</span></p>
+      </div>
 
-    <div class="mt-6 flex justify-end gap-2">
-      <button id="closeModal" class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-600">Đóng</button>
-      <button id="confirmOrder" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Xác nhận đơn hàng</button>
+      <div class="mt-8 flex justify-end gap-3">
+        <button id="closeModal"
+          class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-600 font-semibold">Đóng</button>
+        <button id="confirmOrder"
+          class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">Xác nhận đơn hàng</button>
+      </div>
     </div>
   </div>
-</div>
-
-
-
 </body>
 
 </html>
