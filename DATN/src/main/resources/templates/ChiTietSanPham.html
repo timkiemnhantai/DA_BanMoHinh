@@ -19,7 +19,13 @@
 					th:src="@{${anhSP.urlAnhSP}}"
 					th:alt="'Thumbnail SP ' + ${iStat.index + 1}" class="thumbnail"
 					th:classappend="${iStat.index == 0} ? ' active' : ''"
-					th:data-anh="@{${anhSP.urlAnhSP}}" />
+					th:data-anh="@{${anhSP.urlAnhSP}}"
+					th:data-gia="${chiTiet[0].bienThe.gia}"
+					th:data-giasaugiam="${chiTiet[0].giaSauGiam}"
+					th:data-phienban="${chiTiet[0].bienThe.phienBan}"
+					th:data-tonkho="${chiTiet[0].bienThe.soLuongTonKho}"
+					th:data-mact="${chiTiet[0].bienThe.maCTSP}" />
+
 
 				<th:block th:each="bt : ${chiTiet}">
 					<th:block th:each="anhCT : ${bt.dsAnhChiTiet}">
@@ -74,10 +80,13 @@
 				<h3>Số lượng</h3>
 				<div class="quantity-control">
 					<button class="quantity-btn minus">-</button>
-					<input type="text" value="1" class="quantity-input" id="soLuongInput">
+					<input type="text" value="1" class="quantity-input"
+						id="soLuongInput">
 					<button class="quantity-btn plus">+</button>
 				</div>
-				<p class="max-purchase">Maximum purchase 20</p>
+
+				<p class="max-purchase" id="tonkho-text">Kho: <span id="tonkho-value" th:text="${chiTiet[0].bienThe.soLuongTonKho}"></span></p>
+				
 			</div>
 
 			<!-- NÚt HÀNH ĐỘNG -->
@@ -176,16 +185,52 @@ document.addEventListener("DOMContentLoaded", function () {
 	const inputSoLuong = document.getElementById("soLuongInput");
 	const btnMinus = document.querySelector(".quantity-btn.minus");
 	const btnPlus = document.querySelector(".quantity-btn.plus");
+	function layTonKho() {
+		const activeThumbnail = document.querySelector(".thumbnail.active");
+		return parseInt(activeThumbnail?.dataset.tonkho || "0");
+	}
 
-	btnMinus.addEventListener("click", () => {
-		let val = parseInt(inputSoLuong.value);
-		if (val > 1) inputSoLuong.value = val - 1;
-	});
-
+	// Nút +
 	btnPlus.addEventListener("click", () => {
-		let val = parseInt(inputSoLuong.value);
-		if (val < 20) inputSoLuong.value = val + 1;
+		let val = parseInt(inputSoLuong.value) || 0;
+		const maxSoLuong = layTonKho();
+		if (val < maxSoLuong) {
+			inputSoLuong.value = val + 1;
+		} else {
+			alert("⚠️ Số lượng bạn chọn đã đạt mức tối đa tồn kho!");
+		}
 	});
+
+	// Nút -
+	btnMinus.addEventListener("click", () => {
+		let val = parseInt(inputSoLuong.value) || 0;
+		if (val > 1) {
+			inputSoLuong.value = val - 1;
+		}
+	});
+
+	// Nhập tay: kiểm tra số lượng không vượt tồn kho, không < 1
+	inputSoLuong.addEventListener("input", () => {
+		let val = parseInt(inputSoLuong.value) || 0;
+		const maxSoLuong = layTonKho();
+
+		if (val > maxSoLuong) {
+			alert("⚠️ Số lượng bạn nhập vượt quá tồn kho!");
+			inputSoLuong.value = maxSoLuong;
+		}
+		if (val < 1) {
+			inputSoLuong.value = 1;
+		}
+	});
+
+	// Chặn nhập chữ hoặc ký tự đặc biệt
+	inputSoLuong.addEventListener("keypress", (e) => {
+		if (!/[0-9]/.test(e.key)) {
+			e.preventDefault();
+		}
+	});
+
+
 
 	// ========== THÊM VÀO GIỎ HÀNG ==========
 	document.querySelectorAll(".add-to-cart-btn").forEach(button => {
@@ -204,12 +249,16 @@ document.addEventListener("DOMContentLoaded", function () {
 					body: JSON.stringify({ maCT: maCTSP, soLuong: soLuong })
 				});
 
-				if (!res.ok) throw new Error("Thêm thất bại");
 				const data = await res.json();
-				alert("✅ Đã thêm vào giỏ hàng!");
+
+				if (res.ok) {
+					hienThongBao(data.message || "✅ Đã thêm vào giỏ hàng!", true);
+				} else {
+					hienThongBao(data.error || "❌ Không thể thêm sản phẩm.", false);
+				}
 			} catch (err) {
 				console.error(err);
-				alert("❌ Không thể thêm sản phẩm.");
+				hienThongBao("⚠️ Vui lòng đăng nhập để thêm vào giỏ hàng", false);
 			}
 		});
 	});
@@ -262,10 +311,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		// Reset số lượng về 1 mỗi lần đổi biến thể
 		if (inputSoLuong) inputSoLuong.value = 1;
+		// Cập nhật tồn kho vào input và max-purchase
+		if (inputSoLuong) {
+			inputSoLuong.value = 1;
+			inputSoLuong.setAttribute("data-max", tonKho); // Dùng cho kiểm tra input tay
+		}
 
+		const tonkhoElem = document.querySelector(".max-purchase");
+		if (tonkhoElem) {
+			tonkhoElem.textContent = "Kho: " + tonKho;
+		}
 		thumbnails.forEach(t => t.classList.remove("active"));
 		thumbnail.classList.add("active");
+		
 	}
+
 
 	thumbnails.forEach((thumbnail, index) => {
 		thumbnail.addEventListener("click", function () {

@@ -41,15 +41,25 @@ public class AdminController {
 	@Autowired
 	private DonHangRepository donHangRepository;
 
-	@GetMapping("/curd")
-	public String surd(Model model) {
+	@GetMapping("/QuanLyTaiKhoan")
+	public String qlTaiKhoan(Model model) {
 		List<TaiKhoan> nhanVien = taikhoanService.layTaiKhoanTheoMaVaiTro(Arrays.asList(2));
 		List<TaiKhoan> khachHang = taikhoanService.layTaiKhoanTheoMaVaiTro(Arrays.asList(3));
 		model.addAttribute("nhanvien", nhanVien);
 		model.addAttribute("khachhang", khachHang);
-		return "QuanLyTaiKhoan";
+		model.addAttribute("content","QuanLyTaiKhoan.html");
+		
+		return "curd";
 	}
 
+	@GetMapping("/QuanLyBanner")
+	public String sqlBanner(Model model) {
+
+		model.addAttribute("content","QuanLyBanner.html");
+		
+		return "curd";
+	}
+	
 	@GetMapping("/QuanLyThanhToan")
 	public String hienThiThanhToan(Model model) {
 		List<ThanhToan> listThanhToan = thanhToanRepository.findAll();
@@ -204,4 +214,11 @@ public class AdminController {
         return "index";
     }
 
+    
+    @GetMapping("/QuanLyDonHang")
+    public String qlDonHang(Model model) {
+		model.addAttribute("content", "QuanLyDonHang.html");
+		return "curd";
+    }
+    
 }

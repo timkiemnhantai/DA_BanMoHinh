@@ -37,11 +37,13 @@ import com.poly.dto.SanPhamDTO;
 import com.poly.model.DonHang;
 import com.poly.model.DiaChi;
 import com.poly.model.TaiKhoan;
+import com.poly.model.ThanhToan;
 import com.poly.repository.BienTheSanPhamRepository;
 import com.poly.repository.ChiTietDonHangRepository;
 import com.poly.repository.DiaChiRepository;
 import com.poly.repository.DonHangRepository;
 import com.poly.repository.TaiKhoanRepository;
+import com.poly.repository.ThanhToanRepository;
 import com.poly.repository.TrangThaiDHRepository;
 import com.poly.security.CustomUserDetails;
 import com.poly.service.ChiTietGioHangService;
@@ -85,8 +87,8 @@ public class HomeController {
 //	private LoaiSanPhamService loaisanphamService;
 //	@Autowired
 //	private AnhChiTietRepository anhChiTietRepository;
-//	@Autowired
-//	private AnhSanPhamService anhsanphamService;
+	@Autowired
+	private ThanhToanRepository thanhToanRepo;
 	@Autowired
 	private ChiTietGioHangService chitietgiohangService;
 	@Autowired
@@ -102,7 +104,8 @@ public class HomeController {
 	@Autowired
 	private DiaChiService diaChiService;
 	@Autowired DonHangService donHangService;
-	
+    @Autowired
+    private WebSocketNotificationController webSocketNotificationController;
 	@GetMapping("/home")
 	public String home(Model model) {
 		// Mới nhất (mặc định)
@@ -370,7 +373,7 @@ public class HomeController {
 	}
 	@PostMapping("/gio-hang/them")
 	@ResponseBody
-	public ResponseEntity<?> themVaoGio(@RequestBody Map<String, Object> data,
+	public ResponseEntity<?> themVaoGio(@RequestBody Map<String, Object> data, RedirectAttributes redirectAttributes,
 	                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
 	    try {
 	        TaiKhoan taiKhoan = userDetails.getTaiKhoan(); // ✅
@@ -381,7 +384,7 @@ public class HomeController {
 	        boolean daThem = giohangService.themSanPhamVaoGio(taiKhoan, maCT, soLuong);
 
 	        if (daThem) {
-	            return ResponseEntity.ok(Map.of("status", "ok"));
+	        	 return ResponseEntity.ok(Map.of("message", "Thêm sản phẩm thành công"));
 	        } else {
 	            return ResponseEntity.badRequest().body(Map.of("error", "Không thể thêm sản phẩm"));
 	        }
@@ -427,6 +430,21 @@ public class HomeController {
 	    	    model.addAttribute("diaChi", "(Chưa có địa chỉ)");
 	    	} else {
 	    	    model.addAttribute("diaChi", diaChiMacDinh.getDiaChiDayDu());
+		        String sdtGoc = diaChiMacDinh.getSoDienThoai();
+		        String sdtDinhDang = SoDienThoaiUtils.chuyenDinhDangQuocTe(sdtGoc);
+		        model.addAttribute("soDienThoai", sdtDinhDang);
+		        model.addAttribute("hoTen", diaChiMacDinh.getHoTen());
+		        System.out.print("name: " + diaChiMacDinh.getHoTen());
+			    if (sdtDinhDang != null && !sdtDinhDang.trim().isEmpty()) {
+			        model.addAttribute("soDienThoai", sdtDinhDang);
+			    } else {
+			        model.addAttribute("soDienThoai", "(Chưa có số điện thoại)");
+			    }
+			    if (diaChiMacDinh.getHoTen() != null && !diaChiMacDinh.getHoTen().trim().isEmpty()) {
+			        model.addAttribute("hoTen", diaChiMacDinh.getHoTen());
+			    } else {
+			        model.addAttribute("hoTen", "(Chưa có họ và tên)");
+			    }
 	    	}
 	        List<GioHangDTO> dsThanhToan = chitietgiohangService
 	                .layGioHangDTOTheoDanhSachCTGH(maTK, maCTGHList);
@@ -448,28 +466,13 @@ public class HomeController {
 
 	        BigDecimal tongThanhToan = tongTien.add(BigDecimal.valueOf(phiVanChuyen));
 
-	        String sdtGoc = taiKhoan.getSoDT();
-	        String sdtDinhDang = SoDienThoaiUtils.chuyenDinhDangQuocTe(sdtGoc);
-
-	        // ✅ Truyền dữ liệu ra view
-	        model.addAttribute("soDienThoai", sdtDinhDang);
-	        model.addAttribute("hoTen", taiKhoan.getHoTen());
 
 //		    if (diaChi != null && !diaChi.trim().isEmpty()) {
 //		        model.addAttribute("diaChi", diaChi);
 //		    } else {
 //		        model.addAttribute("diaChi", "(Chưa có địa chỉ)");
 //		    }
-		    if (sdtDinhDang != null && !sdtDinhDang.trim().isEmpty()) {
-		        model.addAttribute("soDienThoai", sdtDinhDang);
-		    } else {
-		        model.addAttribute("soDienThoai", "(Chưa có số điện thoại)");
-		    }
-		    if (taiKhoan.getHoTen() != null && !taiKhoan.getHoTen().trim().isEmpty()) {
-		        model.addAttribute("hoTen", taiKhoan.getHoTen());
-		    } else {
-		        model.addAttribute("hoTen", "(Chưa có họ và tên)");
-		    }
+
 	        model.addAttribute("dsThanhToan", dsThanhToan);
 	        model.addAttribute("tongSoLuong", tongSoLuong);
 	        model.addAttribute("tongTien", tongTien);
@@ -502,6 +505,7 @@ public class HomeController {
 	        @RequestParam("soLuong") List<Integer> soLuongList,
 	        @RequestParam("donGia") List<BigDecimal> donGiaList,
 	        @RequestParam("giaThucTe") List<BigDecimal> giaThucTeList,
+	        @RequestParam("phuongThucThanhToan") String phuongThucThanhToan,
 	        @RequestParam(PHI_VAN_CHUYEN) BigDecimal phiVanChuyen,
 	        @RequestParam String ngayGiaoDuKien,
 	        Model model,
@@ -587,6 +591,18 @@ public class HomeController {
 	    chitietdonhangRepository.saveAll(chiTietList);
 
 	    System.out.println(">>> ✅ Đặt hàng thành công. Đơn hàng mã: " + donHang.getMaDH());
+	 // ✅ Bước 6: Tạo bản ghi thanh toán
+	    ThanhToan thanhToan = new ThanhToan();
+	    thanhToan.setDonHang(donHang);
+	    thanhToan.setSoTien(donHang.getThanhTien());  // hoặc tongTienCTT.subtract(tongGiamGia).add(phiVanChuyen)
+	    thanhToan.setPhuongThucTT(phuongThucThanhToan); // hoặc lấy từ form nếu có nhiều phương thức
+	    thanhToan.setTrangThai("Chưa thanh toán"); // Mặc định trạng thái
+	    thanhToan.setGhiChuTT("");
+
+	    // ✅ Không set ngay ngày thanh toán (để rỗng, chờ cập nhật sau)
+	    thanhToanRepo.save(thanhToan);
+
+	    System.out.println(">>> ✅ Đã tạo bản ghi thanh toán mặc định cho đơn hàng " + donHang.getMaDH());
 
 	    return "thanh-cong";
 	}
@@ -640,7 +656,66 @@ public class HomeController {
 
 
 
+//	@GetMapping("/test/cap-nhat-don-hang")
+//	@ResponseBody
+//	public String testCapNhatTrangThai(
+//	        @RequestParam int maDH,
+//	        @RequestParam int trangThaiMoi,
+//	        @RequestParam String trangThaiThanhToan) {
+//
+//	    try {
+//	        donHangService.capNhatTrangThaiDonHang(maDH, trangThaiMoi, trangThaiThanhToan);
+//	        return "✅ Đã cập nhật trạng thái và trừ tồn kho nếu cần!";
+//	    } catch (Exception e) {
+//	        return "❌ Lỗi: " + e.getMessage();
+//	    }
+//	}
 
+
+	@GetMapping("/xac-nhan-thanh-toan")
+	@ResponseBody
+	public String xacNhanThanhToan(@RequestParam("maDH") int maDH) {
+	    try {
+	        DonHang donHang = donhangRepository.findById(maDH).orElse(null);
+	        if (donHang != null) {
+	            ThanhToan thanhToan = donHang.getThanhToan();
+	            if (thanhToan != null) {
+	                thanhToan.setTrangThai("Đã thanh toán");
+	                thanhToanRepo.save(thanhToan);
+	                return "✅ Đã cập nhật trạng thái thanh toán!";
+	            } else {
+	                return "⚠️ Đơn hàng không có thông tin thanh toán!";
+	            }
+	        } else {
+	            return "❌ Không tìm thấy đơn hàng!";
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace(); // Gỡ lỗi nếu cần
+	        return "❌ Có lỗi xảy ra khi cập nhật!";
+	    }
+	}
+
+	
+	@GetMapping("/xac-nhan-nhan-hang/{maDH}")
+    public ResponseEntity<String> xacNhanNhanHang(@PathVariable("maDH") int maDH) {
+        try {
+            donHangService.xacNhanNhanHang(maDH);
+            return ResponseEntity.ok("Đơn hàng đã được xác nhận là đã nhận hàng.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Lỗi: " + e.getMessage());
+        }
+    }
+	
+	@GetMapping("/xac-nhan-da-thanh-toan/{maDH}")
+	public ResponseEntity<?> xacNhanDaThanhToan(@PathVariable int maDH) {
+	    DonHang dh = donHangService.capNhatTrangThaiThanhToan(maDH);
+	    String noiDung = "Đơn hàng #" + maDH + " đã giao. Vui lòng kiểm tra và xác nhận nếu không có vấn đề!";
+
+	    // Gửi thông báo WebSocket
+	    webSocketNotificationController.guiThongBaoDonHang(dh.getTaiKhoan().getMaTK(), noiDung);
+	    System.out.println(">>> Gửi WebSocket tới /topic/user/" + dh.getTaiKhoan().getMaTK() + " với nội dung: " + noiDung);
+	    return ResponseEntity.ok("Xác nhận thành công");
+	}
 
 	
 	

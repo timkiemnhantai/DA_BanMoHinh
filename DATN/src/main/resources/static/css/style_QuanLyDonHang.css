@@ -1,0 +1,154 @@
+   .container-admin {
+      margin-top: 100px;
+      margin-left: 100px;
+      padding: 20px;
+      min-height: calc(100vh - 100px);
+      background: #fdfdfd;
+    }
+
+
+    .tools {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .search {
+      display: flex;
+      flex-grow: 1;
+      gap: 10px;
+    }
+
+    .search input,
+    .search select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 200px;
+    }
+
+    .search-right button {
+      background: #007bff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .search-right button:hover {
+      background: #0056b3;
+    }
+
+    .add {
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .add:hover {
+      background: #e55c27;
+    }
+
+    table {
+      text-align: center;
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    thead {
+      background: #f1f5f9;
+    }
+
+    th,
+    td {
+      padding: 14px;
+      text-align: center;
+      vertical-align: middle;
+      border-bottom: 1px solid #eee;
+      font-size: 0.95rem;
+    }
+
+    tbody tr:hover {
+      background: #f6fafe;
+    }
+
+    .status-label {
+      padding: 4px 10px;
+      border-radius: 20px;
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-new {
+      background: #2196f3;
+    }
+
+    .status-pending {
+      background: #f0ad4e;
+    }
+
+    .action-btn {
+      cursor: pointer;
+      width: 22px;
+      transition: transform 0.2s ease;
+    }
+
+    .action-btn:hover {
+      transform: scale(1.15);
+    }
+
+    .navigation {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pagination-info {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .pagination-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .pagination-buttons button {
+      padding: 6px 12px;
+      background: #e0e0e0;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .pagination-buttons button:hover {
+      background: #007bff;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .search {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .search input,
+      .search select {
+        width: 100%;
+      }
+
+      .container-admin {
+        margin-left: 60px;
+      }
+    }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
@@ -19,48 +20,61 @@
 			</div>
 		</div>
 		<div class="nav-right">
-			<label for="">Tài khoản |</label> <a href="#"> <img
-				src="/img/Screenshot_2025-06-19_220523-removebg-preview.png"
-				alt="Tài khoản" />
-			</a>
+			<label for="">Tài khoản |</label>
+			<div class="account-container">
+				<a href="#"> <img
+					src="/img/Screenshot_2025-06-19_220523-removebg-preview.png"
+					alt="Tài khoản" />
+				</a>
+				<div class="account-dropdown1">
+				 <a
+						th:href="@{/logout}">Đăng Xuất</a>
+				</div>
+			</div>
 		</div>
 	</nav>
 
 	<!-- ========== TASKBAR ========== -->
-<div class="taskbar">
+	<div class="taskbar">
 
-	<!-- Chỉ ADMIN thấy -->
-	<a th:href="@{/QuanLySanPham}" title="Quản lý sản phẩm" sec:authorize="hasAnyAuthority('Admin', 'Nhân viên')">
-		<img src="/img/box.png" alt="" />
-	</a>
+		<!-- Chỉ ADMIN thấy -->
+		<a th:href="@{/QuanLySanPham}" title="Quản lý sản phẩm"
+			sec:authorize="hasAnyAuthority('Admin', 'Nhân viên')"> <img
+			src="/img/box.png" alt="" />
+		</a>
 
-	<!-- Chỉ ADMIN thấy -->
-	<a th:href="@{/QuanLyTaiKhoan}" title="Quản lý tài khoản" sec:authorize="hasAuthority('Admin')">
-		<img src="/img/account.png" alt="" />
-	</a>
+		<!-- Chỉ ADMIN thấy -->
+		<a th:href="@{/QuanLyTaiKhoan}" title="Quản lý tài khoản"
+			sec:authorize="hasAuthority('Admin')"> <img
+			src="/img/account.png" alt="" />
+		</a>
 
-	<!-- ADMIN và NHANVIEN đều thấy -->
-	<a th:href="@{/QuanLyDonHang}" title="Quản lý đơn hàng" sec:authorize="hasAnyAuthority('Admin', 'Nhân viên')">
-		<img src="/img/booking.png" alt="" />
-	</a>
+		<!-- ADMIN và NHANVIEN đều thấy -->
+		<a th:href="@{/QuanLyDonHang}" title="Quản lý đơn hàng"
+			sec:authorize="hasAnyAuthority('Admin', 'Nhân viên')"> <img
+			src="/img/booking.png" alt="" />
+		</a>
 
-	<!-- ADMIN và NHANVIEN đều thấy -->
-	<a th:href="@{/QuanLyDanhGia}" title="Quản lý đánh giá" sec:authorize="hasAnyAuthority('Admin', 'Nhân viên')">
-		<img src="/img/review.png" alt="" />
-	</a>
+		<!-- ADMIN và NHANVIEN đều thấy -->
+		<a th:href="@{/QuanLyDanhGia}" title="Quản lý đánh giá"
+			sec:authorize="hasAnyAuthority('Admin', 'Nhân viên')"> <img
+			src="/img/review.png" alt="" />
+		</a>
 
-	<!-- Chỉ ADMIN thấy -->
-	<a th:href="@{/QuanLyBanner}" title="Quản lý banner" sec:authorize="hasAuthority('Admin')">
-		<img src="/img/advertisement.png" alt="" />
-	</a>
+		<!-- Chỉ ADMIN thấy -->
+		<a th:href="@{/QuanLyBanner}" title="Quản lý banner"
+			sec:authorize="hasAuthority('Admin')"> <img
+			src="/img/advertisement.png" alt="" />
+		</a>
 
-	<!-- Chỉ ADMIN thấy -->
-	<a th:href="@{/QuanLyThanhToan}" title="Quản lý thanh toán" sec:authorize="hasAuthority('Admin')">
-		<img src="/img/credit-card.png" alt="" />
-	</a>
-</div>
+		<!-- Chỉ ADMIN thấy -->
+		<a th:href="@{/QuanLyThanhToan}" title="Quản lý thanh toán"
+			sec:authorize="hasAuthority('Admin')"> <img
+			src="/img/credit-card.png" alt="" />
+		</a>
+	</div>
 
-	
-		<div th:replace="~{${content}}"></div>
+
+	<div th:replace="~{${content}}"></div>
 </body>
 </html>

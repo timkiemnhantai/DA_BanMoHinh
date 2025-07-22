@@ -16,14 +16,7 @@
 			<th:block th:each="sp, iterStat : ${gioHang}">
 
 				<div class="shop-item" th:if="${iterStat.index > -1}">
-					<div class="shop-info">
-						<div class="checkbox-wrapper">
-							<input type="checkbox" id="check-atino" class="shop-checkbox">
-							<label for="check-atino"></label>
-						</div>
-						<span class="favorite-tag">Yêu thích</span> <span
-							class="shop-name">Gundam Shop</span>
-					</div>
+
 
 					<div class="product-item">
 						<div class="product-selection-box">
@@ -34,17 +27,25 @@
 								th:data-soluong="${sp.chiTietGioHang.soLuong}"
 								class="product-checkbox"> <label
 								th:for="'check-product-atino-' + ${sp.chiTietGioHang.maCTGH}"></label>
-							<img
+							<a
+								th:href="@{/chi-tiet-san-pham/{id}(id=${sp.bienThe.sanPham.maSP}, ${sp.bienThe.sanPham.tenSP})}">
+								<img
 								th:src="@{${not #lists.isEmpty(sp.bienThe.anhChiTietList) 
 			                ? sp.bienThe.anhChiTietList[0].urlAnhCT 
 			                : sp.bienThe.sanPham.anhSanPham[0].urlAnh}}"
 								alt="" class="product-img">
+							</a>
+
 							<div class="product-details">
-								<p class="product-name" th:text="${sp.bienThe.sanPham.tenSP}"></p>
-								<div class="product-tag-row">
-									<span class="tag-hot-deal">25.6k+</span> <span
-										class="tag-flash-sale">Flash Sale</span>
-								</div>
+								<a
+									th:href="@{/chi-tiet-san-pham/{id}(id=${sp.bienThe.sanPham.maSP}, ${sp.bienThe.sanPham.tenSP})}">
+									<p class="product-name" th:text="${sp.bienThe.sanPham.tenSP}"></p>
+									<div class="product-tag-row">
+										<span class="tag-hot-deal">25.6k+</span> <span
+											class="tag-flash-sale">Flash Sale</span>
+									</div>
+								</a>
+
 							</div>
 						</div>
 						<div class="product-type">
@@ -70,7 +71,8 @@
 
 							<input type="text" class="quantity-input"
 								th:id="'soLuong-' + ${sp.chiTietGioHang.maCTGH}"
-								th:value="${sp.chiTietGioHang.soLuong}" readonly />
+								th:value="${sp.chiTietGioHang.soLuong}"
+								th:attr="data-tonkho=${sp.bienThe.soLuongTonKho}" />
 
 							<button type="button" class="quantity-btn plus"
 								onclick="thayDoiSoLuong(this, 1)">+</button>
@@ -93,11 +95,11 @@
 
 
 			<div class="voucher-and-summary-section">
-				<div class="shopee-voucher-row">
+				<!-- 			<div class="shopee-voucher-row">
 					<i class="fas fa-ticket-alt"></i> <span>Gundam Voucher</span>
 					<button class="apply-voucher-btn" type="button">Chọn hoặc
 						nhập mã</button>
-				</div>
+				</div>  -->
 
 				<div class="selected-products-summary">
 					<div class="checkbox-wrapper">
@@ -128,14 +130,24 @@
 <script>
 function thayDoiSoLuong(button, delta) {
     const parent = button.closest('.product-quantity-control');
+    const input = parent.querySelector('.quantity-input');
     const maCTGH = parent.dataset.mactgh;
 
-    const input = parent.querySelector('.quantity-input');
     let soLuongHienTai = parseInt(input.value) || 1;
     let soLuongMoi = soLuongHienTai + delta;
+
     if (soLuongMoi < 1) soLuongMoi = 1;
 
-    // Gửi cập nhật lên server trước
+    const tonKho = parseInt(input.dataset.tonkho || "0");
+    if (soLuongMoi > tonKho) {
+        alert("❌ Sản phẩm này chỉ còn " + tonKho + " trong kho!");
+        return;
+    }
+
+    capNhatSoLuongLenServer(maCTGH, soLuongMoi, input, parent);
+}
+
+function capNhatSoLuongLenServer(maCTGH, soLuongMoi, input, parent) {
     const csrfToken = document.querySelector('meta[name="_csrf"]').content;
     const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
 
@@ -145,38 +157,54 @@ function thayDoiSoLuong(button, delta) {
             'Content-Type': 'application/json',
             [csrfHeader]: csrfToken
         },
-        body: JSON.stringify({ maCTGH: maCTGH, soLuong: soLuongMoi })
+        body: JSON.stringify({ maCTGH, soLuong: soLuongMoi })
     })
     .then(res => {
         if (!res.ok) throw new Error("Cập nhật lỗi");
         return res.json();
     })
- .then(data => {
-    // ✅ Nếu server chấp nhận thì cập nhật giao diện
-    input.value = soLuongMoi;
+    .then(data => {
+        input.value = soLuongMoi;
 
-    const cartItem = parent.closest('.product-item');
-    const currentPrice = cartItem.querySelector('.current-price');
-    const totalDiv = cartItem.querySelector('.product-total-price');
+        const cartItem = parent.closest('.product-item');
+        const currentPrice = cartItem.querySelector('.current-price');
+        const totalDiv = cartItem.querySelector('.product-total-price');
 
-    const giaSauGiam = parseFloat(currentPrice.dataset.giasaugiam || "0");
-    const tongTien = giaSauGiam * soLuongMoi;
+        const giaSauGiam = parseFloat(currentPrice.dataset.giasaugiam || "0");
+        const tongTien = giaSauGiam * soLuongMoi;
 
-    if (totalDiv) {
-        totalDiv.textContent = formatCurrency(tongTien) + " VND";
-    }
+        if (totalDiv) {
+            totalDiv.textContent = formatCurrency(tongTien) + " VND";
+        }
 
-    // ✅ THÊM DÒNG NÀY để cập nhật tổng tiền toàn bộ
-    capNhatTongTienToanBo();
-    capNhatSoLuongDaChon();
-    console.log("✅ Cập nhật thành công:", data);
-})
+        capNhatTongTienToanBo();
+    })
     .catch(err => {
-        // ❌ Nếu có lỗi thì KHÔNG thay đổi input
         console.error(err);
-        alert("❌ Không thể cập nhật số lượng.\n Có thể sản phẩm đang có giảm giá hoặc không còn giảm giá tại thời gian này.\n Bạn có thể thêm mới lại sản phẩm vào giỏ hàng để đc hưởng quyền lợi, cũng như thỏa đáng 2 bên");
+        alert("❌ Không thể cập nhật số lượng.\n" + err.message);
     });
 }
+
+// Lắng nghe khi người dùng nhập số lượng thủ công
+document.querySelectorAll('.quantity-input').forEach(input => {
+    input.addEventListener('input', function () {
+        const parent = this.closest('.product-quantity-control');
+        const maCTGH = parent.dataset.mactgh;
+
+        const tonKho = parseInt(this.dataset.tonkho || "0");
+        let val = parseInt(this.value || "1");
+
+        if (val < 1) val = 1;
+        if (val > tonKho) {
+            alert("❌ Bạn chỉ có thể đặt tối đa " + tonKho + " sản phẩm.");
+            val = tonKho;
+        }
+
+        this.value = val;
+        capNhatSoLuongLenServer(maCTGH, val, this, parent);
+    });
+});
+
 
 function formatCurrency(number) {
     return number.toLocaleString("vi-VN");
@@ -184,7 +212,6 @@ function formatCurrency(number) {
 function xoaSanPhamKhoiGio(button) {
     const maCTGH = button.dataset.mactgh;
 
-    if (!confirm("Bạn chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?")) return;
 
     // Lấy CSRF token
     const csrfToken = document.querySelector('meta[name="_csrf"]').content;
@@ -215,11 +242,11 @@ function xoaSanPhamKhoiGio(button) {
             capNhatSoLuongDaChon();
         }
 
-        alert("✅ Đã xóa sản phẩm khỏi giỏ hàng!");
+        hienThongBao("✅ Đã xóa sản phẩm khỏi giỏ hàng!", true);
     })
     .catch(err => {
         console.error(err);
-        alert("❌ " + err.message);
+        hienThongBao(err.message || "❌ Không thể xóa sản phẩm", false);
     });
 }
 document.querySelector('form[action="/thanh-toan"]').addEventListener('submit', function (e) {
@@ -229,7 +256,7 @@ document.querySelector('form[action="/thanh-toan"]').addEventListener('submit', 
     // Nếu chưa chọn sản phẩm nào thì chặn gửi form và cảnh báo
     if (checked.length === 0) {
       e.preventDefault();
-      alert("❌ Vui lòng chọn ít nhất một sản phẩm để thanh toán!");
+      hienThongBao("❌ Vui lòng chọn ít nhất một sản phẩm để thanh toán!", false);
     }
   });
 
@@ -237,7 +264,7 @@ document.querySelector('form[action="/thanh-toan"]').addEventListener('submit', 
 <script>
 function capNhatTongTienToanBo() {
 	const checkboxes = document.querySelectorAll('input[name="chonCTGH"]:checked');
-	let tongSoLuong = 0;
+	let tongSoLuong = 0; // Số dòng sản phẩm
 	let tongTien = 0;
 
 	checkboxes.forEach(cb => {
@@ -245,14 +272,16 @@ function capNhatTongTienToanBo() {
 		const inputSL = item.querySelector('.quantity-input');
 		const soLuong = parseInt(inputSL.value || 1);
 		const gia = parseFloat(cb.dataset.gia || 0);
-		tongSoLuong += soLuong;
-		tongTien += gia * soLuong;
+
+		tongSoLuong += 1; // ✅ chỉ cộng mỗi dòng 1 đơn vị
+		tongTien += gia * soLuong; // ✅ tiền vẫn dựa trên số lượng
 	});
 
 	// Cập nhật giao diện
 	document.getElementById("tongSoLuong").textContent = tongSoLuong;
 	document.getElementById("tongTien").textContent = tongTien.toLocaleString("vi-VN") + " VND";
 }
+
 
 // Gắn sự kiện cho mỗi checkbox
 document.querySelectorAll('input[name="chonCTGH"]').forEach(cb => {
@@ -284,12 +313,10 @@ itemCheckboxes.forEach(cb => {
 });
 
 function capNhatSoLuongDaChon() {
-    let tong = 0;
-    document.querySelectorAll('.quantity-input').forEach(input => {
-        tong += parseInt(input.value || 1);
-    });
-    soLuongDaChonSpan.textContent = tong;
+    const soLuongDaChon = document.querySelectorAll('input[name="chonCTGH"]:checked').length;
+    soLuongDaChonSpan.textContent = soLuongDaChon;
 }
+
 window.addEventListener("DOMContentLoaded", function () {
     capNhatSoLuongDaChon();
 });
@@ -302,11 +329,11 @@ document.querySelector(".delete-selected-link").addEventListener("click", functi
     const checkedBoxes = document.querySelectorAll('input[name="chonCTGH"]:checked');
 
     if (checkedBoxes.length === 0) {
-        alert("❌ Vui lòng chọn ít nhất một sản phẩm để xoá!");
+        hienThongBao("❌ Vui lòng chọn ít nhất một sản phẩm để xoá!", false);
         return;
     }
 
-    if (!confirm("Bạn chắc chắn muốn xoá tất cả sản phẩm đã chọn?")) return;
+    showConfirm("Bạn chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?", () => {
 
     const csrfToken = document.querySelector('meta[name="_csrf"]').content;
     const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
@@ -333,14 +360,14 @@ document.querySelector(".delete-selected-link").addEventListener("click", functi
             capNhatTongTienToanBo();
             capNhatSoLuongDaChon();
             masterCheckbox.checked = false;
-            alert("✅ Đã xoá tất cả sản phẩm được chọn!");
+            hienThongBao("✅ Đã xoá tất cả sản phẩm được chọn!", true);
         } else {
             throw new Error(data.error || "Không thể xoá!");
         }
     })
+})
     .catch(err => {
-        console.error(err);
-        alert("❌ Lỗi khi xoá: " + err.message);
+        hienThongBao("❌ Lỗi! Không xóa được sản phẩm" , false);
     });
 });
 </script>
