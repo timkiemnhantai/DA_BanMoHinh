@@ -2,10 +2,9 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Hồ Sơ Cá Nhân</title>
+  <title>Địa chỉ của tôi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/css/Style_TrangCaNhan.css">
-  
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -85,142 +84,90 @@
       font-weight: bold;
     }
 
-    /* Content */
+    /* Main content */
     .content {
       flex-grow: 1;
       padding: 30px;
     }
 
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     .content h2 {
       font-size: 16px;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
     }
 
-    .content p {
-      color: #888;
-      margin-bottom: 25px;
-      font-size: 13px;
-    }
-
-    .form-group {
-      display: flex;
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      width: 120px;
-      font-size: 13px;
-      color: #555;
-      margin-top: 6px;
-    }
-
-    .form-group input[type="text"],
-    .form-group input[type="email"],
-    .form-group select {
-      flex: 1;
-      padding: 8px;
-      font-size: 13px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-    }
-
-    .form-group .note {
-      font-size: 12px;
-      color: #999;
-      margin-top: 4px;
-    }
-
-    .form-group .link {
-      color: #05a;
-      font-size: 13px;
-      text-decoration: none;
-      margin-left: 4px;
-    }
-
-    .form-radio {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .form-radio label {
-      font-size: 13px;
-    }
-
-    .birth-select {
-      display: flex;
-      gap: 10px;
-    }
-
-    .birth-select select {
-      flex: 1;
-    }
-
-    .btn-save {
+    .btn-add {
       background-color: #ee4d2d;
-      color: white;
+      color: #fff;
+      padding: 8px 14px;
       border: none;
-      padding: 8px 24px;
       font-size: 13px;
       border-radius: 2px;
       cursor: pointer;
     }
 
-    /* Avatar Upload */
-    .avatar-section {
-      border-left: 1px solid #f0f0f0;
-      padding-left: -100px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
+    .address-list {
+      margin-top: 20px;
     }
 
-    .avatar-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    .address-item {
+       
+     border: 1px solid #c3baba;
+      padding: 16px 0;
+    }
+    .address-item .name{
+       margin-left: 20px;
     }
 
-    .avatar-wrapper img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin-bottom: 10px;
+    .address-item strong {
+        
+      font-weight: 500;
+      margin-right: 10px;
     }
 
-    .avatar-wrapper input[type="file"] {
-      display: none;
+    .address-item span {
+      color: #555;
     }
 
-    .btn-upload {
-      display: inline-block;
-      padding: 6px 12px;
+    .address-actions {
+      margin-top: 8px;
+      margin-left: -30px;
+    }
+
+    .address-actions a {
+    margin-left: 50px;
       font-size: 13px;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      cursor: pointer;
-      margin-bottom: 10px;
+      color: #1685fa;
+      text-decoration: none;
+      margin-right: 10px;
     }
 
-    .avatar-section .note {
+    .address-actions a:hover {
+      text-decoration: underline;
+    }
+
+    .default-label {
+      display: inline-block;
       font-size: 12px;
-      color: #888;
-      line-height: 1.4;
-      text-align: left;
+      border: 1px solid #ee4d2d;
+      color: #ee4d2d;
+      padding: 2px 6px;
+      border-radius: 2px;
+      margin-top: 4px;
     }
 
-    /* Input width fix */
-    .form-group .short-input input {
-      width: 250px;
-    }
-
-    .form-group .full-input input {
-      width: 380px;
+    .btn-set-default {
+      font-size: 13px;
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      background: #fff;
+      cursor: pointer;
+      border-radius: 2px;
     }
   </style>
 </head>
@@ -283,9 +230,8 @@
 
 
 
-    <!-- phần nội dung  -->
-  <div class="container">
 
+  <div class="container">
     <!-- Sidebar -->
     <div class="sidebar">
       <div class="user-info">
@@ -294,84 +240,42 @@
         <a href="#">✎ Sửa Hồ Sơ</a>
       </div>
       <ul>
-        <li><a href="#" >Tài Khoản Của Tôi</a></li>
-        <li><a href="/TrangCaNhan.html" class="active">Hồ Sơ</a></li>
-        <li><a href="/DiaChi.html">Địa Chỉ</a></li>
+        <li><a href="#">Tài Khoản Của Tôi</a></li>
+        <li><a href="/TrangCaNhan.html">Hồ Sơ</a></li>
+        <li><a href="/DiaChi.html" class="active">Địa Chỉ</a></li>
         <li><a href="/DoiMatKhau.html">Đổi Mật Khẩu</a></li>
         <li><a href="/XemTrangThai.html">Đơn Mua</a></li>
       </ul>
     </div>
 
-    <!-- Content -->
+    <!-- Main Content -->
     <div class="content">
-      <h2>Hồ Sơ Của Tôi</h2>
-      <p>Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
-      <form>
-        <div class="form-group">
-          <label>Tên đăng nhập</label>
-          <div class="short-input">
-            <input type="text" value="truonggiangg" readonly>
-            <div class="note">Tên đăng nhập chỉ có thể thay đổi một lần.</div>
-          </div>
+      <div class="content-header">
+        <div>
+          <h2>Địa chỉ của tôi</h2>
         </div>
-
-        <div class="form-group">
-          <label>Tên</label>
-          <div class="full-input">
-            <input type="text" value="truonggiangg">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Email</label>
-          <div class="full-input" style="display:flex;align-items:center;">
-            <input type="text" value="vo***********@gmail.com">
-            <a href="#" class="link">Thay Đổi</a>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Số điện thoại</label>
-          <div class="full-input">
-            <input type="text" value="0342183192">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Giới tính</label>
-          <div class="form-radio">
-            <label><input type="radio" name="gender"> Nam</label>
-            <label><input type="radio" name="gender"> Nữ</label>
-            <label><input type="radio" name="gender"> Khác</label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Ngày sinh</label>
-          <div class="birth-select">
-            <select><option>Ngày</option></select>
-            <select><option>Tháng</option></select>
-            <select><option>Năm</option></select>
-          </div>
-        </div>
-
-        <button type="submit" class="btn-save">Lưu</button>
-      </form>
-    </div>
-
-    <!-- Avatar -->
-    <div class="avatar-section">
-      <div class="avatar-wrapper">
-        <img src="/img/user2.jpg" alt="Avatar">
-        <input type="file" id="upload">
-        <label for="upload" class="btn-upload">Chọn Ảnh</label>
+        <button class="btn-add">+ Thêm địa chỉ mới</button>
       </div>
-      <div class="note">
-        Dung lượng file tối đa 1 MB<br>
-        Định dạng: .JPEG, .PNG
+
+      <div class="address-list">
+        <div class="address-item">
+            <div class="name">
+          <div>
+            <strong>võ trường giang</strong>
+            <span>(+84) 342 183 192</span>
+          </div>
+          <div>phước chỉ</div>
+          <div>Xã Phước Chỉ, Thị Xã Trảng Bàng, Tây Ninh</div>
+          <div class="default-label">Mặc định</div>
+        </div>
+          <div class="address-actions">
+            <a href="#">Cập nhật</a>
+            <a href="#">Xóa</a>
+            <button class="btn-set-default">Thiết lập mặc định</button>
+          </div>
+        </div>
       </div>
     </div>
-
   </div>
 </body>
 </html>

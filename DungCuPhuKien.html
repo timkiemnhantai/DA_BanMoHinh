@@ -43,7 +43,7 @@
                 <li><a href="/SanPham.html">Sản phẩm</a></li>
                 <li><a href="/HangGiamGia.html">Hàng giảm giá</a></li>
                 <li><a href="/DungCuPhuKien.html">Dụng cụ - Phụ kiện</a></li>
-                <li><a href="/LienHe.html">Liên Hệ</a></li>
+                <li><a href="/ChinhSach.html">Chính Sách</a></li>
               </ul>
             </div>
           </div>
@@ -71,9 +71,12 @@
                     <i class="fas fa-bars"></i>
                     <span>Danh mục</span>
                 </div>
+                <!-- Danh mục: Sản phẩm -->
                 <div class="sidebar-category">
-                    <h4><i class="fas fa-caret-right"></i> Sản phẩm</h4>
-                    <ul>
+                    <h4 class="toggle-btn" onclick="toggleDropdown(this)">
+                        <i class="fas fa-caret-right"></i> Sản phẩm
+                    </h4>
+                    <ul class="dropdown-menu hidden pl-3 list-disc text-sm text-gray-700">
                         <li><a href="#">Bandai</a></li>
                         <li><a href="#">HG Gundam (High Grade 1/144)</a></li>
                         <li><a href="#">RG Gundam (Real Grade 1/144)</a></li>
@@ -85,11 +88,34 @@
                         <li><a href="#">MOTOR NUCLEAR</a></li>
                     </ul>
                 </div>
+
+
+                <!-- Danh mục: Dụng cụ - Phụ kiện -->
                 <div class="sidebar-category">
-                    <h4><i class="fas fa-caret-right"></i> Dụng cụ - Phụ kiện</h4>
+                    <h4 class="toggle-btn" onclick="toggleDropdown(this)">
+                        <i class="fas fa-caret-right"></i> Dụng cụ - Phụ kiện
+                    </h4>
+                    <ul class="dropdown-menu hidden pl-3 list-disc text-sm text-gray-700">
+                        <li><a href="#">ActionBaseMGRGHG</a></li>
+                        <li><a href="#">ÁoChoàngchoMNP-XH02 Caoren</a></li>
+                        <li><a href="#">BaseStageAct</a></li>
+                        <li><a href="#">LedUnit(forRX-0)</a></li>
+                        <li><a href="#">TheWitchFromMercury</a></li>                     
+                    </ul>
                 </div>
+
+                <!-- Danh mục: Hàng giảm giá -->
                 <div class="sidebar-category">
-                    <h4><i class="fas fa-caret-right"></i> Hàng giảm giá</h4>
+                   <h4 class="toggle-btn" onclick="toggleDropdown(this)">
+                        <i class="fas fa-caret-right"></i> Hàng giảm giá
+                    </h4>
+                    <ul class="dropdown-menu hidden pl-3 list-disc text-sm text-gray-700">
+                        <li><a href="#">Bandai</a></li>
+                        <li><a href="#">HG Gundam (High Grade 1/144)</a></li>
+                        <li><a href="#">RG Gundam (Real Grade 1/144)</a></li>
+                        <li><a href="#">MG Gundam (Master Grade 1/100)</a></li>
+                        <li><a href="#">PG Gundam (Perfect Grade 1/60)</a></li>
+                    </ul>
                 </div>
             </aside>
 
@@ -222,6 +248,25 @@
             </main>
         </div>
     </div>
+
+    <script>
+        function toggleDropdown(header) {
+            const icon = header.querySelector("i");
+            const ul = header.nextElementSibling;
+
+            // Toggle ẩn/hiện danh sách
+            ul.classList.toggle("hidden");
+
+            // Đổi icon
+            if (ul.classList.contains("hidden")) {
+                icon.classList.remove("fa-caret-down");
+                icon.classList.add("fa-caret-right");
+            } else {
+                icon.classList.remove("fa-caret-right");
+                icon.classList.add("fa-caret-down");
+            }
+        }
+    </script>
 
 </body>
 

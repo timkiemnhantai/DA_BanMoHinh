@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,30 @@
     <link rel="stylesheet" href="css/ThanhToan.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        /* ghi chú cho người bán  */
+        .seller-note-section {
+            margin-top: 5px;
+            margin-bottom: -10px;
+        }
+
+        .seller-note-input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .seller-note-input:focus {
+            border-color: #007bff;
+        }
+    </style>
 </head>
+
 <body>
     <div class="body-nav">
         <nav>
@@ -26,7 +50,8 @@
             <div class="nav-toolbar">
                 <div class="search">
                     <div class="search-left">
-                        <input type="text" placeholder="Từ khóa..." onfocus="this.placeholder=''" onblur="this.placeholder='Từ khóa...'">
+                        <input type="text" placeholder="Từ khóa..." onfocus="this.placeholder=''"
+                            onblur="this.placeholder='Từ khóa...'">
                     </div>
                     <div class="search-right">
                         <button class="in">
@@ -36,14 +61,14 @@
                 </div>
 
                 <div class="item">
-              <ul>
-                <li><a href="/index.html">Trang chủ</a></li>
-                <li><a href="/SanPham.html">Sản phẩm</a></li>
-                <li><a href="/HangGiamGia.html">Hàng giảm giá</a></li>
-                <li><a href="/DungCuPhuKien.html">Dụng cụ - Phụ kiện</a></li>
-                <li><a href="/LienHe.html">Liên Hệ</a></li>
-              </ul>
-            </div>
+                    <ul>
+                        <li><a href="/index.html">Trang chủ</a></li>
+                        <li><a href="/SanPham.html">Sản phẩm</a></li>
+                        <li><a href="/HangGiamGia.html">Hàng giảm giá</a></li>
+                        <li><a href="/DungCuPhuKien.html">Dụng cụ - Phụ kiện</a></li>
+                        <li><a href="/ChinhSach.html">Chính Sách</a></li>
+                    </ul>
+                </div>
             </div>
 
             <div class="nav-account">
@@ -53,8 +78,10 @@
                     <a href=""><img src="/img/instagram.png" alt=""></a>
                 </div>
                 <div class="account-right">
-                    <a href=""><img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="" height="48px"></a>
-                    <a href="/GioHang.html"><img src="/img/Screenshot_2025-06-19_220342-removebg-preview.png" alt="" height="48px"></a>
+                    <a href=""><img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt=""
+                            height="48px"></a>
+                    <a href="/GioHang.html"><img src="/img/Screenshot_2025-06-19_220342-removebg-preview.png" alt=""
+                            height="48px"></a>
                 </div>
             </div>
         </nav>
@@ -67,7 +94,8 @@
             </div>
             <div class="section-content">
                 <div class="address-info">
-                    <span class="name-phone">Nguyễn Văn A (+84) 912 345 678</span> <span class="default-tag">MẶC ĐỊNH</span><br>
+                    <span class="name-phone">Nguyễn Văn A (+84) 912 345 678</span> <span class="default-tag">MẶC
+                        ĐỊNH</span><br>
                     <span>284/18, Phan Huy Ích, phường 12, Gò Vấp</span>
                 </div>
                 <a href="#" class="change-address-btn" id="openAddressModal">Thay Đổi</a>
@@ -91,46 +119,74 @@
                     <tr>
                         <td>
                             <div class="product-item-row">
-                                <img src="/img/vn-11134207-7ra0g-m84y9wcskbji74.jpg" alt="Product Image" class="product-img">
-                                <div class="product-name"> Mô Hình Lắp Ráp In Era+ THUNDERBOLT 2.0 <div class="product-type">Loại: Đen, M</div>
+                                <img src="/img/vn-11134207-7ra0g-m84y9wcskbji74.jpg" alt="Product Image"
+                                    class="product-img">
+                                <div class="product-name"> Mô Hình Lắp Ráp In Era+ THUNDERBOLT 2.0 <div
+                                        class="product-type">Loại: Đen, M</div>
                                 </div>
                             </div>
                         </td>
                         <td style="text-align: center;">₫980.000</td>
                         <td style="text-align: center;">1</td>
-                        <td>₫980.000</td>
+                        <td style="text-align: left ;">₫980.000</td>
                     </tr>
                     <tr>
                         <td>
                             <div class="product-item-row">
-                                <img src="/img/vn-11134207-7ra0g-m84y9wcskbji74.jpg" alt="Product Image" class="product-img">
-                                <div class="product-name"> Mô Hình Lắp Ráp In Era+ THUNDERBOLT 2.0 <div class="product-type">Loại: Đen, M</div>
+                                <img src="/img/vn-11134207-7ra0g-m84y9wcskbji74.jpg" alt="Product Image"
+                                    class="product-img">
+                                <div class="product-name"> Mô Hình Lắp Ráp In Era+ THUNDERBOLT 2.0 <div
+                                        class="product-type">Loại: Đen, M</div>
                                 </div>
                             </div>
                         </td>
                         <td style="text-align: center;">₫980.000</td>
                         <td style="text-align: center;">1</td>
-                        <td>₫980.000</td>
+                        <td style="text-align: left;">₫980.000</td>
                     </tr>
                     <tr>
                         <td>
                             <div class="product-item-row">
-                                <img src="/img/vn-11134207-7ra0g-m84y9wcskbji74.jpg" alt="Product Image" class="product-img">
-                                <div class="product-name"> Mô Hình Lắp Ráp In Era+ THUNDERBOLT 2.0 <div class="product-type">Loại: Đen, M</div>
+                                <img src="/img/vn-11134207-7ra0g-m84y9wcskbji74.jpg" alt="Product Image"
+                                    class="product-img">
+                                <div class="product-name"> Mô Hình Lắp Ráp In Era+ THUNDERBOLT 2.0 <div
+                                        class="product-type">Loại: Đen, M</div>
                                 </div>
                             </div>
                         </td>
                         <td style="text-align: center;">₫980.000</td>
                         <td style="text-align: center;">1</td>
-                        <td>₫980.000</td>
+                        <td style="text-align: left;">₫980.000</td>
                     </tr>
                 </tbody>
             </table>
+
+
+
+
+
+
+            <!-- Ghi chú cho người bán -->
+            <div class="seller-note-section section">
+                <div class="section-header">
+                    <i class="fas fa-sticky-note"></i> Ghi chú cho người bán
+                </div>
+                <div class="section-content">
+                    <textarea class="seller-note-input"
+                        placeholder="Bạn có lưu ý gì cho người bán không? (Ví dụ: Giao giờ hành chính, đóng gói kỹ...)"
+                        rows="3"></textarea>
+                </div>
+            </div>
+
+
+
+
+
         </div>
 
         <div class="section shipping-method-section">
             <div class="section-header">
-                Phương thức vận chuyển: <span style="color: #333; margin-left: 5px;">Nhanh</span> 
+                Phương thức vận chuyển: <span style="color: #333; margin-left: 5px;">Nhanh</span>
                 <!-- <a href="#" class="change-shipping-btn">Thay Đổi</a> -->
             </div>
             <div class="section-content">
@@ -165,7 +221,8 @@
                 <div class="payment-tab">Chuyển khoản ngân hàng</div>
             </div>
             <div class="payment-content">
-                <div class="payment-description">Phí thu hộ: ₫0 VND. Ưu đãi về phí vận chuyển (nếu có) áp dụng cả với phí thu hộ.</div>
+                <div class="payment-description">Phí thu hộ: ₫0 VND. Ưu đãi về phí vận chuyển (nếu có) áp dụng cả với
+                    phí thu hộ.</div>
             </div>
         </div>
 
@@ -204,7 +261,7 @@
                     <div class="radio-dot"></div>
                     <div class="modal-address-info">
                         <span class="name-phone">Nguyễn Văn A (+84) 912 345 678</span><br>
-                        
+
                         <span>284/18, Phan Huy Ích, phường 12, Gò Vấp</span>
                         <span class="default-tag">Mặc định</span>
                     </div>
@@ -214,6 +271,25 @@
                 <div class="add-new-address">
                     <i class="fas fa-plus"></i> Thêm Địa Chỉ Mới
                 </div>
+
+                <div class="address-form hidden" id="addressForm">
+                    <div class="form-group">
+                        <label for="name">Họ tên:</label>
+                        <input type="text" id="name" class="form-input" placeholder="Nhập họ tên">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Số điện thoại:</label>
+                        <input type="text" id="phone" class="form-input" placeholder="Nhập số điện thoại">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Địa chỉ:</label>
+                        <input type="text" id="address" class="form-input" placeholder="Nhập địa chỉ chi tiết">
+                    </div>
+                    <div class="form-buttons">
+                        <button class="cancel-btn" id="cancelFormBtn">Hủy</button>
+                        <button class="confirm-btn" id="saveAddressBtn">Lưu</button>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer-buttons">
                 <button class="cancel-btn" id="cancelAddressModal">Hủy</button>
@@ -221,6 +297,11 @@
             </div>
         </div>
     </div>
+
+
+
+
+
 
     <script>
         // Lấy các phần tử cần thiết
@@ -233,7 +314,7 @@
 
         // Hàm để mở modal
         if (openModalBtn) {
-            openModalBtn.addEventListener('click', function(e) {
+            openModalBtn.addEventListener('click', function (e) {
                 e.preventDefault(); // Ngăn chặn hành vi mặc định của thẻ a (chuyển trang)
                 if (addressModalOverlay) {
                     addressModalOverlay.style.display = 'flex'; // Hiển thị modal (dùng flex để căn giữa)
@@ -256,10 +337,10 @@
         if (cancelModalBtn) {
             cancelModalBtn.addEventListener('click', closeAddressModal);
         }
-        
+
         // Xử lý khi nhấn nút "Xác nhận" trong modal
         if (confirmModalBtn) {
-            confirmModalBtn.addEventListener('click', function() {
+            confirmModalBtn.addEventListener('click', function () {
                 const selectedAddress = document.querySelector('.modal-address-item.selected');
                 if (selectedAddress) {
                     const addressId = selectedAddress.dataset.addressId;
@@ -275,7 +356,7 @@
 
         // Đóng modal khi nhấn ra ngoài khu vực nội dung modal
         if (addressModalOverlay) {
-            addressModalOverlay.addEventListener('click', function(e) {
+            addressModalOverlay.addEventListener('click', function (e) {
                 if (e.target === addressModalOverlay) {
                     closeAddressModal();
                 }
@@ -285,7 +366,7 @@
         // Xử lý chọn địa chỉ trong modal (thay đổi trạng thái 'selected')
         if (addressItems && addressItems.length > 0) {
             addressItems.forEach(item => {
-                item.addEventListener('click', function() {
+                item.addEventListener('click', function () {
                     // Xóa trạng thái 'selected' khỏi tất cả các mục
                     addressItems.forEach(i => i.classList.remove('selected'));
                     // Thêm trạng thái 'selected' vào mục được nhấp
@@ -293,6 +374,48 @@
                 });
             });
         }
+
+        const addressForm = document.getElementById('addressForm');
+        const addNewBtn = document.querySelector('.add-new-address');
+        const updateBtns = document.querySelectorAll('.update-btn');
+        const cancelFormBtn = document.getElementById('cancelFormBtn');
+        const saveAddressBtn = document.getElementById('saveAddressBtn');
+
+        // Mở form khi nhấn "Thêm Địa Chỉ Mới"
+        if (addNewBtn) {
+            addNewBtn.addEventListener('click', () => {
+                addressForm.classList.remove('hidden');
+            });
+        }
+
+        // Mở form khi nhấn "Cập nhật"
+        updateBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                addressForm.classList.remove('hidden');
+                // Optionally: điền sẵn thông tin nếu cần
+            });
+        });
+
+        // Hủy form
+        if (cancelFormBtn) {
+            cancelFormBtn.addEventListener('click', () => {
+                addressForm.classList.add('hidden');
+            });
+        }
+
+        // Lưu địa chỉ mới
+        if (saveAddressBtn) {
+            saveAddressBtn.addEventListener('click', () => {
+                // TODO: xử lý lưu vào danh sách địa chỉ hoặc cập nhật
+                alert('Địa chỉ đã được lưu!');
+                addressForm.classList.add('hidden');
+            });
+        }
+
+
+
     </script>
 </body>
+
 </html>

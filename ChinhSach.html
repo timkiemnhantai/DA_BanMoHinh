@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chính sách cửa hàng | Gundam Shop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- ==== NAV của bạn giữ nguyên ==== -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f2f5;
+    }
+
+    .body-nav {
+      justify-content: center;
+      height: 110px;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+
+    nav {
+      width: 100%;
+      height: 110px;
+      min-height: 120px;
+      background-color: white;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-logo {
+      min-width: 18%;
+      flex-shrink: 0;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .nav-logo .stripe {
+      position: absolute;
+      max-width: 80px;
+      height: 300px;
+      transform: rotate(-23deg);
+      top: -80px;
+    }
+
+    .nav-logo .blue {
+      background-color: blue;
+      width: 30px;
+      left: 15px;
+    }
+
+    .nav-logo .yellow {
+      background-color: yellow;
+      width: 30px;
+      left: 45px;
+    }
+
+    .nav-logo .red {
+      background-color: red;
+      width: 30px;
+      left: 75px;
+    }
+
+    .nav-logo .logo-wrapper {
+      min-width: 105px;
+      min-height: 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-left: clamp(130px, 15vw, 160px);
+      flex-shrink: 0;
+    }
+
+    .nav-logo .logo-wrapper img {
+      width: 65px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .nav-logo .logo-wrapper .logo-title {
+      font-size: 16px;
+      color: #333;
+      margin-top: -6px;
+    }
+
+    .nav-toolbar {
+      min-width: 300px;
+      max-width: 40%;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      margin-left: clamp(10px, 10vw, 200px);
+      padding-top: clamp(22px, 1vw, 25px);
+    }
+
+    .search {
+      display: flex;
+      max-width: 676px;
+      height: 40px;
+      border: 1px solid black;
+      border-radius: 40px;
+      overflow: hidden;
+      flex-shrink: 0;
+      margin-bottom: 10px;
+    }
+
+    .search-left {
+      flex: 8;
+      padding-left: 12px;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-left input {
+      width: 100%;
+      font-size: 16px;
+      margin-left: 20px;
+      opacity: 0.5;
+      border: none;
+      outline: none;
+    }
+
+    .search-right {
+      flex: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-left: 1px solid black;
+      background-color: blue;
+      padding: 2.5px;
+    }
+
+    .search-right .in {
+      background-color: white;
+      width: 100%;
+      border-radius: 0 40px 40px 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .search-right .in:hover {
+      background-color: rgb(240, 238, 238);
+    }
+
+    .search-right .in img {
+      width: 15%;
+      margin-left: -4px;
+    }
+
+    .item {
+      margin-top: 10px;
+      align-self: flex-start;
+      margin-left: -10px;
+    }
+
+    .item ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .item ul li a {
+      text-decoration: none;
+      font-size: 16px;
+      color: #333;
+      padding: 6px 12px;
+      transition: 0.3s;
+    }
+
+    .item ul li a:hover {
+      color: #007bff;
+      border-bottom: 2px solid #007bff;
+    }
+
+    .nav-account {
+      width: 40%;
+      display: flex;
+      min-width: 200px;
+      min-height: 120px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .account-left {
+      height: 25px;
+      width: 50%;
+      display: flex;
+      margin: 30px 25px 0 23px;
+      gap: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+      flex: 1 1 100px;
+    }
+
+    .account-left label {
+      font-size: 16px;
+      white-space: nowrap;
+    }
+
+    .account-left a img {
+      min-width: 24px;
+      height: 24px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .account-left a img:hover {
+      opacity: 0.5;
+    }
+
+    .account-right {
+      width: 50%;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin: 0 0 5px 50px;
+      justify-content: flex-end;
+    }
+
+    .account-right a {
+      margin: 10px;
+      width: 50px;
+    }
+
+    .account-right a img {
+      flex-shrink: 0;
+      min-width: 50px;
+      object-fit: contain;
+    }
+
+    /* Footer Section */
+    .site-footer {
+      background-color: #f0f2f5;
+      /* Nền xám nhạt */
+      padding: 40px 0;
+      margin-top: 10px;
+      /* Khoảng cách với phần nội dung phía trên */
+      border-top: 1px solid #ddd;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      /* Sắp xếp các cột theo hàng ngang */
+      justify-content: space-between;
+      /* Phân bổ không gian đều giữa các cột */
+      gap: 30px;
+      /* Khoảng cách giữa các cột */
+      flex-wrap: wrap;
+      /* Cho phép các cột xuống hàng trên màn hình nhỏ */
+      padding: 0 20px;
+      /* Khoảng đệm hai bên */
+    }
+
+    .footer-column {
+      flex: 1;
+      /* Mỗi cột sẽ cố gắng chiếm một phần bằng nhau */
+      min-width: 200px;
+      /* Chiều rộng tối thiểu cho mỗi cột */
+      padding: 10px 0;
+      color: #555;
+      font-size: 0.95em;
+      position: relative;
+      /* Dùng cho ảnh phụ */
+    }
+
+    .footer-column h4 {
+      color: #333;
+      font-size: 1.1em;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      /* Đường gạch chân dưới tiêu đề */
+      padding-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #333;
+      font-size: 1.1em;
+    }
+
+    .footer-logo img {
+      width: 40px;
+      /* Kích thước logo */
+      height: 40px;
+      margin-right: 10px;
+      border-radius: 50%;
+      /* Có thể bo tròn nếu logo là ảnh tròn */
+      background-color: #ccc;
+      /* Placeholder */
+    }
+
+    .footer-column p {
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .footer-column ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .footer-column ul li {
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .footer-column ul li:hover {
+      color: #007bff;
+      /* Đổi màu khi hover */
+    }
+
+    /* Các logo thanh toán và vận chuyển */
+    .payment-methods,
+    .shipping-methods {
+      display: flex;
+      flex-wrap: wrap;
+      /* Cho phép các logo xuống hàng */
+      gap: 10px;
+      /* Khoảng cách giữa các logo */
+      margin-bottom: 20px;
+    }
+
+    .payment-methods img,
+    .shipping-methods img {
+      height: 30px;
+      /* Chiều cao cố định cho các logo */
+      width: auto;
+      /* Chiều rộng tự động để giữ tỉ lệ */
+      border: 1px solid #eee;
+      border-radius: 4px;
+      background-color: #f8f8f8;
+      /* Nền nhẹ */
+      padding: 3px;
+    }
+
+    /* Các ảnh Gundam và Robot trong footer */
+    .footer-gundam-image {
+      position: absolute;
+      bottom: 0;
+      /* Đặt dưới cùng của cột */
+      right: 0;
+      /* Đặt bên phải của cột */
+      width: 80px;
+      /* Kích thước ảnh */
+      height: auto;
+      opacity: 0.8;
+      /* Làm mờ nhẹ */
+    }
+
+    .footer-robot-image {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 60px;
+      height: auto;
+      opacity: 0.8;
+    }
+
+    .footer-map-image {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .footer-last-robot-image {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 60px;
+      height: auto;
+      opacity: 0.8;
+    }
+
+    /* Điều chỉnh vị trí của ảnh robot trong cột thứ 3 */
+    .payment-shipping-column {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .payment-shipping-column .footer-robot-image {
+      margin-top: auto;
+      /* Đẩy ảnh xuống dưới cùng */
+      align-self: flex-end;
+      /* Căn phải ảnh */
+      position: static;
+      /* Đặt lại vị trí để nó đi theo luồng flex */
+    }
+
+    /* Điều chỉnh lại cho cột cuối cùng */
+    .final-column ul {
+      margin-bottom: 20px;
+    }
+
+    .final-column .footer-last-robot-image {
+      margin-top: auto;
+      /* Đẩy ảnh xuống dưới cùng */
+      align-self: flex-end;
+      /* Căn phải ảnh */
+      position: static;
+      /* Đặt lại vị trí để nó đi theo luồng flex */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .footer-container {
+        flex-direction: column;
+        /* Xếp các cột theo chiều dọc trên màn hình nhỏ */
+        align-items: center;
+        /* Căn giữa các cột */
+        gap: 20px;
+      }
+
+      .footer-column {
+        min-width: 90%;
+        /* Chiếm gần hết chiều rộng */
+        text-align: center;
+        /* Căn giữa nội dung cột */
+        padding: 15px;
+        border: 1px solid #eee;
+        /* Thêm viền để phân biệt cột */
+        border-radius: 8px;
+      }
+
+      .footer-logo,
+      .payment-methods,
+      .shipping-methods {
+        justify-content: center;
+        /* Căn giữa các item con */
+      }
+
+      .footer-column h4 {
+        text-align: center;
+      }
+
+      /* Đặt lại vị trí ảnh phụ cho màn hình nhỏ */
+      .footer-gundam-image,
+      .footer-robot-image,
+      .footer-last-robot-image {
+        position: static;
+        /* Bỏ định vị tuyệt đối */
+        margin-top: 15px;
+        opacity: 1;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+  </style>
+
+  <div class="body-nav">
+    <nav>
+      <div class="nav-logo">
+        <div class="stripe blue"></div>
+        <div class="stripe yellow"></div>
+        <div class="stripe red"></div>
+        <div class="logo-wrapper">
+          <img src="/img/processed_no_white.png" alt="">
+          <div class="logo-title">Gundam Shop</div>
+        </div>
+      </div>
+
+      <div class="nav-toolbar">
+        <div class="search">
+          <div class="search-left">
+            <input type="text" placeholder="Từ khóa..." onfocus="this.placeholder=''"
+              onblur="this.placeholder='Từ khóa...'">
+          </div>
+          <div class="search-right">
+            <button class="in">
+              <img src="/img/search.png" alt="">
+            </button>
+          </div>
+        </div>
+        <div class="item">
+          <ul>
+            <li><a href="/index.html">Trang chủ</a></li>
+            <li><a href="/SanPham.html">Sản phẩm</a></li>
+            <li><a href="/HangGiamGia.html">Hàng giảm giá</a></li>
+            <li><a href="/DungCuPhuKien.html">Dụng cụ - Phụ kiện</a></li>
+            <li><a href="/ChinhSach.html">Chính Sách</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nav-account">
+        <div class="account-left">
+          <label>Kết nối</label>
+          <a href="#"><img src="/img/facebook.png" alt=""></a>
+          <a href="#"><img src="/img/instagram.png" alt=""></a>
+        </div>
+        <div class="account-right">
+          <a href="#"><img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt=""></a>
+          <a href="/GioHang.html"><img src="/img/Screenshot_2025-06-19_220342-removebg-preview.png" alt=""></a>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <!-- END NAV -->
+
+  <!-- ==== NỘI DUNG TRANG CHÍNH SÁCH ==== -->
+  <main class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg mt-7 p-5 space-y-6">
+    <h1 class="text-3xl font-bold text-center text-blue-800">Chính Sách Cửa Hàng</h1>
+
+    <section>
+      <h2 class="text-xl font-semibold mb-2">1. Chính sách bảo mật</h2>
+      <p>Chúng tôi cam kết bảo mật tuyệt đối thông tin cá nhân của khách hàng. Mọi dữ liệu đều được mã hóa và không chia
+        sẻ với bên thứ ba.</p>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-semibold mb-2">2. Chính sách đổi trả</h2>
+      <p>Quý khách có thể đổi hoặc trả sản phẩm trong vòng <strong>7 ngày</strong> kể từ khi nhận hàng, với điều kiện
+        sản phẩm còn nguyên vẹn, chưa qua sử dụng.</p>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-semibold mb-2">3. Chính sách vận chuyển</h2>
+      <p>Gundam Shop giao hàng toàn quốc với thời gian 2-5 ngày làm việc. Miễn phí giao hàng cho đơn từ 1.000.000đ trở
+        lên.</p>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-semibold mb-2">4. Hình thức thanh toán</h2>
+      <p>Chúng tôi hỗ trợ thanh toán khi nhận hàng (COD), chuyển khoản ngân hàng và ví điện tử.</p>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-semibold mb-2">5. Hướng dẫn sử dụng sản phẩm</h2>
+      <p>Các bộ Gundam đi kèm hướng dẫn chi tiết bằng hình ảnh, vui lòng làm theo từng bước để tránh hư hỏng chi tiết.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-semibold mb-2">6. Liên hệ hỗ trợ</h2>
+      <p>Mọi thắc mắc xin vui lòng liên hệ qua hotline hoặc email hiển thị ở cuối trang web để được hỗ trợ nhanh chóng.
+      </p>
+    </section>
+  </main>
+
+  <div class="text-center text-sm text-gray-500 mt-10 mb-4">
+    &copy; 2025 Gundam Shop. Bản quyền được bảo lưu.
+  </div>
+
+</body>
+
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-column">
+      <div class="footer-logo">
+        <img src="/img/logo_gundam.png" alt="Gundam Shop Footer Logo">
+        <span>Gundam Shop</span>
+      </div>
+      <h4>Liên hệ</h4>
+      <p>Địa chỉ: QTSC 9 Building, D. Tố Ký, Tân Chánh Hiệp, Quận 12, Hồ Chí Minh</p>
+      <p>Hotline: xxxx.xxxx.xxx</p>
+      <p>Email: abcyz@gmail.com</p>
+    </div>
+
+    <div class="footer-column">
+      <h4>Chính sách</h4>
+      <ul>
+        <li>Chính sách bảo mật</li>
+        <li>Chính sách đổi trả</li>
+        <li>Chính sách vận chuyển</li>
+        <li>Quy định sử dụng</li>
+      </ul>
+    </div>
+
+    <div class="footer-column payment-shipping-column">
+      <h4>Thanh toán</h4>
+      <div class="payment-methods">
+        <img src="/img/1.png" alt="Visa">
+        <img src="/img/2.png" alt="Mastercard">
+        <img src="/img/3.png" alt="JCB">
+        <img src="/img/4.png" alt="Amex">
+        <img src="/img/5.png" alt="QR Code">
+      </div>
+      <h4>Đơn vị vận chuyển</h4>
+      <div class="shipping-methods">
+        <img src="/img/6.png" alt="SPX Express">
+        <img src="/img/7.png" alt="Giao Hang Tiet Kiem">
+        <img src="/img/8.png" alt="J&T Express">
+        <img src="/img/9.png" alt="Ninja Van">
+        <img src="/img/12.png" alt="VNPost">
+        <img src="/img/10.png" alt="Giao Hang Nhanh">
+        <img src="/img/11.png" alt="Best Express">
+      </div>
+    </div>
+
+    <div class="footer-column map-column">
+      <h4>Map</h4>
+      <img src="/img/google_map.png" alt="Google Map" class="footer-map-image">
+    </div>
+
+    <div class="footer-column final-column">
+      <h4>Đề tài</h4>
+      <p>Website bán hàng mô hình lắp ráp</p>
+      <h4>Thành viên</h4>
+      <ul>
+        <li>Tứ Ngọc Sơn</li>
+        <li>Trần Phúc Duy Khang</li>
+        <li>Võ Trường Giang</li>
+        <li>Nguyễn Hoàng Gia Khang</li>
+        <li>Phạm Minh Tân</li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+</html>

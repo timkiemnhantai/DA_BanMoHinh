@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,23 +12,31 @@
     <style>
         /* CSS cho Slider Ảnh Chính */
         .product-image-slider {
+            height: 370px;
             position: relative;
-            width: 100%; /* Hoặc một chiều rộng cố định */
-            max-width: 500px; /* Tùy chỉnh kích thước ảnh chính */
-            overflow: hidden; /* Quan trọng để ẩn các ảnh không hiển thị */
+            width: 100%;
+            /* Hoặc một chiều rộng cố định */
+            max-width: 500px;
+            /* Tùy chỉnh kích thước ảnh chính */
+            overflow: hidden;
+            /* Quan trọng để ẩn các ảnh không hiển thị */
             margin: 0 auto;
         }
 
         .slider-images-wrapper {
+            height: 370px;
             display: flex;
-            transition: transform 0.5s ease-in-out; /* Hiệu ứng chuyển động */
+            transition: transform 0.5s ease-in-out;
+            /* Hiệu ứng chuyển động */
         }
 
         .slider-images-wrapper img {
             width: 100%;
-            flex-shrink: 0; /* Ngăn không cho ảnh co lại */
+            flex-shrink: 0;
+            /* Ngăn không cho ảnh co lại */
             display: block;
-            object-fit: contain; /* Đảm bảo ảnh hiển thị đầy đủ */
+            object-fit: contain;
+            /* Đảm bảo ảnh hiển thị đầy đủ */
         }
 
         .slider-button {
@@ -63,33 +72,39 @@
             justify-content: center;
             gap: 10px;
             margin-top: 15px;
-            overflow-x: auto; /* Cho phép cuộn ngang nếu có nhiều thumbnails */
-            padding-bottom: 5px; /* Để tránh scrollbar che ảnh */
+            overflow-x: auto;
+            /* Cho phép cuộn ngang nếu có nhiều thumbnails */
+            padding-bottom: 5px;
+            /* Để tránh scrollbar che ảnh */
         }
 
         .thumbnail-images img {
-            width: 80px; /* Kích thước thumbnail */
+            width: 80px;
+            /* Kích thước thumbnail */
             height: 80px;
             object-fit: cover;
             border: 2px solid transparent;
-            cursor: pointer; /* Vẫn giữ cursor pointer để ngụ ý có thể tương tác */
+            cursor: pointer;
+            /* Vẫn giữ cursor pointer để ngụ ý có thể tương tác */
             transition: border-color 0.3s ease;
         }
 
         .thumbnail-images img.active {
-            border-color: #007bff; /* Màu viền cho ảnh đang hiển thị (nếu bạn muốn) */
+            border-color: #007bff;
+            /* Màu viền cho ảnh đang hiển thị (nếu bạn muốn) */
         }
 
         /* Các style cũ từ code của bạn (có thể đã có trong style_ChiTietSanPham.css) */
         .main-content-wrapper {
             display: flex;
             justify-content: center;
-            padding: 20px;
+            padding: -40px;
         }
 
         .product-detail-container {
             display: flex;
-            flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
+            flex-wrap: wrap;
+            /* Cho phép xuống dòng trên màn hình nhỏ */
             gap: 40px;
             max-width: 1200px;
             width: 100%;
@@ -97,14 +112,17 @@
 
         .product-image-gallery {
             flex: 1;
-            min-width: 300px; /* Đảm bảo đủ không gian */
+            min-width: 300px;
+            /* Đảm bảo đủ không gian */
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
         /* ... (Thêm các CSS khác từ style_ChiTietSanPham.css vào đây nếu cần) */
     </style>
 </head>
+
 <body>
     <div class="body-nav">
         <nav>
@@ -122,7 +140,8 @@
             <div class="nav-toolbar">
                 <div class="search">
                     <div class="search-left">
-                        <input type="text" placeholder="Từ khóa..." onfocus="this.placeholder=''" onblur="this.placeholder='Từ khóa...'">
+                        <input type="text" placeholder="Từ khóa..." onfocus="this.placeholder=''"
+                            onblur="this.placeholder='Từ khóa...'">
                     </div>
                     <div class="search-right">
                         <button class="in">
@@ -132,14 +151,14 @@
                 </div>
 
                 <div class="item">
-              <ul>
-                <li><a href="/index.html">Trang chủ</a></li>
-                <li><a href="/SanPham.html">Sản phẩm</a></li>
-                <li><a href="/HangGiamGia.html">Hàng giảm giá</a></li>
-                <li><a href="/DungCuPhuKien.html">Dụng cụ - Phụ kiện</a></li>
-                <li><a href="/LienHe.html">Liên Hệ</a></li>
-              </ul>
-            </div>
+                    <ul>
+                        <li><a href="/index.html">Trang chủ</a></li>
+                        <li><a href="/SanPham.html">Sản phẩm</a></li>
+                        <li><a href="/HangGiamGia.html">Hàng giảm giá</a></li>
+                        <li><a href="/DungCuPhuKien.html">Dụng cụ - Phụ kiện</a></li>
+                        <li><a href="/LienHe.html">Liên Hệ</a></li>
+                    </ul>
+                </div>
             </div>
 
             <div class="nav-account">
@@ -150,7 +169,8 @@
                 </div>
                 <div class="account-right">
                     <a href="/login.html"><img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt=""></a>
-                    <a href="/GioHang.html"><img src="/img/Screenshot_2025-06-19_220342-removebg-preview.png" alt=""></a>
+                    <a href="/GioHang.html"><img src="/img/Screenshot_2025-06-19_220342-removebg-preview.png"
+                            alt=""></a>
                 </div>
             </div>
         </nav>
@@ -166,11 +186,11 @@
                         <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.2.png" alt="Mô Hình THUNDERBOLT 2.0 (Ảnh 3)">
                         <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.3.png" alt="Mô Hình THUNDERBOLT 2.0 (Ảnh 4)">
                         <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.4.png" alt="Mô Hình THUNDERBOLT 2.0 (Ảnh 5)">
-                        </div>
+                    </div>
                     <button class="slider-button prev" onclick="moveSlider(-1)">&#10094;</button>
                     <button class="slider-button next" onclick="moveSlider(1)">&#10095;</button>
                 </div>
-                
+
                 <div class="thumbnail-images">
                     <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.png" alt="Thumbnail 1" class="thumbnail active">
                     <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.1.png" alt="Thumbnail 2" class="thumbnail">
@@ -178,44 +198,111 @@
                     <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.3.png" alt="Thumbnail 4" class="thumbnail">
                     <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.4.png" alt="Thumbnail 5" class="thumbnail">
 
-                    </div>
+                </div>
+
+
             </div>
+
+
 
             <div class="product-info-section">
                 <h1>Mô Hình Lắp Ráp In Era+ THUNDERBOLT 2.0</h1>
                 <p class="product-version">PHIÊN BẢN</p>
                 <div class="price-section">
-                    <span class="original-price">$29.99</span>
-                    <span class="current-price">$19.99</span>
+                    <span class="original-price">$800.99</span>
+                    <span class="current-price">$500.99</span>
                 </div>
                 <div class="stock-indicator">
-                    <div class="stock-bar" style="width: 70%;"></div>
+                    <div class="stock-bar" style="width: 100%;"></div>
                     <span class="stock-text">20 item left</span>
                 </div>
 
-                <div class="description-section">
+                <!-- <div class="description-section">
                     <h3>Mô tả</h3>
                     <p>Sản phẩm đến từ Trung Quốc</p>
                     <a href="#" class="read-more">Read more</a>
+                </div> -->
+
+
+
+                <!-- BẮT ĐẦU: Form chọn loại ảnh sản phẩm -->
+                <div class="variant-selection mt-4">
+                    <h3 class="text-lg font-semibold mb-2">Chọn loại sản phẩm:</h3>
+                    <div class="flex gap-4 flex-wrap">
+                        <label class="cursor-pointer text-center">
+                            <input type="radio" name="variant" value="aerial" class="hidden peer" checked>
+                            <div class="border rounded-lg p-2 peer-checked:ring-2 peer-checked:ring-blue-500">
+                                <img src="/img/MoHinh/BanDai/HG/GundamGusionRebakeFullCity/sp5.1.png"
+                                    alt="Gundam Aerial" class="w-20 h-20 object-cover rounded mx-auto">
+                                <div class="mt-1 text-sm">Aerial</div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer text-center">
+                            <input type="radio" name="variant" value="calibarn" class="hidden peer">
+                            <div class="border rounded-lg p-2 peer-checked:ring-2 peer-checked:ring-blue-500">
+                                <img src="/img/MoHinh/BanDai/HG/GundamCalibarn/sp4.1.png" alt="Calibarn"
+                                    class="w-20 h-20 object-cover rounded mx-auto">
+                                <div class="mt-1 text-sm">Calibarn</div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer text-center">
+                            <input type="radio" name="variant" value="dilanza" class="hidden peer">
+                            <div class="border rounded-lg p-2 peer-checked:ring-2 peer-checked:ring-blue-500">
+                                <img src="/img/MoHinh/BanDai/HG/GundamAerialRebuild/sp2.1.png" alt="Dilanza"
+                                    class="w-20 h-20 object-cover rounded mx-auto">
+                                <div class="mt-1 text-sm">Dilanza</div>
+                            </div>
+                        </label>
+                    </div>
                 </div>
+                <!-- KẾT THÚC: Form chọn loại ảnh sản phẩm -->
+
+
+
+
+
 
                 <div class="quantity-section">
                     <h3>Số lượng</h3>
                     <div class="quantity-control">
-                        <button class="quantity-btn minus">-</button>
-                        <input type="text" value="1" class="quantity-input">
+                        <button class="quantity-btn minus" style="margin-left: 3px;">-</button>
+                        <input type="text" value="10" class="quantity-input">
                         <button class="quantity-btn plus">+</button>
                     </div>
-                    <p class="max-purchase">Maximum purchase 5</p>
+                    <p class="max-purchase">Maximum purchase 10</p>
+                    <div class="action-buttons">
+                        <button class="buy-now-btn">MUA NGAY</button>
+                        <button class="add-to-cart-btn"><i class="fas fa-shopping-bag"></i> Thêm vào giỏ hàng</button>
+
+                    </div>
                 </div>
 
-                <div class="action-buttons">
-                    <button class="add-to-cart-btn"><i class="fas fa-shopping-bag"></i> Thêm vào giỏ hàng</button>
-                    <button class="add-to-wishlist-btn"><i class="far fa-heart"></i> Danh sách yêu thích</button>
-                </div>
+
             </div>
         </div>
     </div>
+
+    <!-- Form mô tả sản phẩm -->
+
+
+    <div class="main-content-wrapper comments-page-wrapper">
+
+        <div class="product-detail-container">
+            <div class="description-section">
+                <h3>Mô tả</h3>
+                <p>- Mô hình lắp ráp bằng cách bấm khớp, không cần dùng keo dán <br>
+                    - Biên độ cử động cao, dễ dàng tạo dáng <br>
+                    - Chất liệu: Nhựa PS, ABS, TPE <br>
+                    - Tỉ lệ: 1/10. Chiều cao khoảng 19cm (tính từ đỉnh đầu đến chân)<br>
+                    - Sản phẩm thực tế có thể hơi khác trong hình
+                </p>
+                <a href="#" class="read-more">Read more</a>
+            </div>
+        </div>
+
+    </div>
+
+
 
 
     <div class="main-content-wrapper comments-page-wrapper">
@@ -244,13 +331,14 @@
                     </div>
                 </div>
             </div> -->
-           
+
             <div class="comment-list">
                 <div class="comment-item">
                     <img src="/img/avatar2.jpg" alt="User Avatar" class="comment-avatar">
                     <div class="comment-content">
                         <span class="comment-author">Courtney Henry</span>
-                        <p class="comment-text">Ultricies interdum dolor sodales. Vitae feugiat vitae quis id consectetur. Aenean urna, lectus enim suscipit eget. Tristique bibendum nibh enim dui.</p>
+                        <p class="comment-text">Ultricies interdum dolor sodales. Vitae feugiat vitae quis id
+                            consectetur. Aenean urna, lectus enim suscipit eget. Tristique bibendum nibh enim dui.</p>
                         <div class="comment-actions-row">
                             <a href="#" class="comment-action-link">Like</a>
                             <a href="#" class="comment-action-link">Reply</a>
@@ -276,7 +364,8 @@
                     <img src="/img/avatar4.jpg" alt="User Avatar" class="comment-avatar">
                     <div class="comment-content">
                         <span class="comment-author">Theresa Webb</span>
-                        <p class="comment-text">Donec sed sed feugiat sit. Enim, urna euismod magna enim. Sit cras eget id sagittis consequat at.</p>
+                        <p class="comment-text">Donec sed sed feugiat sit. Enim, urna euismod magna enim. Sit cras eget
+                            id sagittis consequat at.</p>
                         <div class="comment-actions-row">
                             <a href="#" class="comment-action-link">Like</a>
                             <a href="#" class="comment-action-link">Reply</a>
@@ -354,103 +443,104 @@
         </div>
     </footer>
 
-   <script>
-    const sliderWrapper = document.getElementById('sliderImagesWrapper');
-    const images = sliderWrapper ? sliderWrapper.querySelectorAll('img') : [];
-    let currentIndex = 0;
-    const totalImages = images.length;
+    <script>
+        const sliderWrapper = document.getElementById('sliderImagesWrapper');
+        const images = sliderWrapper ? sliderWrapper.querySelectorAll('img') : [];
+        let currentIndex = 0;
+        const totalImages = images.length;
 
-    // Di chuyển slider đến ảnh tương ứng
-    function moveSlider(direction) {
-        if (!sliderWrapper || totalImages === 0) return;
+        // Di chuyển slider đến ảnh tương ứng
+        function moveSlider(direction) {
+            if (!sliderWrapper || totalImages === 0) return;
 
-        currentIndex += direction;
+            currentIndex += direction;
 
-        if (currentIndex < 0) {
-            currentIndex = totalImages - 1;
-        } else if (currentIndex >= totalImages) {
-            currentIndex = 0;
+            if (currentIndex < 0) {
+                currentIndex = totalImages - 1;
+            } else if (currentIndex >= totalImages) {
+                currentIndex = 0;
+            }
+
+            const offset = -currentIndex * 100;
+            sliderWrapper.style.transform = `translateX(${offset}%)`;
+
+            updateThumbnailActiveState();
         }
 
-        const offset = -currentIndex * 100;
-        sliderWrapper.style.transform = `translateX(${offset}%)`;
-
-        updateThumbnailActiveState();
-    }
-
-    // Cập nhật trạng thái active của thumbnail
-    function updateThumbnailActiveState() {
-        const thumbnails = document.querySelectorAll('.thumbnail-images .thumbnail');
-        if (thumbnails && thumbnails.length > 0) {
-            thumbnails.forEach((thumb, index) => {
-                if (index === currentIndex) {
-                    thumb.classList.add('active');
-                } else {
-                    thumb.classList.remove('active');
-                }
-            });
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        updateThumbnailActiveState();
-
-        // ==== Xử lý click vào thumbnail để đổi ảnh lớn ====
-        const thumbnails = document.querySelectorAll('.thumbnail');
-        thumbnails.forEach((thumb, index) => {
-            thumb.setAttribute('data-index', index); // Gắn index cho từng thumbnail
-
-            thumb.addEventListener('click', () => {
-                currentIndex = parseInt(thumb.getAttribute('data-index'));
-                moveSlider(0); // Gọi lại để cập nhật slider đúng vị trí
-            });
-        });
-
-        // ==== Xử lý nút tăng giảm số lượng ====
-        const quantityInput = document.querySelector('.quantity-input');
-        const decreaseBtn = document.querySelector('.quantity-btn.minus');
-        const increaseBtn = document.querySelector('.quantity-btn.plus');
-        const maxPurchaseElement = document.querySelector('.max-purchase');
-
-        let maxPurchase = 5;
-        if (maxPurchaseElement) {
-            const match = maxPurchaseElement.textContent.match(/Maximum purchase (\d+)/);
-            if (match && match[1]) {
-                maxPurchase = parseInt(match[1]);
+        // Cập nhật trạng thái active của thumbnail
+        function updateThumbnailActiveState() {
+            const thumbnails = document.querySelectorAll('.thumbnail-images .thumbnail');
+            if (thumbnails && thumbnails.length > 0) {
+                thumbnails.forEach((thumb, index) => {
+                    if (index === currentIndex) {
+                        thumb.classList.add('active');
+                    } else {
+                        thumb.classList.remove('active');
+                    }
+                });
             }
         }
 
-        if (decreaseBtn && increaseBtn && quantityInput) {
-            decreaseBtn.addEventListener('click', () => {
-                let currentValue = parseInt(quantityInput.value);
-                if (isNaN(currentValue) || currentValue < 1) currentValue = 1;
-                if (currentValue > 1) {
-                    quantityInput.value = currentValue - 1;
-                }
+        document.addEventListener('DOMContentLoaded', () => {
+            updateThumbnailActiveState();
+
+            // ==== Xử lý click vào thumbnail để đổi ảnh lớn ====
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach((thumb, index) => {
+                thumb.setAttribute('data-index', index); // Gắn index cho từng thumbnail
+
+                thumb.addEventListener('click', () => {
+                    currentIndex = parseInt(thumb.getAttribute('data-index'));
+                    moveSlider(0); // Gọi lại để cập nhật slider đúng vị trí
+                });
             });
 
-            increaseBtn.addEventListener('click', () => {
-                let currentValue = parseInt(quantityInput.value);
-                if (isNaN(currentValue) || currentValue < 1) currentValue = 1;
-                if (currentValue < maxPurchase) {
-                    quantityInput.value = currentValue + 1;
-                }
-            });
+            // ==== Xử lý nút tăng giảm số lượng ====
+            const quantityInput = document.querySelector('.quantity-input');
+            const decreaseBtn = document.querySelector('.quantity-btn.minus');
+            const increaseBtn = document.querySelector('.quantity-btn.plus');
+            const maxPurchaseElement = document.querySelector('.max-purchase');
 
-            quantityInput.addEventListener('change', () => {
-                let value = parseInt(quantityInput.value);
-                if (isNaN(value) || value < 1) {
-                    quantityInput.value = 1;
-                } else if (value > maxPurchase) {
-                    quantityInput.value = maxPurchase;
+            let maxPurchase = 5;
+            if (maxPurchaseElement) {
+                const match = maxPurchaseElement.textContent.match(/Maximum purchase (\d+)/);
+                if (match && match[1]) {
+                    maxPurchase = parseInt(match[1]);
                 }
-            });
-        }
+            }
 
-     
-    });
-</script>
+            if (decreaseBtn && increaseBtn && quantityInput) {
+                decreaseBtn.addEventListener('click', () => {
+                    let currentValue = parseInt(quantityInput.value);
+                    if (isNaN(currentValue) || currentValue < 1) currentValue = 1;
+                    if (currentValue > 1) {
+                        quantityInput.value = currentValue - 1;
+                    }
+                });
+
+                increaseBtn.addEventListener('click', () => {
+                    let currentValue = parseInt(quantityInput.value);
+                    if (isNaN(currentValue) || currentValue < 1) currentValue = 1;
+                    if (currentValue < maxPurchase) {
+                        quantityInput.value = currentValue + 1;
+                    }
+                });
+
+                quantityInput.addEventListener('change', () => {
+                    let value = parseInt(quantityInput.value);
+                    if (isNaN(value) || value < 1) {
+                        quantityInput.value = 1;
+                    } else if (value > maxPurchase) {
+                        quantityInput.value = maxPurchase;
+                    }
+                });
+            }
+
+
+        });
+    </script>
 
 
 </body>
+
 </html>

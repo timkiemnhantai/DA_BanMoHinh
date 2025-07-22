@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quên mật khẩu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .background-image {
+      position: fixed;
+      inset: 0;
+      background: url('/img/nu-vs-sazabi-v0-haxzkgu24scb1.webp') no-repeat center center/cover;
+      filter: brightness(0.55);
+      z-index: -1;
+    }
+
+    .center-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 1rem;
+    }
+
+    .glass-container {
+      background: rgba(30, 30, 30, 0.6);
+      border: 1.5px solid rgba(100, 255, 255, 0.25);
+      border-radius: 12px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 30px rgba(0, 255, 255, 0.1);
+      max-width: 450px;
+      width: 100%;
+      padding: 2rem;
+      color: #e0f7fa;
+    }
+
+    h2 {
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin: 0.5rem 0 1.2rem;
+      text-align: center;
+      color: #aeefff;
+    }
+
+    p {
+      font-size: 0.9rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .label-text {
+      font-size: 0.9rem;
+      color: #b2ebf2;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 0.4rem;
+      margin-left: 2px;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 0.65rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1.5px solid rgba(100, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      color: #e0f7fa;
+      margin-bottom: 1.2rem;
+      box-sizing: border-box;
+    }
+
+    .input-field::placeholder {
+      color: rgba(224, 247, 250, 0.5);
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #00e5ff;
+      box-shadow: 0 0 4px 2px rgba(0, 229, 255, 0.5);
+    }
+
+    .btn {
+      background: #00e5ff;
+      color: #003c42;
+      font-weight: 600;
+      width: 100%;
+      padding: 0.9rem 0;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+
+    .btn:hover {
+      background: #00bcd4;
+      transform: translateY(-1px);
+    }
+
+    .link-back {
+      display: inline-block;
+      margin-top: 1rem;
+      text-align: center;
+      width: 100%;
+      color: #00e5ff;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .form-step {
+      display: none;
+    }
+
+    .form-step.active {
+      display: block;
+    }
+
+    .success-message {
+      text-align: center;
+      color: #a7ffeb;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="background-image"></div>
+  <section class="center-screen">
+    <div class="glass-container">
+      <h2> Quên mật khẩu</h2>
+      <p>Hoàn tất các bước để đặt lại mật khẩu của bạn.</p>
+
+      <!-- Step 1: Nhập Email -->
+      <div id="step-email" class="form-step active">
+        <label for="email" class="label-text">Email đã đăng ký</label>
+        <input type="email" id="email" class="input-field" placeholder="example@email.com" required>
+        <button class="btn" onclick="goToOTP()">Gửi mã OTP</button>
+      </div>
+
+      <!-- Step 2: Nhập OTP -->
+      <div id="step-otp" class="form-step">
+        <label for="otp" class="label-text">Nhập mã OTP</label>
+        <input type="text" id="otp" class="input-field" placeholder="Mã xác nhận OTP" required>
+        <button class="btn" onclick="goToReset()">Xác nhận OTP</button>
+        <div class="link-back" onclick="goBackToEmail()">← Quay lại bước trước</div>
+      </div>
+
+      <!-- Step 3: Đặt lại mật khẩu -->
+      <div id="step-reset" class="form-step">
+        <label for="new-password" class="label-text">Mật khẩu mới</label>
+        <input type="password" id="new-password" class="input-field" placeholder="Mật khẩu mới" required>
+
+        <label for="confirm-password" class="label-text">Xác nhận mật khẩu</label>
+        <input type="password" id="confirm-password" class="input-field" placeholder="Nhập lại mật khẩu" required>
+
+        <button class="btn" onclick="finishReset()">Lưu mật khẩu</button>
+        <div class="link-back" onclick="goBackToOTP()">← Quay lại bước trước</div>
+      </div>
+
+      <!-- Step 4: Xong -->
+      <div id="step-done" class="form-step success-message">
+         Mật khẩu đã được cập nhật thành công!<br/>
+        <a href="/login.html" class="link-back">→ Đăng nhập lại</a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function showStep(id) {
+      document.querySelectorAll('.form-step').forEach(step => {
+        step.classList.remove('active');
+      });
+      document.getElementById(id).classList.add('active');
+    }
+
+    function goToOTP() {
+      // Giả lập gửi email
+      showStep('step-otp');
+    }
+
+    function goToReset() {
+      // Giả lập xác nhận OTP
+      showStep('step-reset');
+    }
+
+    function finishReset() {
+      const pass = document.getElementById('new-password').value;
+      const confirm = document.getElementById('confirm-password').value;
+      if (pass !== confirm) {
+        alert(" Mật khẩu không khớp!");
+        return;
+      }
+      // Giả lập lưu mật khẩu
+      showStep('step-done');
+    }
+
+    function goBackToEmail() {
+      showStep('step-email');
+    }
+
+    function goBackToOTP() {
+      showStep('step-otp');
+    }
+  </script>
+</body>
+</html>
