@@ -25,6 +25,16 @@ CREATE TABLE TaiKhoan (
     FOREIGN KEY (MaVaiTro) REFERENCES VaiTro(MaVaiTro)
 );
 GO
+CREATE TABLE ThongBao (
+    MaThongBao INT PRIMARY KEY IDENTITY(1,1),
+    TieuDe NVARCHAR(200),
+    NoiDung NVARCHAR(MAX),
+    DaDoc BIT DEFAULT 0, -- 0: chưa đọc, 1: đã đọc
+    ThoiGianTao DATETIME DEFAULT GETDATE(),
+    MaTK INT,
+    FOREIGN KEY (MaTK) REFERENCES TaiKhoan(MaTK)
+);
+GO
 CREATE TABLE DiaChi (
     MaDiaChi INT PRIMARY KEY IDENTITY(1,1),
     MaTK INT NOT NULL, -- khóa ngoại đến người dùng
@@ -153,6 +163,7 @@ CREATE TABLE DonHang (
     NgayDat DATETIME,
     NgayGiaoDuKien NVARCHAR(50),
     NgayGiaoThucTe DATETIME,
+	NgayXacNhanNhanHang DATETIME NULL,
     TongTienCTT DECIMAL(18,2),
     GiamGiaThucTe DECIMAL(18,2),
     PhiVanChuyen DECIMAL(18,2),
@@ -276,27 +287,6 @@ CREATE TABLE TaiKhoan_Voucher (
     PRIMARY KEY (MaTK, MaVoucher),
     FOREIGN KEY (MaTK) REFERENCES TaiKhoan(MaTK),
     FOREIGN KEY (MaVoucher) REFERENCES Voucher(MaVoucher)
-);
-GO
-CREATE TABLE ThongBao (
-    MaThongBao INT PRIMARY KEY IDENTITY(1,1),
-    TieuDe NVARCHAR(255) NOT NULL,
-    NoiDung NVARCHAR(MAX) NOT NULL,
-    NgayTao DATETIME DEFAULT GETDATE(),
-    LoaiThongBao VARCHAR(50), -- ví dụ: 'Khuyến mãi', 'Đơn hàng', 'Hệ thống'
-    UrlLienKet NVARCHAR(255), -- nếu muốn click để chuyển trang
-    MaNguoiGui INT, -- FK tới nhân viên hoặc admin
-    FOREIGN KEY (MaNguoiGui) REFERENCES TaiKhoan(MaTK)
-);
-GO
-CREATE TABLE TaiKhoan_ThongBao (
-    MaTK INT,
-    MaThongBao INT,
-    DaDoc BIT DEFAULT 0, -- 0 = chưa đọc, 1 = đã đọc
-    NgayNhan DATETIME DEFAULT GETDATE(),
-    PRIMARY KEY (MaTK, MaThongBao),
-    FOREIGN KEY (MaTK) REFERENCES TaiKhoan(MaTK),
-    FOREIGN KEY (MaThongBao) REFERENCES ThongBao(MaThongBao)
 );
 
 GO
@@ -993,13 +983,13 @@ INSERT INTO AnhChiTiet (MaCTSP, URLAnhCT) VALUES
 (51, '/AnhSanPham/MoHinh/SNAA/IronSickle(TheRoundTableKnights)/IronSickle(TheRoundTableKnights)9.png'),
 (51, '/AnhSanPham/MoHinh/SNAA/IronSickle(TheRoundTableKnights)/IronSickle(TheRoundTableKnights)10.png'),
 (51, '/AnhSanPham/MoHinh/SNAA/IronSickle(TheRoundTableKnights)/IronSickle(TheRoundTableKnights)11.png'),
-(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT2.png'),
-(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT3.png'),
-(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT4.png'),
-(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT5.png'),
-(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT6.png'),
-(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT7.png'),
-(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT8.png'),
+(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT2.jpg'),
+(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT3.jpg'),
+(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT4.jpg'),
+(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT5.jpg'),
+(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT6.jpg'),
+(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT7.jpg'),
+(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT8.jpg'),
 (53, '/AnhSanPham/MoHinh/SNAA/YR-03MartialEmperor/YR-03MartialEmperor2.png'),
 (53, '/AnhSanPham/MoHinh/SNAA/YR-03MartialEmperor/YR-03MartialEmperor3.png'),
 (53, '/AnhSanPham/MoHinh/SNAA/YR-03MartialEmperor/YR-03MartialEmperor4.png'),
@@ -1078,35 +1068,37 @@ VALUES
 GO 
 
 INSERT INTO DonHang (
-    MaTK, MaTTDH,  DiaChiGiaoHang, NgayDat, NgayGiaoDuKien, NgayGiaoThucTe,
-    TongTienCTT, GiamGiaThucTe, PhiVanChuyen, ThanhTien, GhiChu
+    MaTK, MaTTDH, DiaChiGiaoHang, NgayDat, NgayGiaoDuKien, NgayGiaoThucTe,
+    TongTienCTT, GiamGiaThucTe, PhiVanChuyen, ThanhTien, GhiChu, NgayXacNhanNhanHang
 ) VALUES
 -- Đơn hàng 1 - Chờ xác nhận
-(6, 1,  N'123 Đường ABC, Q1, TP.HCM', '2025-06-27', '2025-07-01', NULL,
-480000, 0, 30000, 510000, N'Khách mới, chờ xác nhận'),
+(6, 1, N'123 Đường ABC, Q1, TP.HCM', '2025-06-27', '2025-07-01', NULL,
+480000, 0, 30000, 510000, N'Khách mới, chờ xác nhận', NULL),
 
 -- Đơn hàng 2 - Đang giao
-(3, 3,  N'45 Lý Tự Trọng, Q3, TP.HCM', '2025-06-25', '2025-06-28', NULL,
-620000, 50000, 25000, 595000, N'Sử dụng mã giảm giá 50K'),
+(3, 3, N'45 Lý Tự Trọng, Q3, TP.HCM', '2025-06-25', '2025-06-28', NULL,
+620000, 50000, 25000, 595000, N'Sử dụng mã giảm giá 50K', NULL),
 
 -- Đơn hàng 3 - Đã giao
-(4, 4,  N'78 Hoàng Văn Thụ, Q.Tân Bình, TP.HCM', '2025-06-22', '2025-06-25', '2025-06-25',
-700000, 0, 30000, 730000, N'Giao thành công'),
+(4, 4, N'78 Hoàng Văn Thụ, Q.Tân Bình, TP.HCM', '2025-06-22', '2025-06-25', '2025-06-25',
+700000, 0, 30000, 730000, N'Giao thành công', '2025-06-26'),
 
 -- Đơn hàng 4 - Đã hủy
 (5, 5, N'90 Nguyễn Trãi, Q5, TP.HCM', '2025-06-15', '2025-06-17', NULL,
-400000, 20000, 30000, 410000, N'Khách huỷ do thay đổi địa chỉ'),
+400000, 20000, 30000, 410000, N'Khách huỷ do thay đổi địa chỉ', NULL),
 
 -- Đơn hàng 5 - Đã giao
-(3, 4,  N'25 Nguyễn Đình Chiểu, Q.3, TP.HCM', '2025-06-10', '2025-06-13', '2025-06-13',
-300000, 0, 25000, 325000, N'Đã giao, không sử dụng mã giảm'),
+(3, 4, N'25 Nguyễn Đình Chiểu, Q.3, TP.HCM', '2025-06-10', '2025-06-13', '2025-06-13',
+300000, 0, 25000, 325000, N'Đã giao, không sử dụng mã giảm', '2025-06-14'),
 
-(6, 4,  N'23 Pasteur, Q1, TP.HCM', '2025-06-18', '2025-06-21', NULL,
-650000, 30000, 20000, 640000, N'Giao vào buổi sáng, gọi trước khi giao'),
+-- Đơn hàng 6 - Đã giao nhưng chưa xác nhận
+(6, 4, N'23 Pasteur, Q1, TP.HCM', '2025-06-18', '2025-06-21', NULL,
+650000, 30000, 20000, 640000, N'Giao vào buổi sáng, gọi trước khi giao', NULL),
 
-(7, 4,  N'151 Hai Bà Trưng, Q3, TP.HCM', '2025-06-10', '2025-06-13', '2025-06-12',
-750000, 50000, 30000, 730000, N'Khách thanh toán tiền mặt, đã nhận đủ hàng');
-GO 
+-- Đơn hàng 7 - Đã giao
+(7, 4, N'151 Hai Bà Trưng, Q3, TP.HCM', '2025-06-10', '2025-06-13', '2025-06-12',
+750000, 50000, 30000, 730000, N'Khách thanh toán tiền mặt, đã nhận đủ hàng', '2025-06-13');
+GO
 -- ChiTietDonHang cho 5 đơn hàng tương ứng với MaDH từ 1 đến 5
 INSERT INTO ChiTietDonHang (MaDH, MaCTSP, SoLuongSP, DonGia, GiamGiaThucTe, ThanhTien, GhiChu) VALUES
 -- Đơn hàng 1
@@ -1233,19 +1225,3 @@ VALUES (5, 3, 0);
 INSERT INTO TaiKhoan_Voucher (MaTK, MaVoucher, NgaySuDung, TrangThaiSuDung)
 VALUES (6, 2, '2025-07-10 09:30:00', 1);
 
--- Giả định MaNguoiGui = 99 là nhân viên gửi
-INSERT INTO ThongBao (TieuDe, NoiDung, LoaiThongBao, UrlLienKet, MaNguoiGui)
-VALUES 
-(N'Sự kiện tháng 7', N'Giảm giá toàn bộ sản phẩm đến 50%!', 'Khuyến mãi', '/khuyen-mai', 2),
-(N'Đơn hàng đã giao', N'Đơn hàng #456 của bạn đã được giao thành công.', 'Đơn hàng', '/don-hang/456', 2);
--- Thông báo 1 (sự kiện) gửi cho toàn hệ thống
-INSERT INTO TaiKhoan_ThongBao (MaTK, MaThongBao, DaDoc)
-VALUES 
-(4, 1, 0),
-(5, 1, 0),
-(6, 1, 1);
-
--- Thông báo 2 (đơn hàng) gửi riêng user 4
-INSERT INTO TaiKhoan_ThongBao (MaTK, MaThongBao, DaDoc)
-VALUES 
-(4, 2, 1);
