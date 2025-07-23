@@ -29,6 +29,7 @@ CREATE TABLE ThongBao (
     MaThongBao INT PRIMARY KEY IDENTITY(1,1),
     TieuDe NVARCHAR(200),
     NoiDung NVARCHAR(MAX),
+    Url NVARCHAR(500), -- URL chuyển hướng khi nhấn thông báo
     DaDoc BIT DEFAULT 0, -- 0: chưa đọc, 1: đã đọc
     ThoiGianTao DATETIME DEFAULT GETDATE(),
     MaTK INT,

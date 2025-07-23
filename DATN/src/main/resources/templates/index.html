@@ -105,7 +105,10 @@
         style="background-color: #ffc107; color: #fff; border-radius: 8px; margin-bottom: 8px; padding: 12px 16px;">
         
         <div class="toast-content" style="display: flex; justify-content: space-between; align-items: center;">
-            <span th:text="${tb.noiDung}"></span>
+        	<a th:href="${tb.url}" onclick="return danhDauVaAn(this)">
+                <span th:text="${tb.noiDung}"></span>
+        	</a>
+
             <button class="toast-close" style="background: none; border: none; font-size: 18px; color: #fff; cursor: pointer;" 
                     onclick="danhDauVaAn(this)">
                 ×
@@ -193,11 +196,12 @@
 </footer>
 
 <script>
-    function danhDauVaAn(button) {
-        const toast = button.closest('.toast');
+    function danhDauVaAn(element) {
+        const toast = element.closest('.toast');
         const id = toast.getAttribute('data-id');
+        const isLink = element.tagName === 'A';
+        const url = isLink ? element.getAttribute('href') : null;
 
-        // Lấy CSRF token và header name từ thẻ meta
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
@@ -206,11 +210,14 @@
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken  // gắn CSRF header đúng cách
+                [csrfHeader]: csrfToken
             }
         }).then(res => {
             if (res.ok) {
-                toast.remove(); // Xóa phần tử khỏi DOM nếu thành công
+                toast.remove();
+                if (isLink && url) {
+                    window.location.href = url; // Chuyển hướng sau khi đánh dấu
+                }
             } else {
                 alert('Lỗi khi đánh dấu thông báo đã đọc');
             }
@@ -218,8 +225,11 @@
             console.error('Lỗi fetch:', err);
             alert('Lỗi kết nối máy chủ');
         });
+
+        return false; // Ngăn chuyển hướng mặc định nếu là <a>
     }
 </script>
+
 
 
 
@@ -275,7 +285,7 @@ function hienThongBaoHeThong(message, isSuccess = true) {
 
 
 
-function hienThongBao(noiDung, maThongBao) {
+function hienThongBao(noiDung, maThongBao, url) {
     const container = document.getElementById('toast-container');
 
     const toast = document.createElement("div");
@@ -317,7 +327,18 @@ function hienThongBao(noiDung, maThongBao) {
     });
 
     toast.addEventListener("click", () => {
-        window.location.href = "/don-hang";
+    	const id = toast.getAttribute("data-id");
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        fetch(`/thong-bao/${id}/da-doc`, {
+            method: 'POST',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        }).finally(() => {
+            window.location.href = url;
+        });
     });
 
     container.appendChild(toast);
@@ -359,7 +380,7 @@ if (maTK > 0) {
 	stompClient.connect({}, function () {
 		stompClient.subscribe("/topic/thong-bao/" + maTK, function (message) {
 			const data = JSON.parse(message.body); // 👈 parse JSON object
-			hienThongBao(data.noiDung, data.maThongBao); // 👈 dùng đúng dữ liệu
+			hienThongBao(data.noiDung, data.maThongBao, data.url); // 👈 dùng đúng dữ liệu
 		});
 	});
 }

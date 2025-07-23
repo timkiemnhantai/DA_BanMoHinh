@@ -692,6 +692,7 @@ public class HomeController {
 	    ThongBao thongBao = new ThongBao();
 	    thongBao.setTaiKhoan(taiKhoan);// ✅ Đã được attach vào context// Truyền đối tượng TaiKhoan, KHÔNG phải MaTK
 	    thongBao.setNoiDung(noiDung);
+	    thongBao.setUrl("/DonHang");
 	    thongBao.setNgayTao(LocalDateTime.now());
 	    thongBao.setDaDoc(false);
 
@@ -701,7 +702,7 @@ public class HomeController {
 
 
 	    // 🌟 2. Gửi WebSocket tới client
-	    webSocketNotificationController.guiThongBaoDonHang(dh.getTaiKhoan().getMaTK(), noiDung, daLuu.getMaThongBao());
+	    webSocketNotificationController.guiThongBaoDonHang(dh.getTaiKhoan().getMaTK(), noiDung, daLuu.getMaThongBao(), daLuu.getUrl() );
 	    System.out.println(">>> Gửi WebSocket tới /topic/user/" + dh.getTaiKhoan().getMaTK() + " với nội dung: " + noiDung);
 
 	    return ResponseEntity.ok("Xác nhận thành công");
