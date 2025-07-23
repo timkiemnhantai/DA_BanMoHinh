@@ -85,8 +85,6 @@ public interface SanPhamRepository extends JpaRepository<SanPham, Integer> {
 		    @Param("activeStatus") String activeStatus
 		);
 
-
-		
 	@Query("""
 		    SELECT new com.poly.dto.SanPhamDTO(
 		        sp,

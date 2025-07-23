@@ -18,7 +18,7 @@
 				</a>
 			</div>
 			<div class="category-item">
-				<a style="" th:href="@{/product(loai='Bandai RG')}"> <img src="/img/BandaiRG_Logo_1200x600_crop_center.jpg"
+				<a  th:href="@{/product(loai='Bandai RG')}"> <img src="/img/BandaiRG_Logo_1200x600_crop_center.jpg"
 					alt="RG" /> <span>Real Grade</span>
 				</a>
 			</div>
@@ -81,9 +81,9 @@
 					th:if="${sp.phanTramGiam != null or sp.giaGiam != null}">
 					<span
 						th:text="${
-  sp.phanTramGiam != null ? '-' + sp.phanTramGiam + '%' :
-  (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam) + 'đ' : '')
-}"></span>
+						  sp.phanTramGiam != null ? '-' + sp.phanTramGiam + '%' :
+						  (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam) + 'đ' : '')
+						}"></span>
 				</div>
 				<a
 					th:href="@{/chi-tiet-san-pham/{id}(id=${sp.sanPham.maSP}, ${sp.sanPham.tenSP})}">

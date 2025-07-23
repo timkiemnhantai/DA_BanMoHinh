@@ -1,16 +1,25 @@
 package com.poly.model;
 
-
-
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Table(name = "ThongBao")
 public class ThongBao {
 
@@ -19,22 +28,19 @@ public class ThongBao {
     @Column(name = "MaThongBao")
     private Integer maThongBao;
 
-    @Column(name = "TieuDe", nullable = false)
+    @Column(name = "TieuDe")
     private String tieuDe;
 
-    @Column(name = "NoiDung", nullable = false, columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "NoiDung", columnDefinition = "NVARCHAR(MAX)")
     private String noiDung;
 
-    @Column(name = "NgayTao")
-    private LocalDateTime ngayTao;
+    @Column(name = "DaDoc")
+    private Boolean daDoc = false;
 
-    @Column(name = "LoaiThongBao")
-    private String loaiThongBao;
+    @Column(name = "ThoiGianTao")
+    private LocalDateTime ngayTao = LocalDateTime.now();
 
-    @Column(name = "UrlLienKet")
-    private String urlLienKet;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MaNguoiGui")
-    private TaiKhoan nguoiGui;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "MaTK")
+    private TaiKhoan taiKhoan;
 }

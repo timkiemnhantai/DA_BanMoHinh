@@ -1,5 +1,7 @@
 package com.poly.controller;
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -11,8 +13,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.poly.model.TaiKhoan;
+
 import com.poly.security.CustomUserDetails;
 import com.poly.service.TaiKhoanService;
+
 import com.poly.service.VaiTroService;
 
 import jakarta.servlet.http.HttpSession;
@@ -29,6 +33,8 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
+	
     @GetMapping("/login")
     public String loginPage(HttpSession session) {
         TaiKhoan user = (TaiKhoan) session.getAttribute("user");
@@ -88,6 +94,8 @@ public class AuthController {
 //        System.out.println("==> Vai trò: " + tk.getVaiTro().getTenVaiTro());
         session.setAttribute("user", tk); // gán vào session để dùng trong giao diện
         session.setAttribute("role", tk.getVaiTro().getTenVaiTro());
+        
+
         
         return switch (tk.getVaiTro().getTenVaiTro()) {
             case "Admin" -> "redirect:/QuanLySanPham";

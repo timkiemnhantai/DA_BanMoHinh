@@ -38,6 +38,7 @@ import com.poly.model.DonHang;
 import com.poly.model.DiaChi;
 import com.poly.model.TaiKhoan;
 import com.poly.model.ThanhToan;
+import com.poly.model.ThongBao;
 import com.poly.repository.BienTheSanPhamRepository;
 import com.poly.repository.ChiTietDonHangRepository;
 import com.poly.repository.DiaChiRepository;
@@ -56,6 +57,7 @@ import com.poly.model.ChiTietDonHang;
 
 import com.poly.service.SanPhamService;
 import com.poly.service.TaiKhoanService;
+import com.poly.service.ThongBaoService;
 import com.poly.util.PhiVanChuyenUtils;
 import com.poly.util.SoDienThoaiUtils;
 
@@ -83,8 +85,8 @@ public class HomeController {
 	private ChiTietDonHangRepository chitietdonhangRepository;
 //	@Autowired
 //	private BienTheGiamGiaSPService bienthegiamgiaspService;
-//	@Autowired
-//	private LoaiSanPhamService loaisanphamService;
+	@Autowired
+	private ThongBaoService thongBaoService;
 //	@Autowired
 //	private AnhChiTietRepository anhChiTietRepository;
 	@Autowired
@@ -107,7 +109,7 @@ public class HomeController {
     @Autowired
     private WebSocketNotificationController webSocketNotificationController;
 	@GetMapping("/home")
-	public String home(Model model) {
+	public String home(Model model, HttpSession session) {
 		// Mới nhất (mặc định)
 		SanPhamDTO filterMoiNhat = new SanPhamDTO();
 		List<SanPhamDTO> danhsachSP = sanphamService.locSanPham(filterMoiNhat);
@@ -119,7 +121,7 @@ public class HomeController {
 		SanPhamDTO filterGiamGia = new SanPhamDTO();
 		filterGiamGia.setGiamGia(true);
 		List<SanPhamDTO> spgiamgia = sanphamService.locSanPham(filterGiamGia);
-
+	
 		// Truyền vào view
 		model.addAttribute("danhsachSP", danhsachSP);
 		model.addAttribute("topBanChay", topBanChay);
@@ -127,6 +129,14 @@ public class HomeController {
 		model.addAttribute("content", "home.html");
 		return "index";
 	}
+	@PostMapping("/thong-bao/{id}/da-doc")
+	@ResponseBody
+	public ResponseEntity<?> danhDauThongBaoDaDoc(@PathVariable Integer id) {
+	    thongBaoService.danhDauDaDoc(id);
+	    return ResponseEntity.ok().build();
+	}
+
+
 
 	@GetMapping("/403")
 	public String accessDenied() {
@@ -384,9 +394,9 @@ public class HomeController {
 	        boolean daThem = giohangService.themSanPhamVaoGio(taiKhoan, maCT, soLuong);
 
 	        if (daThem) {
-	        	 return ResponseEntity.ok(Map.of("message", "Thêm sản phẩm thành công"));
+	        	 return ResponseEntity.ok(Map.of("message", "✅ Đã thêm vào giỏ hàng!"));
 	        } else {
-	            return ResponseEntity.badRequest().body(Map.of("error", "Không thể thêm sản phẩm"));
+	            return ResponseEntity.badRequest().body(Map.of("error", "❌ Không thể thêm sản phẩm."));
 	        }
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -656,44 +666,6 @@ public class HomeController {
 
 
 
-//	@GetMapping("/test/cap-nhat-don-hang")
-//	@ResponseBody
-//	public String testCapNhatTrangThai(
-//	        @RequestParam int maDH,
-//	        @RequestParam int trangThaiMoi,
-//	        @RequestParam String trangThaiThanhToan) {
-//
-//	    try {
-//	        donHangService.capNhatTrangThaiDonHang(maDH, trangThaiMoi, trangThaiThanhToan);
-//	        return "✅ Đã cập nhật trạng thái và trừ tồn kho nếu cần!";
-//	    } catch (Exception e) {
-//	        return "❌ Lỗi: " + e.getMessage();
-//	    }
-//	}
-
-
-	@GetMapping("/xac-nhan-thanh-toan")
-	@ResponseBody
-	public String xacNhanThanhToan(@RequestParam("maDH") int maDH) {
-	    try {
-	        DonHang donHang = donhangRepository.findById(maDH).orElse(null);
-	        if (donHang != null) {
-	            ThanhToan thanhToan = donHang.getThanhToan();
-	            if (thanhToan != null) {
-	                thanhToan.setTrangThai("Đã thanh toán");
-	                thanhToanRepo.save(thanhToan);
-	                return "✅ Đã cập nhật trạng thái thanh toán!";
-	            } else {
-	                return "⚠️ Đơn hàng không có thông tin thanh toán!";
-	            }
-	        } else {
-	            return "❌ Không tìm thấy đơn hàng!";
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace(); // Gỡ lỗi nếu cần
-	        return "❌ Có lỗi xảy ra khi cập nhật!";
-	    }
-	}
 
 	
 	@GetMapping("/xac-nhan-nhan-hang/{maDH}")
@@ -709,13 +681,32 @@ public class HomeController {
 	@GetMapping("/xac-nhan-da-thanh-toan/{maDH}")
 	public ResponseEntity<?> xacNhanDaThanhToan(@PathVariable int maDH) {
 	    DonHang dh = donHangService.capNhatTrangThaiThanhToan(maDH);
-	    String noiDung = "Đơn hàng #" + maDH + " đã giao. Vui lòng kiểm tra và xác nhận nếu không có vấn đề!";
+	    String noiDung = "Đơn hàng: DH" + maDH + " đã giao. Vui lòng kiểm tra và xác nhận nếu không có vấn đề!";
 
-	    // Gửi thông báo WebSocket
-	    webSocketNotificationController.guiThongBaoDonHang(dh.getTaiKhoan().getMaTK(), noiDung);
+	    // 🌟 1. Lưu thông báo vào DB
+	    Integer maTK = dh.getTaiKhoan().getMaTK(); // Lấy ra ID
+
+	    TaiKhoan taiKhoan = new TaiKhoan(); // Tạo đối tượng rỗng
+	    taiKhoan.setMaTK(maTK); // Chỉ cần set MaTK
+
+	    ThongBao thongBao = new ThongBao();
+	    thongBao.setTaiKhoan(taiKhoan);// ✅ Đã được attach vào context// Truyền đối tượng TaiKhoan, KHÔNG phải MaTK
+	    thongBao.setNoiDung(noiDung);
+	    thongBao.setNgayTao(LocalDateTime.now());
+	    thongBao.setDaDoc(false);
+
+	    ThongBao daLuu = thongBaoService.taoThongBao(thongBao);
+
+
+
+
+	    // 🌟 2. Gửi WebSocket tới client
+	    webSocketNotificationController.guiThongBaoDonHang(dh.getTaiKhoan().getMaTK(), noiDung, daLuu.getMaThongBao());
 	    System.out.println(">>> Gửi WebSocket tới /topic/user/" + dh.getTaiKhoan().getMaTK() + " với nội dung: " + noiDung);
+
 	    return ResponseEntity.ok("Xác nhận thành công");
 	}
+
 
 	
 	

@@ -75,6 +75,7 @@ public class TaiKhoan {
 	    }
 	    return null;
 	}
-
+	@OneToMany(mappedBy = "taiKhoan", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ThongBao> thongBaos;
 
 }
