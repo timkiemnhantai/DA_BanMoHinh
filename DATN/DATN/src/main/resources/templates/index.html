@@ -113,7 +113,7 @@
         </div>
     </div>
 </div>
-
+<div id="toast-container1" class="toast-container"></div>
 
 	<!-- Modal xác nhận -->
 	<div id="confirm-modal" class="modal-overlay hidden">
@@ -257,6 +257,24 @@
     
   </script>
 <script>
+function hienThongBaoHeThong(message, isSuccess = true) {
+	const container = document.getElementById('toast-container1');
+
+	const toast = document.createElement('div');
+	toast.classList.add('toast');
+	toast.style.backgroundColor = isSuccess ? '#28a745' : '#dc3545'; // xanh nếu thành công, đỏ nếu lỗi
+	toast.textContent = message;
+
+	container.appendChild(toast);
+
+	setTimeout(() => {
+		toast.remove();
+	}, 4000);
+}
+
+
+
+
 function hienThongBao(noiDung, maThongBao) {
     const container = document.getElementById('toast-container');
 
