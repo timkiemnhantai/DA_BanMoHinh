@@ -34,6 +34,9 @@ public class ThongBao {
     @Column(name = "NoiDung", columnDefinition = "NVARCHAR(MAX)")
     private String noiDung;
 
+    @Column(name = "Url")
+    private String url;
+    
     @Column(name = "DaDoc")
     private Boolean daDoc = false;
 

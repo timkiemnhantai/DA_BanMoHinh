@@ -11,11 +11,12 @@ public class WebSocketNotificationController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    public void guiThongBaoDonHang(int maTK, String noiDung, int maThongBao) {
+    public void guiThongBaoDonHang(int maTK, String noiDung, int maThongBao, String url) {
         // Gửi thông báo đến client (ví dụ /topic/thong-bao/6)
     	Map<String, Object> data = new HashMap<>();
     	data.put("noiDung", noiDung);
     	data.put("maThongBao", maThongBao);
+    	data.put("url", url);
         messagingTemplate.convertAndSend("/topic/thong-bao/" + maTK, data);
     }
 }
