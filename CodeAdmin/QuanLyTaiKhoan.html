@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quản lý tài khoản</title>
+
+  <!-- Icon Font -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ========== NAVIGATION BAR ========== */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100px;
+      background-color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 25px;
+      z-index: 999;
+      border-bottom: 1px solid #ccc;
+    }
+
+    #navbar .nav-left {
+      display: flex;
+      align-items: center;
+    }
+
+    #navbar .logo-wrapper {
+      display: flex;
+      align-items: center;
+    }
+
+    #navbar .logo-wrapper img {
+      height: 45px;
+      margin-right: 10px;
+    }
+
+    #navbar .logo-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #000;
+    }
+
+    #navbar .nav-right {
+      display: flex;
+      align-items: center;
+    }
+
+    #navbar .nav-right label {
+      margin-right: 10px;
+      font-weight: 500;
+    }
+
+    #navbar .nav-right img {
+      height: 35px;
+      border-radius: 50%;
+    }
+
+    /* ========== TASKBAR (Dọc bên trái) ========== */
+    .taskbar {
+      position: fixed;
+      top: 100px; /* Chiều cao navbar */
+      left: 0;
+      width: 100px;
+      height: calc(100vh - 60px);
+      background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      border-right: 1px solid #ccc;
+      z-index: 998;
+    }
+
+    .taskbar a {
+      margin-bottom: 20px;
+    }
+
+    .taskbar img {
+      width: 28px;
+      opacity: 0.7;
+      transition: all 0.3s ease;
+    }
+
+    .taskbar img:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    /* ========== CONTAINER - Phần nội dung chính ========== */
+    .container-admin {
+      margin-top: 80px;   /* Tránh đè navbar */
+      margin-left: 100px;  /* Tránh đè taskbar */
+      padding: 20px;
+      overflow-x: hidden;
+      background: #fdfdfd;
+      min-height: calc(100vh - 60px);
+    }
+
+    .form-admin {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    .form-label label {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+
+    .tabs {
+      margin: 15px 0;
+      display: flex;
+      gap: 10px;
+    }
+
+    .tab-button {
+      background-color: #eee;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .tab-button.active {
+      background-color: #333;
+      color: #fff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .form-list .form-table2 {
+      display: none;
+    }
+
+    .form-list .form-table2.active {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    .tools {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .search {
+      display: flex;
+    }
+
+    .search input {
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-right: none;
+      border-radius: 5px 0 0 5px;
+    }
+
+    .search button {
+      background: #ccc;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 0 5px 5px 0;
+      cursor: pointer;
+    }
+
+    .add {
+      background: #3490dc;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- ========== NAVBAR ========== -->
+  <nav id="navbar">
+    <div class="nav-left">
+      <div class="logo-wrapper">
+        <img src="/img/processed_no_white.png" alt="Logo" />
+        <div class="logo-title">Gundam Shop</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <label for="">Tài khoản |</label>
+      <a href="#">
+        <img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Tài khoản"/>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ========== TASKBAR ========== -->
+  <div class="taskbar">
+      <a href="/CodeAdmin/QuanLySanPham.html" title="Quản lý sản phẩm"><img src="/img/box.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyTaiKhoan.html" title="Quản lý tài khoản"><img src="/img/account.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyDonHang.html" title="Quản lý đơn hàng"><img src="/img/booking.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyDanhGia.html" title="Quản lý đánh giá"><img src="/img/review.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyBanner.html" title="Quản lý banner"><img src="/img/advertisement.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyThanhToan.html" title="Quản lý thanh toán"><img src="/img/credit-card.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyXacNhanDonHang.html" title="Quản lý Xác Nhận Đơn Hàng"><img src="/img/changes.png" alt="" /></a>
+  </div>
+
+  <!-- ========== MAIN CONTAINER ========== -->
+  <div class="container-admin">
+    <div class="form-admin">
+      <div class="form-label">
+        <label>Quản lý tài khoản</label>
+        <div class="tabs">
+          <button class="tab-button active" data-tab="khach">Khách hàng</button>
+          <button class="tab-button" data-tab="nhanvien">Nhân viên</button>
+        </div>
+      </div>
+
+      <!-- Tab content -->
+      <div class="tab-content tab-khach active">
+        <div class="tools">
+          <div class="search">
+            <input type="text" placeholder="Từ khóa...">
+            <button><i class="fas fa-search"></i></button>
+          </div>
+          <button class="add">Thêm mới</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>Họ và tên</th><th>Tên đăng nhập</th>
+              <th>Giới tính</th><th>Ngày sinh</th><th>Số điện thoại</th>
+              <th>Địa chỉ</th><th>Email</th><th>Avatar</th><th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <!-- JS will append here -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tab-content tab-nhanvien">
+        <div class="tools">
+          <div class="search">
+            <input type="text" placeholder="Từ khóa...">
+            <button><i class="fas fa-search"></i></button>
+          </div>
+          <button class="add">Thêm mới</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>Họ và tên</th><th>Tên đăng nhập</th>
+              <th>Giới tính</th><th>Ngày sinh</th><th>Số điện thoại</th>
+              <th>Địa chỉ</th><th>Email</th><th>Avatar</th><th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="table-body2">
+            <!-- JS will append here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+<!-- Form chỉnh sửa inline (ẩn ban đầu) -->
+<div id="editFormInline" class="hidden mt-6 p-4 border rounded bg-white shadow">
+  <h2 class="text-lg font-bold mb-2">Chỉnh sửa tài khoản</h2>
+  <form id="inlineForm" class="grid grid-cols-2 gap-4">
+    <input type="hidden" id="inlineIndex">
+    <div><label>ID</label><input id="inlineId" disabled class="w-full border px-2 py-1 rounded" /></div>
+    <div><label>Họ và tên</label><input id="inlineName" class="w-full border px-2 py-1 rounded" /></div>
+    <div><label>Tên đăng nhập</label><input id="inlineUsername" class="w-full border px-2 py-1 rounded" /></div>
+    <div><label>Giới tính</label>
+      <select id="inlineGender" class="w-full border px-2 py-1 rounded">
+        <option>Nam</option><option>Nữ</option>
+      </select>
+    </div>
+    <div><label>Ngày sinh</label><input id="inlineDob" type="date" class="w-full border px-2 py-1 rounded" /></div>
+    <div><label>SĐT</label><input id="inlinePhone" class="w-full border px-2 py-1 rounded" /></div>
+    <div><label>Địa chỉ</label><input id="inlineAddress" class="w-full border px-2 py-1 rounded" /></div>
+    <div><label>Email</label><input id="inlineEmail" class="w-full border px-2 py-1 rounded" /></div>
+    <div class="col-span-2 flex justify-end gap-3 mt-2">
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Lưu</button>
+      <button type="button" id="inlineCancel" class="bg-gray-400 text-white px-4 py-2 rounded">Hủy</button>
+    </div>
+  </form>
+</div>
+
+
+  </div>
+
+
+  
+
+
+  <!-- ========== SCRIPT ========== -->
+  <script>
+    const buttons = document.querySelectorAll(".tab-button");
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const tab = button.dataset.tab;
+        buttons.forEach(b => b.classList.remove("active"));
+        button.classList.add("active");
+
+        document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+        document.querySelector(".tab-" + tab).classList.add("active");
+      });
+    });
+
+    // Tạo dữ liệu giả
+    const tbody = document.getElementById("table-body");
+    const tbody2 = document.getElementById("table-body2");
+
+    for (let i = 1; i <= 5; i++) {
+      tbody.innerHTML += `
+        <tr>
+          <td>A0${i}</td>
+          <td>Nguyễn Văn A</td>
+          <td>nguyenvana</td>
+          <td>Nam</td>
+          <td>01-01-2000</td>
+          <td>0901234567</td>
+          <td>12 Nguyễn Huệ, TP.HCM</td>
+          <td>a@gmail.com</td>
+          <td><img style="width:40px;" src="/img/Screenshot_2025-06-19_220523-removebg-preview.png"/></td>
+          <td><i class="fas fa-edit cursor-pointer"></i></td>
+        </tr>`;
+      tbody2.innerHTML += `
+        <tr>
+          <td>B0${i}</td>
+          <td>Trần Thị B</td>
+          <td>tranthib</td>
+          <td>Nữ</td>
+          <td>02-02-1995</td>
+          <td>0912345678</td>
+          <td>45 Trần Hưng Đạo, Hà Nội</td>
+          <td>b@gmail.com</td>
+          <td><img style="width:40px;" src="/img/Screenshot_2025-06-19_220523-removebg-preview.png"/></td>
+          <td><i class="fas fa-edit cursor-pointer"></i></td>
+        </tr>`;
+    }
+
+
+    // Form sửa tại chỗ
+const inlineForm = document.getElementById("editFormInline");
+const inlineIndex = document.getElementById("inlineIndex");
+const inlineId = document.getElementById("inlineId");
+const inlineName = document.getElementById("inlineName");
+const inlineUsername = document.getElementById("inlineUsername");
+const inlineGender = document.getElementById("inlineGender");
+const inlineDob = document.getElementById("inlineDob");
+const inlinePhone = document.getElementById("inlinePhone");
+const inlineAddress = document.getElementById("inlineAddress");
+const inlineEmail = document.getElementById("inlineEmail");
+const inlineCancel = document.getElementById("inlineCancel");
+
+function convertToInputDate(dateStr) {
+  const [d, m, y] = dateStr.split("-");
+  return `${y}-${m}-${d}`;
+}
+function convertToDisplayDate(dateStr) {
+  const [y, m, d] = dateStr.split("-");
+  return `${d}-${m}-${y}`;
+}
+
+// Gắn sự kiện vào các nút chỉnh sửa
+document.querySelectorAll("#table-body .fa-edit").forEach((icon, index) => {
+  icon.addEventListener("click", () => {
+    const row = icon.closest("tr");
+    const cells = row.querySelectorAll("td");
+
+    inlineIndex.value = index;
+    inlineId.value = cells[0].innerText;
+    inlineName.value = cells[1].innerText;
+    inlineUsername.value = cells[2].innerText;
+    inlineGender.value = cells[3].innerText;
+    inlineDob.value = convertToInputDate(cells[4].innerText);
+    inlinePhone.value = cells[5].innerText;
+    inlineAddress.value = cells[6].innerText;
+    inlineEmail.value = cells[7].innerText;
+
+    inlineForm.classList.remove("hidden");
+    inlineForm.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// Lưu khi submit
+document.getElementById("inlineForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const row = document.querySelectorAll("#table-body tr")[inlineIndex.value];
+  const cells = row.querySelectorAll("td");
+
+  cells[1].innerText = inlineName.value;
+  cells[2].innerText = inlineUsername.value;
+  cells[3].innerText = inlineGender.value;
+  cells[4].innerText = convertToDisplayDate(inlineDob.value);
+  cells[5].innerText = inlinePhone.value;
+  cells[6].innerText = inlineAddress.value;
+  cells[7].innerText = inlineEmail.value;
+
+  inlineForm.classList.add("hidden");
+  alert("Đã cập nhật!");
+});
+
+// Hủy bỏ chỉnh sửa
+inlineCancel.onclick = () => {
+  inlineForm.classList.add("hidden");
+};
+
+
+
+
+  </script>
+</body>
+</html>

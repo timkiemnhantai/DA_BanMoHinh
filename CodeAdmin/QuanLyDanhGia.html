@@ -6,54 +6,9 @@
   <title>Quản lý đánh giá</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/css/Style_QuanLyThanhToan.css">
+  <link rel="stylesheet" href="/css/Style_QuanLyDanhGia.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    #navbar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 100px;
-      background-color: #ffffff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 25px;
-      z-index: 999;
-      border-bottom: 1px solid #ccc;
-    }
-    .taskbar {
-      position: fixed;
-      top: 100px;
-      left: 0;
-      width: 100px;
-      height: calc(100vh - 100px);
-      background-color: #f9f9f9;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 20px;
-      border-right: 1px solid #ccc;
-      z-index: 998;
-    }
-    .taskbar img { width: 28px; opacity: 0.7; transition: 0.3s; }
-    .taskbar img:hover { opacity: 1; transform: scale(1.1); }
-    .container-admin {
-      margin-top: 100px;
-      margin-left: 100px;
-      padding: 30px;
-      background: #fdfdfd;
-      min-height: calc(100vh - 100px);
-    }
-    .truncate {
-      max-width: 300px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .stars {
-      color: #fbbf24;
-    }
-  </style>
+ 
 </head>
 <body>
   <!-- NAVBAR -->
@@ -72,12 +27,13 @@
 
   <!-- TASKBAR -->
   <div class="taskbar">
-    <a href="/QuanLySanPham.html"><img src="/img/box.png" alt="Sản phẩm" /></a>
-    <a href="/QuanLyTaiKhoan.html"><img src="/img/account.png" alt="Tài khoản" /></a>
-    <a href="/QuanLyDonHang.html"><img src="/img/booking.png" alt="Đơn hàng" /></a>
-    <a href="/QuanLyDanhGia.html"><img src="/img/review.png" alt="Đánh giá" /></a>
-    <a href="/QuanLyBanner.html"><img src="/img/advertisement.png" alt="Banner" /></a>
-    <a href="/QuanLyThanhToan.html"><img src="/img/credit-card.png" alt="Thanh toán" /></a>
+     <a href="/CodeAdmin/QuanLySanPham.html" title="Quản lý sản phẩm"><img src="/img/box.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyTaiKhoan.html" title="Quản lý tài khoản"><img src="/img/account.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyDonHang.html" title="Quản lý đơn hàng"><img src="/img/booking.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyDanhGia.html" title="Quản lý đánh giá"><img src="/img/review.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyBanner.html" title="Quản lý banner"><img src="/img/advertisement.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyThanhToan.html" title="Quản lý thanh toán"><img src="/img/credit-card.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyXacNhanDonHang.html" title="Quản lý Xác Nhận Đơn Hàng"><img src="/img/changes.png" alt="" /></a>
   </div>
 
   <!-- MAIN -->
@@ -122,6 +78,47 @@
             <button class="btn btn-danger btn-sm">Xóa</button>
           </td>
         </tr>
+
+        <tr>
+          <td>DG002</td>
+          <td>SP456</td>
+          <td>TK002</td>
+          <td>3</td>
+          <td>Tạm ổn, giao hàng hơi chậm.</td>
+          <td>2025-07-14</td>
+          <td>
+            <button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
+            <button class="btn btn-danger btn-sm">Xóa</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>DG002</td>
+          <td>SP456</td>
+          <td>TK002</td>
+          <td>3</td>
+          <td>Tạm ổn, giao hàng hơi chậm.</td>
+          <td>2025-07-14</td>
+          <td>
+            <button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
+            <button class="btn btn-danger btn-sm">Xóa</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>DG002</td>
+          <td>SP456</td>
+          <td>TK002</td>
+          <td>3</td>
+          <td>Tạm ổn, giao hàng hơi chậm.</td>
+          <td>2025-07-14</td>
+          <td>
+            <button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
+            <button class="btn btn-danger btn-sm">Xóa</button>
+          </td>
+        </tr>
+
+
       </tbody>
     </table>
 

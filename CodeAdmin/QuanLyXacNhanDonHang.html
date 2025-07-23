@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quản lý thanh toán</title>
+
+  <!-- Icon Font -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style_QuanLyXacNhanDonHang.css">
+  
+</head>
+<body>
+  <!-- ========== NAVBAR ========== -->
+  <nav id="navbar">
+    <div class="nav-left">
+      <div class="logo-wrapper">
+        <img src="/img/processed_no_white.png" alt="Logo" />
+        <div class="logo-title">Gundam Shop</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <label for="">Tài khoản |</label>
+      <a href="#">
+        <img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Tài khoản"/>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ========== TASKBAR ========== -->
+  <div class="taskbar">
+     <a href="/CodeAdmin/QuanLySanPham.html" title="Quản lý sản phẩm"><img src="/img/box.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyTaiKhoan.html" title="Quản lý tài khoản"><img src="/img/account.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyDonHang.html" title="Quản lý đơn hàng"><img src="/img/booking.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyDanhGia.html" title="Quản lý đánh giá"><img src="/img/review.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyBanner.html" title="Quản lý banner"><img src="/img/advertisement.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyThanhToan.html" title="Quản lý thanh toán"><img src="/img/credit-card.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyXacNhanDonHang.html" title="Quản lý Xác Nhận Đơn Hàng"><img src="/img/changes.png" alt="" /></a>
+  </div>
+
+
+
+  <div class="container-admin">
+    <h1>Quản lý Xác Nhận Đơn Hàng</h1>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Mã Đơn</th>
+          <th>Khách hàng</th>
+          <th>Sản phẩm</th>
+          <th>Tổng tiền</th>
+          <th>Ngày đặt</th>
+          <th>Trạng thái</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>DH12345</td>
+          <td>Nguyễn Văn A</td>
+          <td>
+            <ul>
+              <li>Gundam RX-78-2</li>
+              <li>Gundam Zaku II</li>
+            </ul>
+          </td>
+          <td>1.500.000đ</td>
+          <td>23/07/2025</td>
+          <td><span class="status pending">Chờ xác nhận</span></td>
+          <td>
+            <button class="btn btn-confirm" onclick="confirmOrder(this)">Duyệt</button>
+            <button class="btn btn-reject" onclick="rejectOrder(this)">Từ chối</button>
+          </td>
+        </tr>
+
+
+        <tr>
+          <td>DH12345</td>
+          <td>Nguyễn Văn c</td>
+          <td>
+            <ul>
+              <li>Gundam RX-78-2</li>
+              <li>Gundam Zaku II</li>
+            </ul>
+          </td>
+          <td>1.500.000đ</td>
+          <td>23/07/2025</td>
+          <td><span class="status pending">Chờ xác nhận</span></td>
+          <td>
+            <button class="btn btn-confirm" onclick="confirmOrder(this)">Duyệt</button>
+            <button class="btn btn-reject" onclick="rejectOrder(this)">Từ chối</button>
+          </td>
+        </tr>
+
+
+
+        
+
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function confirmOrder(button) {
+      const row = button.closest('tr');
+      const status = row.querySelector('.status');
+      status.textContent = 'Đã xác nhận';
+      status.className = 'status confirmed';
+
+      button.disabled = true;
+      button.nextElementSibling.disabled = true;
+    }
+
+    function rejectOrder(button) {
+      const row = button.closest('tr');
+      const status = row.querySelector('.status');
+      status.textContent = 'Đã hủy';
+      status.className = 'status rejected';
+
+      button.disabled = true;
+      button.previousElementSibling.disabled = true;
+    }
+  </script>
+
+  
+
+
+
+
+
+</body>
+</html>
