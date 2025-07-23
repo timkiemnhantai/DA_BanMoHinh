@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		const maxSoLuong = layTonKho();
 
 		if (val > maxSoLuong) {
-			alert("⚠️ Số lượng bạn nhập vượt quá tồn kho!");
+			hienThongBao("⚠️ Số lượng bạn nhập vượt quá tồn kho!", false, false);
 			inputSoLuong.value = maxSoLuong;
 		}
 		if (val < 1) {
@@ -252,13 +252,13 @@ document.addEventListener("DOMContentLoaded", function () {
 				const data = await res.json();
 
 				if (res.ok) {
-					hienThongBao(data.message || "✅ Đã thêm vào giỏ hàng!", true);
+					hienThongBao(data.message ,false, true);
 				} else {
-					hienThongBao(data.error || "❌ Không thể thêm sản phẩm.", false);
+					hienThongBao(data.error, false, false);
 				}
 			} catch (err) {
 				console.error(err);
-				hienThongBao("⚠️ Vui lòng đăng nhập để thêm vào giỏ hàng", false);
+				hienThongBao("⚠️ Vui lòng đăng nhập để thêm vào giỏ hàng", false, false);
 			}
 		});
 	});
