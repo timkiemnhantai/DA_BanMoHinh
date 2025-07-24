@@ -21,6 +21,7 @@ public class SanPhamDTO {
     private String loaiKeyword;
     private String sapXep;
     private Boolean giamGia;
+	private Boolean banChay;
     private Double diemTrungBinhDanhGia = 0.0;
     public SanPhamDTO(SanPham sp, Integer phanTramGiam, Long giaGiam, BigDecimal giaSauGiam, Long tongSoLuongBan, Double diemTrungBinhDanhGia) {
         this.sanPham = sp;

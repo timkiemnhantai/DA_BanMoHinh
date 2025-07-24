@@ -115,8 +115,9 @@ public class HomeController {
 		List<SanPhamDTO> danhsachSP = sanphamService.locSanPham(filterMoiNhat);
 
 		// Bán chạy
-		List<SanPhamDTO> topBanChay = sanphamService.laySanPhamBanChay();
-
+		SanPhamDTO filterBanChay = new SanPhamDTO();
+		filterBanChay.setBanChay(true);
+		List<SanPhamDTO> topBanChay = sanphamService.locSanPham(filterBanChay);
 		// Giảm giá
 		SanPhamDTO filterGiamGia = new SanPhamDTO();
 		filterGiamGia.setGiamGia(true);
