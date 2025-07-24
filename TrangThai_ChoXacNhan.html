@@ -166,91 +166,91 @@
 
 
 
-    /* Content */
-    .content {
-      flex: 1;
-      padding: 30px;
-    }
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 30px;
+        }
 
-    .filter {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
+        .filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
 
-    .btn {
-      padding: 8px 14px;
-      border: 1px solid #ccc;
-      background: #fff;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: 0.3s;
-      font-size: 14px;
-    }
+        .btn {
+            padding: 8px 14px;
+            border: 1px solid #ccc;
+            background: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+        }
 
-    .btn:hover {
-      background: #f0f0f0;
-    }
+        .btn:hover {
+            background: #f0f0f0;
+        }
 
-    .btn.active {
-      background: #ee4d2d;
-      color: white;
-      border-color: #ee4d2d;
-    }
+        .btn.active {
+            background: #ee4d2d;
+            color: white;
+            border-color: #ee4d2d;
+        }
 
-    .order {
-      border: 1px solid #c3baba;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      padding: 16px;
-    }
+        .order {
+            border: 1px solid #c3baba;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 16px;
+        }
 
-    .order-head {
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
+        .order-head {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
 
-    .order-items {
-      border-top: 1px solid #eee;
-      padding-top: 10px;
-    }
+        .order-items {
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
 
-    .item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
+        .item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
 
-    .item img {
-      width: 60px;
-      height: 60px;
-      border-radius: 6px;
-      object-fit: cover;
-    }
+        .item img {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
 
-    .item-info {
-      flex: 1;
-    }
+        .item-info {
+            flex: 1;
+        }
 
-    .item-info p {
-      margin: 4px 0;
-      font-size: 14px;
-    }
+        .item-info p {
+            margin: 4px 0;
+            font-size: 14px;
+        }
 
-    .order-foot {
-      text-align: right;
-      font-size: 14px;
-      margin-top: 10px;
-    }
+        .order-foot {
+            text-align: right;
+            font-size: 14px;
+            margin-top: 10px;
+        }
 
-    .order-foot span {
-      font-weight: bold;
-      color: #ee4d2d;
-    }
+        .order-foot span {
+            font-weight: bold;
+            color: #ee4d2d;
+        }
     </style>
 </head>
 
@@ -329,7 +329,7 @@
                 <li><a href="/TrangCaNhan.html">Tài Khoản Của Tôi</a></li>
                 <li><a href="/TrangCaNhan.html">Hồ Sơ</a></li>
                 <li><a href="/DiaChi.html">Địa Chỉ</a></li>
-                <li><a href="/DoiMatKhau.html" >Đổi Mật Khẩu</a></li>
+                <li><a href="/DoiMatKhau.html">Đổi Mật Khẩu</a></li>
                 <li><a href="/XemTrangThai.html" class="active">Đơn Mua</a></li>
             </ul>
         </div>
@@ -364,28 +364,45 @@
                             <p>Mô Hình Lắp Ráp In Era+ THUNDERBOLT 2.0</p>
                             <p>x1 - 500.000đ</p>
                         </div>
+                        
                     </div>
 
                     <div class="item">
                         <img src="/img/vn-11134207-7ra0g-m84y9wcskbji74.jpg" alt="product">
                         <div class="item-info">
                             <p>Mô Hình Lắp Ráp In Era+ THUNDERBOLT 2.0</p>
-                            <p>x2 - 1.200.000đ</p>
+                            <p>x2 - 1.000.000đ</p>
+                        </div>
+                        <div class="order-actions" style="text-align: right; margin-top: 10px;">
+                            <button class="btn btn-confirm-receive" onclick="confirmReceived(this)">Hủy đơn
+                                hàng</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="order-foot">
-                    Tổng tiền: <span>1.700.000đ</span>
+                    Tổng tiền: <span>1.500.000đ</span>
                 </div>
             </div>
 
-            
 
-        
+
+
         </div>
 
     </div>
+    <script>
+    function confirmReceived(button) {
+        const order = button.closest('.order');
+        const status = order.querySelector('.order-head strong');
+        status.textContent = 'Đã Hủy';
+        button.textContent = '✔ Đã Hủy';
+        button.disabled = true;
+        button.style.backgroundColor = '#d1e7dd';
+        button.style.color = '#198754';
+        button.style.borderColor = '#198754';
+    }
+</script>
 
 
 </body>

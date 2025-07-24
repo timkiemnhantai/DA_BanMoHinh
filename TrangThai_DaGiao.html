@@ -364,9 +364,9 @@
 
                 <div class="order-items">
                     <div class="item">
-                        <img src="/img/MoHinh/BanDai/HG/GundamAerialRebuild/sp2.png" alt="product">
+                        <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.png" alt="product">
                         <div class="item-info">
-                            <p>Mô hình GundamGusionRebakeFullCity</p>
+                            <p>Mô hình GundamAerialRebuild</p>
                             <p>x1 - 850.000đ</p>
                         </div>
                     </div>
@@ -375,12 +375,26 @@
                 <div class="order-foot">
                     Tổng tiền: <span>850.000đ</span>
                 </div>
+                 <div class="order-actions" style="text-align: right; margin-top: 10px;">
+                    <button class="btn btn-confirm-receive" onclick="confirmReceived(this)">Đã nhận được hàng</button>
+                </div>
             </div>
         </div>
 
     </div>
 
-
+ <script>
+    function confirmReceived(button) {
+        const order = button.closest('.order');
+        const status = order.querySelector('.order-head strong');
+        status.textContent = 'Đã Giao';
+        button.textContent = '✔ Đã nhận';
+        button.disabled = true;
+        button.style.backgroundColor = '#d1e7dd';
+        button.style.color = '#198754';
+        button.style.borderColor = '#198754';
+    }
+</script>
 </body>
 
 </html>
