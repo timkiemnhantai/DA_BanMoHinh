@@ -78,4 +78,5 @@ public class TaiKhoan {
 	@OneToMany(mappedBy = "taiKhoan", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ThongBao> thongBaos;
 
+	
 }

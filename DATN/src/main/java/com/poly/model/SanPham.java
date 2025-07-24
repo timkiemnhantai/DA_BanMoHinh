@@ -58,4 +58,7 @@ public class SanPham {
     @CreationTimestamp
     @Column(name = "NgayTao", updatable = false)
     private LocalDateTime ngayTao;
+    
+    @OneToMany(mappedBy = "sanPham", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<DanhGiaSP> danhGiaList;
 }
