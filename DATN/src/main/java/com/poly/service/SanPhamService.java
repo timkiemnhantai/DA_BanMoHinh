@@ -217,10 +217,6 @@ public class SanPhamService {
 
 
 
-	public List<BienTheSanPham> getBienTheBySanPham(Integer maSP) {
-		return bienthesanphamRepository.findBySanPham_MaSP(maSP);
-	}
-
 	public List<AnhChiTiet> getAnhChiTietByMaCTSP(Integer maCTSP) {
 		return anhchitietRepository.findByChiTietSanPham_MaCTSP(maCTSP);
 	}

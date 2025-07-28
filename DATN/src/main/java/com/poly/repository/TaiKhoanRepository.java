@@ -13,4 +13,6 @@ public interface TaiKhoanRepository extends JpaRepository<TaiKhoan, Integer>{
 	boolean existsByEmailOrTenDangNhap(String email, String tenDangNhap);
     List<TaiKhoan> findByVaiTro_MaVaiTroIn(List<Integer> vaiTroIds);
 	Optional <TaiKhoan> findByEmail(String email);
+	boolean existsByEmail(String email);
+	boolean existsByTenDangNhap(String tenDangNhap);
 }

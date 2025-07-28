@@ -13,7 +13,7 @@ GO
 -- 2. TaiKhoan
 CREATE TABLE TaiKhoan (
     MaTK INT PRIMARY KEY IDENTITY(1,1),
-    TenDangNhap VARCHAR(50) UNIQUE NOT NULL,
+    TenDangNhap NVARCHAR(50) UNIQUE NOT NULL,
     MatKhau VARCHAR(100) NOT NULL,
     HoTen NVARCHAR(100),
     GioiTinh BIT,
