@@ -37,13 +37,15 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     private final Pattern pattern = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");
-	
+    private final Pattern emailPattern = Pattern.compile("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+
+
     @GetMapping("/login")
     public String loginPage(HttpSession session) {
         TaiKhoan user = (TaiKhoan) session.getAttribute("user");
-        
+
         if (user != null) {
-        	
+
             String role = user.getVaiTro().getTenVaiTro();
             return switch (role) {
                 case "Admin" -> "redirect:/QuanLySanPham";
@@ -51,7 +53,7 @@ public class AuthController {
                 default -> "redirect:/home";
             };
         }
-        return "login"; 
+        return "login";
     }
 
 //
@@ -123,7 +125,6 @@ public class AuthController {
         boolean hasError = false;
 
 
-        // Kiểm tra rỗng
         if (tenDangNhap == null || tenDangNhap.trim().isEmpty()) {
             model.addAttribute("usernameError", "Tên đăng nhập không được để trống");
             hasError = true;
@@ -132,8 +133,10 @@ public class AuthController {
         if (email == null || email.trim().isEmpty()) {
             model.addAttribute("emailError", "Email không được để trống");
             hasError = true;
+        } else if (!emailPattern.matcher(email).matches()) {
+            model.addAttribute("emailError", "Email không hợp lệ. Vui lòng nhập đúng định dạng.");
+            hasError = true;
         }
-
         if (matKhau == null || matKhau.trim().isEmpty()) {
             model.addAttribute("passwordError", "Mật khẩu không được để trống");
             hasError = true;
