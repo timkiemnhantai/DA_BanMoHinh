@@ -161,13 +161,19 @@ p {
 	<div class="background-image" aria-hidden="true"></div>
 	<section class="center-screen">
 		<form th:action="@{/login}" class="glass-container" autocomplete="off"
-			spellcheck="false" novalidate method="post">
+			spellcheck="false"  method="post">
 			<h2>ĐĂNG NHẬP</h2>
 			<p class="sub-heading">
 				Chưa có tài khoản? <a th:href="@{/register}" class="link-login">Đăng
 					ký</a>
 			</p>
-
+<div th:if="${param.error}"
+     style="color: #ff4d4f; font-size: 12px; text-align: center; margin-top: -20px; margin-bottom: 5px ">
+    Tài khoản hoặc mật khẩu sai!
+</div>
+<div th:if="${successMessage}" style="color: #28a745; font-size: 12px; text-align: center; margin-top: -20px; margin-bottom: 5px " class="alert alert-success" role="alert">
+    <span th:text="${successMessage}"></span>
+</div>
 			<label for="name" class="label-text">Email hoặc Tên tài khoản
 			</label> <input id="email" name="username" type="text"
 				placeholder="Your name" class="input-field" required
@@ -179,7 +185,6 @@ p {
 					style="padding-right: 45px; height: 40px;" required
 					autocomplete="new-password" aria-describedby="passwordHelp" />
 
-				<!-- Nút hiện/ẩn mật khẩu -->
 				<button type="button" onclick="togglePassword()"
 					style="position: absolute; right: 10px; top: 0; height: 100%; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; top: -20px ;">
 					<ion-icon id="toggleIcon" name="eye-outline"

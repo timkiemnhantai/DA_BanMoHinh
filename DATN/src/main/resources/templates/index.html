@@ -98,11 +98,25 @@
 	<div th:replace="~{${content}}"></div>
 
 	<!-- Toast container -->
-	<div id="toast-container" class="toast-container">
-		<div th:if="${message}" class="toast toast-info">
-			<span th:text="${message}"></span>
-		</div>
-	</div>
+<div id="toast-container" class="toast-container">
+   <div th:each="tb : ${dsThongBaoChuaDoc}" 
+        class="toast toast-websocket" 
+        th:attr="data-id=${tb.maThongBao}"
+        style="background-color: #ffc107; color: #fff; border-radius: 8px; margin-bottom: 8px; padding: 12px 16px;">
+        
+        <div class="toast-content" style="display: flex; justify-content: space-between; align-items: center;">
+        	<a th:href="${tb.url}" onclick="return danhDauVaAn(this)">
+                <span th:text="${tb.noiDung}"></span>
+        	</a>
+
+            <button class="toast-close" style="background: none; border: none; font-size: 18px; color: #fff; cursor: pointer;" 
+                    onclick="danhDauVaAn(this)">
+                ×
+            </button>
+        </div>
+    </div>
+</div>
+<div id="toast-container1" class="toast-container"></div>
 
 	<!-- Modal xác nhận -->
 	<div id="confirm-modal" class="modal-overlay hidden">
@@ -178,7 +192,50 @@
 			</ul>
 		</div>
 	</div>
+	
 </footer>
+
+<script>
+    function danhDauVaAn(element) {
+        const toast = element.closest('.toast');
+        const id = toast.getAttribute('data-id');
+        const isLink = element.tagName === 'A';
+        const url = isLink ? element.getAttribute('href') : null;
+
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        // Gửi POST đánh dấu đã đọc
+        fetch(`/thong-bao/${id}/da-doc`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            }
+        }).then(res => {
+            if (res.ok) {
+                toast.remove();
+                if (isLink && url) {
+                    window.location.href = url; // Chuyển hướng sau khi đánh dấu
+                }
+            } else {
+                alert('Lỗi khi đánh dấu thông báo đã đọc');
+            }
+        }).catch(err => {
+            console.error('Lỗi fetch:', err);
+            alert('Lỗi kết nối máy chủ');
+        });
+
+        return false; // Ngăn chuyển hướng mặc định nếu là <a>
+    }
+</script>
+
+
+
+
+
+
+
 <script>
     function updatePadding() {
       const navbar = document.getElementById("navbar");
@@ -210,20 +267,88 @@
     
   </script>
 <script>
-  function hienThongBao(message, isSuccess = true) {
-		const container = document.getElementById('toast-container');
+function hienThongBaoHeThong(message, isSuccess = true) {
+	const container = document.getElementById('toast-container1');
 
-		const toast = document.createElement('div');
-		toast.classList.add('toast');
-		toast.style.backgroundColor = isSuccess ? '#28a745' : '#dc3545'; // xanh nếu thành công, đỏ nếu lỗi
-		toast.textContent = message;
+	const toast = document.createElement('div');
+	toast.classList.add('toast');
+	toast.style.backgroundColor = isSuccess ? '#28a745' : '#dc3545'; // xanh nếu thành công, đỏ nếu lỗi
+	toast.textContent = message;
 
-		container.appendChild(toast);
+	container.appendChild(toast);
 
-		setTimeout(() => {
-			toast.remove();
-		}, 4000);
-	}
+	setTimeout(() => {
+		toast.remove();
+	}, 4000);
+}
+
+
+
+
+function hienThongBao(noiDung, maThongBao, url) {
+    const container = document.getElementById('toast-container');
+
+    const toast = document.createElement("div");
+    toast.className = "toast toast-websocket";
+    toast.style.backgroundColor = "#ffc107";
+    toast.style.color = "#fff";
+    toast.style.borderRadius = "8px";
+    toast.style.marginBottom = "8px";
+    toast.style.padding = "12px 16px";
+
+    toast.setAttribute("data-id", maThongBao);
+
+    toast.innerHTML = `
+        <div class="toast-content" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>${noiDung}</span>
+            <button class="toast-close" style="background: none; border: none; font-size: 18px; color: #fff; cursor: pointer;">×</button>
+        </div>
+    `;
+
+    toast.querySelector(".toast-close").addEventListener("click", function (e) {
+        e.stopPropagation();
+
+        const id = toast.getAttribute("data-id");
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        fetch(`/thong-bao/${id}/da-doc`, {
+            method: 'POST',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        }).then(res => {
+            if (res.ok) toast.remove();
+            else alert("Lỗi khi đánh dấu đã đọc!");
+        }).catch(err => {
+            console.error(err);
+            alert("Lỗi kết nối máy chủ");
+        });
+    });
+
+    toast.addEventListener("click", () => {
+    	const id = toast.getAttribute("data-id");
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        fetch(`/thong-bao/${id}/da-doc`, {
+            method: 'POST',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        }).finally(() => {
+            window.location.href = url;
+        });
+    });
+
+    container.appendChild(toast);
+}
+
+
+
+
+
+
   function showConfirm(message, onConfirm) {
 	  const modal = document.getElementById("confirm-modal");
 	  const messageEl = document.getElementById("confirm-message");
@@ -243,7 +368,24 @@
 	}
   
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script th:inline="javascript">
+/*<![CDATA[*/
+const maTK = /*[[${session.user != null ? session.user.maTK : 0}]]*/ 0;
 
+if (maTK > 0) {
+	const socket = new SockJS("/ws");
+	const stompClient = Stomp.over(socket);
+	stompClient.connect({}, function () {
+		stompClient.subscribe("/topic/thong-bao/" + maTK, function (message) {
+			const data = JSON.parse(message.body); // 👈 parse JSON object
+			hienThongBao(data.noiDung, data.maThongBao, data.url); // 👈 dùng đúng dữ liệu
+		});
+	});
+}
+/*]]>*/
+</script>
 
 <!-- Ionicons: để hiển thị icon trong form -->
 <script type="module"
