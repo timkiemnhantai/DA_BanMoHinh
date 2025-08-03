@@ -6,7 +6,7 @@
 	<div class="sidebar">
 		<div class="user-info">
 
-			<img style="margin-left: 75px" th:src="${avatar}" alt="Avatar">
+			<img style="margin-left: 75px" th:src="${avatar}" alt="Avatar" onerror="this.onerror=null; this.src='/img/Screenshot_2025-06-19_220523-removebg-preview.png';">
 			<strong th:text="${tendn}"></strong> <a th:href="@{/TrangCaNhan}">✎ Sửa Hồ Sơ</a>
 		</div>
 		<ul>
@@ -14,7 +14,7 @@
 					Của Tôi</a></li>
 			<li><a th:href="@{/DiaChi}">Địa Chỉ</a></li>
 
-			<li><a th:href="@{/doimatkhau}">Đổi Mật Khẩu</a></li>
+			<li><a th:href="@{/Doimatkhau}">Đổi Mật Khẩu</a></li>
 
 			<li><a th:href="@{/DonHang}" class="active">Đơn Mua</a></li>
 		</ul>

@@ -20,7 +20,6 @@ import com.poly.model.AnhSanPham;
 import com.poly.model.BienTheSanPham;
 import com.poly.model.ChiTietDonHang;
 import com.poly.model.DanhGiaSP;
-
 import com.poly.model.SanPham;
 import com.poly.repository.AnhChiTietRepository;
 import com.poly.repository.AnhSanPhamRepository;
@@ -151,7 +150,7 @@ public class SanPhamService {
 	            if (ctdhs != null) {
 	                for (ChiTietDonHang ctdh : ctdhs) {
 	                    if (ctdh.getDonHang() != null && ctdh.getDonHang().getTrangThaiDH() != null
-	                            && ctdh.getDonHang().getTrangThaiDH().getMaTTDH() == 4) {
+	                            && ctdh.getDonHang().getTrangThaiDH().getMaTTDH() == 6) {
 	                        tongSLBan += (ctdh.getSoLuongSP() != null ? ctdh.getSoLuongSP() : 0);
 	                    }
 	                }

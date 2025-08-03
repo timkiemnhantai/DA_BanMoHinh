@@ -29,11 +29,11 @@ public class SecurityConfig {
         http
 //            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/register", "/css/**", "/js/**", "/img/**", "/home", "/AnhSanPham/**","/home#","/product","/product/search","/chi-tiet-san-pham/**","/forgot-password","/reset-password","/change-password","/doimatkhau","/ChinhSach","/websocket/**", "/ws/**","/xac-nhan-thanh-toan/**","/thong-bao/**").permitAll()
+                .requestMatchers("/login", "/register", "/css/**", "/js/**", "/img/**", "/home", "/AnhSanPham/**","/product","/product/search","/chi-tiet-san-pham/**","/forgot-password","/reset-password","/change-password","/doimatkhau","/ChinhSach","/websocket/**", "/ws/**","/xac-nhan-thanh-toan/**","/thong-bao/**").permitAll()
                 .requestMatchers("/QuanLySanPham/**", "/QuanLyDanhGia/**").hasAnyAuthority("Admin", "Nhân viên")
                 .requestMatchers("/curd", "/QuanLyThanhToan","/QuanLyTaiKhoan").hasAuthority("Admin")
 
-//                .requestMatchers("/gio-hang","/thanh-toan").hasAuthority("Khách hàng")
+                .requestMatchers("/gio-hang/**","/thanh-toan/**","/Doimatkhau/**","/DiaChi/**","/TrangCaNhan/**","/DonHang/**").hasAuthority("Khách hàng")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
