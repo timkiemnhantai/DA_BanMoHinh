@@ -10,7 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,9 +27,10 @@ public class ThanhToan {
 	@Column(name = "MaThanhToan")
 	private Integer maThanhToan;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "MaDH")
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "MaDH", unique = true)
 	private DonHang donHang;
+
 
 	@Column(name = "SoTien")
 	private BigDecimal soTien;

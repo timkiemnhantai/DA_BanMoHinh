@@ -94,7 +94,6 @@ public class GioHangService {
         ChiTietGioHang ctgh = chitietgiohangRepository.findById(maCTGH)
             .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm trong giỏ"));
 
-        // Kiểm tra xem sản phẩm có thuộc giỏ hàng của người dùng này không (an toàn)
         if (!ctgh.getGioHang().getTaiKhoan().getMaTK().equals(taiKhoan.getMaTK())) {
             throw new RuntimeException("Không có quyền xóa sản phẩm này");
         }

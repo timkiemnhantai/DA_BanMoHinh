@@ -34,8 +34,16 @@ public class TaiKhoanService {
     }
     public boolean existsByEmailOrTenDangNhap(String email,String tenDangNhap) {
         return taikhoanRepository.existsByEmailOrTenDangNhap(email, tenDangNhap);
-
     }
+    public boolean existsByEmail(String email) {
+        return taikhoanRepository.existsByEmail(email);
+    }
+
+    public boolean existsByTenDangNhap(String tenDangNhap) {
+        return taikhoanRepository.existsByTenDangNhap(tenDangNhap);
+    }
+
+    
     public String changePassword(ChangePasswordRequest request) {
         // Bước 1: Tìm tài khoản theo email
         TaiKhoan taiKhoan = taikhoanRepository.findByEmail(request.getEmail())
