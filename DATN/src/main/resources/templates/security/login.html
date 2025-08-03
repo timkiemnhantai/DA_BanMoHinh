@@ -167,7 +167,7 @@ p {
 				Chưa có tài khoản? <a th:href="@{/register}" class="link-login">Đăng
 					ký</a>
 			</p>
-<div th:if="${param.error}" 
+<div th:if="${param.error}"
      style="color: #ff4d4f; font-size: 12px; text-align: center; margin-top: -20px; margin-bottom: 5px ">
     Tài khoản hoặc mật khẩu sai!
 </div>
@@ -185,7 +185,6 @@ p {
 					style="padding-right: 45px; height: 40px;" required
 					autocomplete="new-password" aria-describedby="passwordHelp" />
 
-				<!-- Nút hiện/ẩn mật khẩu -->
 				<button type="button" onclick="togglePassword()"
 					style="position: absolute; right: 10px; top: 0; height: 100%; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; top: -20px ;">
 					<ion-icon id="toggleIcon" name="eye-outline"
