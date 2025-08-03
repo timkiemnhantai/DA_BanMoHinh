@@ -47,25 +47,25 @@ public class AdminController {
 		List<TaiKhoan> khachHang = taikhoanService.layTaiKhoanTheoMaVaiTro(Arrays.asList(3));
 		model.addAttribute("nhanvien", nhanVien);
 		model.addAttribute("khachhang", khachHang);
-		model.addAttribute("content","QuanLyTaiKhoan.html");
+		model.addAttribute("content","Admin_Staff/QuanLyTaiKhoan.html");
 		
-		return "curd";
+		return "Admin_Staff/curd";
 	}
 
 	@GetMapping("/QuanLyBanner")
 	public String sqlBanner(Model model) {
 
-		model.addAttribute("content","QuanLyBanner.html");
+		model.addAttribute("content","Admin_Staff/QuanLyBanner.html");
 		
-		return "curd";
+		return "Admin_Staff/curd";
 	}
 	
 	@GetMapping("/QuanLyThanhToan")
 	public String hienThiThanhToan(Model model) {
 		List<ThanhToan> listThanhToan = thanhToanRepository.findAll();
 		model.addAttribute("listThanhToan", listThanhToan);
-		model.addAttribute("content", "QuanLyThanhToan.html");
-		return "curd";
+		model.addAttribute("content", "Admin_Staff/QuanLyThanhToan.html");
+		return "Admin_Staff/curd";
 	}
 
 	@PostMapping("/ThanhToan/update")
@@ -110,14 +110,14 @@ public class AdminController {
     public String hienThiQuanLySanPham(Model model) {
         List<SanPhamDTO> danhSachSanPham = sanPhamService.locSanPham(new SanPhamDTO());
         model.addAttribute("danhSachSanPham", danhSachSanPham);
-        model.addAttribute("content", "QuanLySanPham.html");
-        return "curd";
+        model.addAttribute("content", "Admin_Staff/QuanLySanPham.html");
+        return "Admin_Staff/curd";
     }
     
     @GetMapping("/QuanLySanPham/create")
     public String showCreateForm(Model model) {
         model.addAttribute("sanPham", new SanPham());
-        return "formSanPham"; // Tạo file Thymeleaf riêng
+        return "Admin_Staff/formSanPham"; // Tạo file Thymeleaf riêng
     }
 
     @PostMapping("/QuanLySanPham/create")
@@ -130,7 +130,7 @@ public class AdminController {
     public String showEditForm(@PathVariable("id") Integer id, Model model) {
         SanPham sp = sanPhamService.getAnhSanPhamById(id).orElseThrow(() -> new IllegalArgumentException("Id không tồn tại: " + id));
         model.addAttribute("sanPham", sp);
-        return "formSanPham";
+        return "Admin_Staff/formSanPham";
     }
 
     @PostMapping("/QuanLySanPham/edit/{id}")
@@ -165,7 +165,7 @@ public class AdminController {
         model.addAttribute("sapXep", sapXep);
         model.addAttribute("giamGia", giamGia);
 
-        return "QuanLySanPham";
+        return "Admin_Staff/QuanLySanPham";
     }
 
     @Autowired
@@ -182,8 +182,8 @@ public class AdminController {
     public String getDanhGiaPage(Model model) {
         List<DanhGiaSP> danhGiaList = danhGiaSPRepository.findAll();
         model.addAttribute("danhGiaList", danhGiaList);
-        model.addAttribute("content", "QuanLyDanhGia.html");
-        return "curd";
+        model.addAttribute("content", "Admin_Staff/QuanLyDanhGia.html");
+        return "Admin_Staff/curd";
     }
     
  // Xử lý update
@@ -211,14 +211,14 @@ public class AdminController {
     @GetMapping("/QuanLyDanhGia/delete/{id}")
     public String deleteDanhGia(@PathVariable("id") Integer id) {
         danhGiaSPRepository.deleteById(id);
-        return "index";
+        return "Admin_Staff/curd";
     }
 
     
     @GetMapping("/QuanLyDonHang")
     public String qlDonHang(Model model) {
-		model.addAttribute("content", "QuanLyDonHang.html");
-		return "curd";
+		model.addAttribute("content", "Admin_Staff/QuanLyDonHang.html");
+		return "Admin_Staff/curd";
     }
     
 }

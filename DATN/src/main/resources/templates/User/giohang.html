@@ -72,7 +72,11 @@
 							<input type="text" class="quantity-input"
 								th:id="'soLuong-' + ${sp.chiTietGioHang.maCTGH}"
 								th:value="${sp.chiTietGioHang.soLuong}"
-								th:attr="data-tonkho=${sp.bienThe.soLuongTonKho}" />
+								th:attr="data-tonkho=${sp.bienThe.soLuongTonKho}, data-giagoc=${sp.bienThe.gia}, 
+             data-giathucte=${sp.chiTietGioHang.giaTienThucTe}, 
+             data-hetgiamgia=${(sp.giaGiam == null and sp.phanTramGiam == null and sp.chiTietGioHang.giaTienThucTe < sp.bienThe.gia)}"
+             	th:disabled="${(sp.giaGiam == null and sp.phanTramGiam == null and sp.chiTietGioHang.giaTienThucTe < sp.bienThe.gia)}"
+              />
 
 							<button type="button" class="quantity-btn plus"
 								onclick="thayDoiSoLuong(this, 1)">+</button>
@@ -131,8 +135,16 @@
 function thayDoiSoLuong(button, delta) {
     const parent = button.closest('.product-quantity-control');
     const input = parent.querySelector('.quantity-input');
+	const giaGoc = parseInt(input.getAttribute("data-giagoc"));
+	const giaThucTe = parseInt(input.getAttribute("data-giathucte"));
+	const hetGiamGia = input.getAttribute("data-hetgiamgia") === "true";
     const maCTGH = parent.dataset.mactgh;
 
+	if (hetGiamGia) {
+		hienThongBaoHeThong("❌ Sản phẩm đã hết ưu đãi. Không thể thay đổi số lượng.", false);
+		return;
+	}
+    
     let soLuongHienTai = parseInt(input.value) || 1;
     let soLuongMoi = soLuongHienTai + delta;
 
@@ -370,4 +382,5 @@ document.querySelector(".delete-selected-link").addEventListener("click", functi
     	hienThongBaoHeThong("❌ Lỗi! Không xóa được sản phẩm" , false);
     });
 });
+
 </script>

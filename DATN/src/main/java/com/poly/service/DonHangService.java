@@ -16,11 +16,11 @@ import com.poly.repository.TrangThaiDHRepository;
 
 
 import com.poly.dto.DonHangDTO;
+import com.poly.model.BienTheSanPham;
+import com.poly.model.ChiTietDonHang;
 import com.poly.model.DonHang;
 import com.poly.model.ThanhToan;
 import com.poly.model.TrangThaiDH;
-import com.poly.model.BienTheSanPham;
-import com.poly.model.ChiTietDonHang;
 
 @Service
 public class DonHangService {
@@ -100,8 +100,15 @@ public class DonHangService {
 	    if (thanhToan != null) {
 	        thanhToan.setTrangThai("Đã thanh toán");
 	        thanhToanRepo.save(thanhToan);
+	        
+	        DonHang donHang = thanhToan.getDonHang(); 
+	        TrangThaiDH trangThai = trangThaiDHRepo.findById(4)
+	            .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái đơn hàng 'Đã giao'"));
 
-	        return thanhToan.getDonHang(); // Trả về để controller sử dụng
+	        donHang.setTrangThaiDH(trangThai);
+	        donHangRepo.save(donHang);
+
+	        return donHang; // Trả về để controller sử dụng
 	    } else {
 	        throw new RuntimeException("Không tìm thấy thông tin thanh toán của đơn hàng mã: " + maDH);
 	    }
@@ -118,7 +125,7 @@ public class DonHangService {
 	        // Chỉ khi trạng thái thanh toán là "Đã thanh toán", mới cho cập nhật trạng thái đơn hàng
 	        if (thanhToan != null && "Đã thanh toán".equalsIgnoreCase(thanhToan.getTrangThai())) {
 	            // Tránh trừ kho nhiều lần
-	            if (donHang.getTrangThaiDH().getMaTTDH() != 4) {
+	            if (donHang.getTrangThaiDH().getMaTTDH() != 7) {
 	                List<ChiTietDonHang> chiTietList = chiTietDonHangRepo.findByDonHang(donHang);
 	                for (ChiTietDonHang chiTiet : chiTietList) {
 	                    BienTheSanPham bienThe = chiTiet.getBienTheSanPham();
@@ -128,7 +135,7 @@ public class DonHangService {
 	            }
 
 	            // Cập nhật trạng thái đơn hàng
-	            TrangThaiDH trangThai = trangThaiDHRepo.findById(4) // 4: Đã thanh toán
+	            TrangThaiDH trangThai = trangThaiDHRepo.findById(6) // 4: Đã thanh toán
 	                    .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái"));
 	            donHang.setTrangThaiDH(trangThai);
 	            donHangRepo.save(donHang);
