@@ -2,7 +2,7 @@ package com.poly.dto;
 
 import java.math.BigDecimal;
 
-import com.poly.entity.SanPham;
+import com.poly.model.SanPham;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

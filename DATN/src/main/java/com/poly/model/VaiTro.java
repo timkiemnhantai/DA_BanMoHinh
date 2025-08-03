@@ -1,4 +1,4 @@
-package com.poly.entity;
+package com.poly.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,19 +11,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "LoaiSanPham")
+@Table(name = "VaiTro")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoaiSanPham {
+public class VaiTro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "MaLoaiSanPham")
-    private Integer maLoaiSanPham;
+    @Column(name = "MaVaiTro")
+    private Integer maVaiTro;
 
-    @Column(name = "TenLoaiSanPham")
-    private String tenLoaiSanPham;
-    
-    @Column(name = "TenLoaiKhongDau")
-    private String tenLoaiKhongDau;
+    @Column(name = "TenVaiTro")
+    private String tenVaiTro;
 }

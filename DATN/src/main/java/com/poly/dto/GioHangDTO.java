@@ -2,8 +2,8 @@ package com.poly.dto;
 
 import java.math.BigDecimal;
 
-import com.poly.entity.BienTheSanPham;
-import com.poly.entity.ChiTietGioHang;
+import com.poly.model.BienTheSanPham;
+import com.poly.model.ChiTietGioHang;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

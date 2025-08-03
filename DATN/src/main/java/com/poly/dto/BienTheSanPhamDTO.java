@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-import com.poly.entity.AnhChiTiet;
-import com.poly.entity.BienTheSanPham;
+import com.poly.model.AnhChiTiet;
+import com.poly.model.BienTheSanPham;
 
 
 @Data

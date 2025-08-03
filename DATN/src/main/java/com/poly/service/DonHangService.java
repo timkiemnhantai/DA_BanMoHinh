@@ -16,11 +16,11 @@ import com.poly.repository.TrangThaiDHRepository;
 
 
 import com.poly.dto.DonHangDTO;
-import com.poly.entity.BienTheSanPham;
-import com.poly.entity.ChiTietDonHang;
-import com.poly.entity.DonHang;
-import com.poly.entity.ThanhToan;
-import com.poly.entity.TrangThaiDH;
+import com.poly.model.BienTheSanPham;
+import com.poly.model.ChiTietDonHang;
+import com.poly.model.DonHang;
+import com.poly.model.ThanhToan;
+import com.poly.model.TrangThaiDH;
 
 @Service
 public class DonHangService {

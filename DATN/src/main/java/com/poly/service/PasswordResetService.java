@@ -6,8 +6,8 @@ import jakarta.mail.MessagingException;
 
 import java.util.List;
 
-import com.poly.entity.PasswordReset;
-import com.poly.entity.TaiKhoan;
+import com.poly.model.PasswordReset;
+import com.poly.model.TaiKhoan;
 
 public interface PasswordResetService {
     List<PasswordReset> findAll();

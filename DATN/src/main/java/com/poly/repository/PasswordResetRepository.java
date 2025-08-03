@@ -3,9 +3,9 @@ package com.poly.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.poly.entity.PasswordReset;
-import com.poly.entity.PasswordResetId;
-import com.poly.entity.TaiKhoan;
+import com.poly.model.PasswordReset;
+import com.poly.model.PasswordResetId;
+import com.poly.model.TaiKhoan;
 
 import java.util.Optional;
 @Repository

@@ -7,8 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import com.poly.entity.TaiKhoan;
-import com.poly.entity.ThongBao;
+import com.poly.model.TaiKhoan;
+import com.poly.model.ThongBao;
 import com.poly.service.ThongBaoService;
 
 import jakarta.servlet.http.HttpSession;

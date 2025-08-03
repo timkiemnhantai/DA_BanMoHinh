@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.poly.entity.AnhSanPham;
+import com.poly.model.AnhSanPham;
 import com.poly.repository.AnhSanPhamRepository;
 
 @Service

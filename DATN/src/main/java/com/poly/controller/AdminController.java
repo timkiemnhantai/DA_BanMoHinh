@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.poly.dto.SanPhamDTO;
-import com.poly.entity.DanhGiaSP;
-import com.poly.entity.DonHang;
-import com.poly.entity.SanPham;
-import com.poly.entity.TaiKhoan;
-import com.poly.entity.ThanhToan;
+import com.poly.model.DanhGiaSP;
+import com.poly.model.DonHang;
+import com.poly.model.SanPham;
+import com.poly.model.TaiKhoan;
+import com.poly.model.ThanhToan;
 import com.poly.repository.DanhGiaSPRepository;
 import com.poly.repository.DonHangRepository;
 import com.poly.repository.SanPhamRepository;

@@ -5,8 +5,8 @@ package com.poly.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
-import com.poly.entity.PasswordReset;
-import com.poly.entity.TaiKhoan;
+import com.poly.model.PasswordReset;
+import com.poly.model.TaiKhoan;
 import com.poly.repository.PasswordResetRepository;
 import com.poly.repository.TaiKhoanRepository;
 

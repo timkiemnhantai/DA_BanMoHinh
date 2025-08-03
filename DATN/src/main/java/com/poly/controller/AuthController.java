@@ -13,7 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.poly.entity.TaiKhoan;
+import com.poly.model.TaiKhoan;
 import com.poly.security.CustomUserDetails;
 import com.poly.service.TaiKhoanService;
 

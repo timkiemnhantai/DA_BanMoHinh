@@ -1,6 +1,6 @@
 package com.poly.security;
 
-import com.poly.entity.TaiKhoan;
+import com.poly.model.TaiKhoan;
 import com.poly.repository.TaiKhoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;

@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.poly.dto.ChangePasswordRequest;
-import com.poly.entity.TaiKhoan;
+import com.poly.model.TaiKhoan;
 import com.poly.repository.TaiKhoanRepository;
 
 @Service

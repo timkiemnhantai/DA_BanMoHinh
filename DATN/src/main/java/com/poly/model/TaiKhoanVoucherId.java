@@ -1,4 +1,4 @@
-package com.poly.entity;
+package com.poly.model;
 
 
 import lombok.*;
@@ -9,25 +9,25 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TaiKhoanThongBaoId implements Serializable {
+public class TaiKhoanVoucherId implements Serializable {
 
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private Integer taiKhoan;
-    private Integer thongBao;
+    private Integer voucher;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TaiKhoanThongBaoId that)) return false;
-        return Objects.equals(taiKhoan, that.taiKhoan) && Objects.equals(thongBao, that.thongBao);
+        if (!(o instanceof TaiKhoanVoucherId that)) return false;
+        return Objects.equals(taiKhoan, that.taiKhoan) && Objects.equals(voucher, that.voucher);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(taiKhoan, thongBao);
+        return Objects.hash(taiKhoan, voucher);
     }
 }
 

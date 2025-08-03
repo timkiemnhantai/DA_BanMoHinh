@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.poly.entity.DiaChi;
-import com.poly.entity.TaiKhoan;
+import com.poly.model.DiaChi;
+import com.poly.model.TaiKhoan;
 import com.poly.repository.DiaChiRepository;
 import com.poly.repository.TaiKhoanRepository;
 

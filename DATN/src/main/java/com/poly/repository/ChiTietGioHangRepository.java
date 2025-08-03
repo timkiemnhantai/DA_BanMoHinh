@@ -10,9 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.poly.entity.BienTheSanPham;
-import com.poly.entity.ChiTietGioHang;
-import com.poly.entity.GioHang;
+import com.poly.model.BienTheSanPham;
+import com.poly.model.ChiTietGioHang;
+import com.poly.model.GioHang;
 
 
 @Repository
