@@ -3,10 +3,10 @@ package com.poly.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.poly.model.AnhChiTiet;
-import com.poly.model.AnhSanPham;
-import com.poly.model.BienTheSanPham;
-import com.poly.model.SanPham;
+import com.poly.entity.AnhChiTiet;
+import com.poly.entity.AnhSanPham;
+import com.poly.entity.BienTheSanPham;
+import com.poly.entity.SanPham;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -10,13 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,11 +35,13 @@ import com.poly.dto.ChiTietSanPhamDTO;
 import com.poly.dto.DonHangDTO;
 import com.poly.dto.GioHangDTO;
 import com.poly.dto.SanPhamDTO;
-import com.poly.model.DonHang;
-import com.poly.model.DiaChi;
-import com.poly.model.TaiKhoan;
-import com.poly.model.ThanhToan;
-import com.poly.model.ThongBao;
+import com.poly.entity.BienTheSanPham;
+import com.poly.entity.ChiTietDonHang;
+import com.poly.entity.DiaChi;
+import com.poly.entity.DonHang;
+import com.poly.entity.TaiKhoan;
+import com.poly.entity.ThanhToan;
+import com.poly.entity.ThongBao;
 import com.poly.repository.BienTheSanPhamRepository;
 import com.poly.repository.ChiTietDonHangRepository;
 import com.poly.repository.DiaChiRepository;
@@ -51,17 +54,13 @@ import com.poly.service.ChiTietGioHangService;
 import com.poly.service.DiaChiService;
 import com.poly.service.DonHangService;
 import com.poly.service.GioHangService;
-import com.poly.service.PasswordResetService;
-import com.poly.model.BienTheSanPham;
-import com.poly.model.ChiTietDonHang;
-
 import com.poly.service.SanPhamService;
 import com.poly.service.TaiKhoanService;
 import com.poly.service.ThongBaoService;
 import com.poly.util.PhiVanChuyenUtils;
 import com.poly.util.SoDienThoaiUtils;
 
-import jakarta.mail.MessagingException;
+
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
@@ -73,8 +72,6 @@ public class HomeController {
 	private static final String ID2 = "id";
 	@Autowired
 	private SanPhamService sanphamService;
-    @Autowired
-    private PasswordResetService passwordResetService;
 //	@Autowired
 //	private ChiTietDonHangService chitietdonhangService;
 	@Autowired
@@ -83,8 +80,8 @@ public class HomeController {
 	private DonHangRepository donhangRepository;
 	@Autowired
 	private ChiTietDonHangRepository chitietdonhangRepository;
-//	@Autowired
-//	private BienTheGiamGiaSPService bienthegiamgiaspService;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private ThongBaoService thongBaoService;
 //	@Autowired
@@ -108,6 +105,9 @@ public class HomeController {
 	@Autowired DonHangService donHangService;
     @Autowired
     private WebSocketNotificationController webSocketNotificationController;
+    
+	private final Pattern pattern = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d])[\\S]{8,}$");
+    
 	@GetMapping("/home")
 	public String home(Model model, HttpSession session) {
 		// Mới nhất (mặc định)
@@ -127,8 +127,8 @@ public class HomeController {
 		model.addAttribute("danhsachSP", danhsachSP);
 		model.addAttribute("topBanChay", topBanChay);
 		model.addAttribute("spgiamgia", spgiamgia);
-		model.addAttribute("content", "home.html");
-		return "index";
+		model.addAttribute("content", "User/home.html");
+		return "User/index";
 	}
 	@PostMapping("/thong-bao/{id}/da-doc")
 	@ResponseBody
@@ -141,7 +141,7 @@ public class HomeController {
 
 	@GetMapping("/403")
 	public String accessDenied() {
-		return "403";
+		return "security/403";
 	}
 
 	@GetMapping("/product")
@@ -160,14 +160,14 @@ public class HomeController {
 		model.addAttribute("sapXepDangChon", sapXep);
 		model.addAttribute("danggiamgia", giamGia);
 		model.addAttribute("danhsachSP", locsp);
-		model.addAttribute("content", "product.html");
-		return "index";
+		model.addAttribute("content", "User/product.html");
+		return "User/index";
 	}
 	
 	@GetMapping("/ChinhSach")
 	public String getMethodName(Model model) {
-		model.addAttribute("content", "chinhsach.html");
-		return "index";
+		model.addAttribute("content", "User/chinhsach.html");
+		return "User/index";
 	}
 		
 	@GetMapping("/chi-tiet-san-pham/{id}")
@@ -186,9 +186,9 @@ public class HomeController {
 		// ảnh chi tiết
 		model.addAttribute("chiTiet", chiTietSP.getDanhSachBienThe()); // biến thể đầu tiên (giá gốc)
 		model.addAttribute("dsDanhGia", sanphamService.getDanhGiaBySanPham(id)); // danh sách đánh giá
-		model.addAttribute("content", "ChiTietSanPham.html"); // nội dung chính
+		model.addAttribute("content", "User/ChiTietSanPham.html"); // nội dung chính
 
-		return "index";
+		return "User/index";
 	}
 
 	@GetMapping("/TrangCaNhan")
@@ -211,8 +211,8 @@ public class HomeController {
 		    }
 			model.addAttribute("taikhoan",taiKhoan);	
 
-		model.addAttribute("content","TrangCaNhan.html");
-		return "index";
+		model.addAttribute("content","User/TrangCaNhan.html");
+		return "User/index";
 	}
 	
 	@PostMapping("/TrangCaNhan/CapNhat")
@@ -270,8 +270,8 @@ public class HomeController {
 
 		model.addAttribute("dsDiaChi", dsDiaChi);
 
-		model.addAttribute("content","DiaChi.html");
-		return "index";
+		model.addAttribute("content","User/DiaChi.html");
+		return "User/index";
 	}
 	@PostMapping("/DiaChi/mac-dinh/{id}")
 	public String thietLapMacDinh(@PathVariable("id") Integer idDiaChi,
@@ -300,25 +300,54 @@ public class HomeController {
 	
 	
 	
-    @GetMapping("/doimatkhau")
-    public String showForgotPasswordForm() {
-        return "/security/thaydoimatkhau";
+    @GetMapping("/Doimatkhau")
+    public String showForgotPasswordForm(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    	Integer maTK = userDetails.getTaiKhoan().getMaTK();
+    	TaiKhoan taiKhoan = taiKhoanRepository.findById(maTK).orElse(null);
+		model.addAttribute("tendn",taiKhoan.getTenDangNhap());
+		model.addAttribute("avatar",taiKhoan.getAvatar());		
+    	model.addAttribute("content", "User/thaydoimatkhau.html"); 	
+        return "User/index";
     }
-    @PostMapping("/doimatkhau")
-    public String requestOtp(@RequestParam String email, Model model) {
-        try {
-            String result = passwordResetService.generateOtp(email);
-            model.addAttribute("message", result);
-            model.addAttribute("email", email);
-            return "/security/reset-password";
-        } catch (MessagingException e) {
-            model.addAttribute("error", "Lỗi khi gửi email: " + e.getMessage());
-            return "/security/thaydoimatkhau";
-        } catch (RuntimeException e) {
-            model.addAttribute("error", e.getMessage());
-            return "/security/thaydoimatkhau";
+    @PostMapping("/xacnhandoimatkhau")
+    public String xacnhan_doimatkhau(
+            @RequestParam String matKhau,
+            @RequestParam String xacnhanmatkhau,
+            Model model,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        Integer maTK = userDetails.getTaiKhoan().getMaTK();
+        TaiKhoan taiKhoan = taiKhoanRepository.findById(maTK).orElse(null);
+
+        boolean hasError = false;
+
+        if (matKhau == null || matKhau.trim().isEmpty()) {
+            model.addAttribute("passwordError", "Mật khẩu không được để trống");
+            hasError = true;
         }
+		if (matKhau.length() < 8 || !pattern.matcher(matKhau).matches()) {
+			model.addAttribute("passwordError", "Mật khẩu phải từ 8 ký tự, có chữ, số và ký hiệu.");
+			hasError = true;
+		}
+        if (xacnhanmatkhau == null || !xacnhanmatkhau.equals(matKhau)) {
+            model.addAttribute("confirmError", "Xác nhận mật khẩu không khớp.");
+            hasError = true;
+        }
+
+        if (hasError) {
+        	model.addAttribute("tendn", taiKhoan.getTenDangNhap());
+        	model.addAttribute("avatar", taiKhoan.getAvatar());
+        	model.addAttribute("content", "User/thaydoimatkhau.html");
+        	return "User/index";
+        }
+
+
+        taiKhoan.setMatKhau(passwordEncoder.encode(matKhau));
+        taiKhoanRepository.save(taiKhoan);
+
+        return "redirect:/Doimatkhau";
     }
+
 	
 
     @GetMapping("/DonHang")
@@ -331,8 +360,8 @@ public class HomeController {
 
         model.addAttribute("dsDonHang", dsDonHang);
         
-        model.addAttribute("content", "XemDonHang.html");
-        return "index";
+        model.addAttribute("content", "User/XemDonHang.html");
+        return "User/index";
     }
 
 	
@@ -356,8 +385,8 @@ public class HomeController {
 		} else {
 			System.out.println(">>> Không có phiên đăng nhập.");
 		}
-		model.addAttribute("content", "giohang.html");
-		return "index";
+		model.addAttribute("content", "User/giohang.html");
+		return "User/index";
 	}
 
 	@PostMapping("/gio-hang/cap-nhat-so-luong")
@@ -432,7 +461,7 @@ public class HomeController {
 
 	    	if (taiKhoan == null) {
 	    	    model.addAttribute("diaChi", "(Không tìm thấy tài khoản)");
-	    	    return "index";
+	    	    return "User/index";
 	    	}
 
 	    	DiaChi diaChiMacDinh = taiKhoan.getDiaChiMacDinh();
@@ -478,12 +507,6 @@ public class HomeController {
 	        BigDecimal tongThanhToan = tongTien.add(BigDecimal.valueOf(phiVanChuyen));
 
 
-//		    if (diaChi != null && !diaChi.trim().isEmpty()) {
-//		        model.addAttribute("diaChi", diaChi);
-//		    } else {
-//		        model.addAttribute("diaChi", "(Chưa có địa chỉ)");
-//		    }
-
 	        model.addAttribute("dsThanhToan", dsThanhToan);
 	        model.addAttribute("tongSoLuong", tongSoLuong);
 	        model.addAttribute("tongTien", tongTien);
@@ -493,8 +516,8 @@ public class HomeController {
 	        model.addAttribute("ngayGiaoDen", ngayGiaoDen);
 	    }
 
-	    model.addAttribute("content", "thanhtoan.html");
-	    return "index";
+	    model.addAttribute("content", "User/thanhtoan.html");
+	    return "User/index";
 	}
 
 	@PostMapping("/gio-hang/xoa-nhieu")
@@ -615,7 +638,7 @@ public class HomeController {
 
 	    System.out.println(">>> ✅ Đã tạo bản ghi thanh toán mặc định cho đơn hàng " + donHang.getMaDH());
 
-	    return "thanh-cong";
+	    return "User/thanh-cong";
 	}
 
 	@PostMapping("/upload-avatar")

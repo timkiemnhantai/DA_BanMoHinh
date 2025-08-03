@@ -8,12 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.poly.model.BienTheSanPham;
-import com.poly.model.BienThe_GiamGiaSP;
-import com.poly.model.ChiTietGioHang;
-import com.poly.model.GiamGiaSP;
-import com.poly.model.GioHang;
-import com.poly.model.TaiKhoan;
+import com.poly.entity.BienTheSanPham;
+import com.poly.entity.BienThe_GiamGiaSP;
+import com.poly.entity.ChiTietGioHang;
+import com.poly.entity.GiamGiaSP;
+import com.poly.entity.GioHang;
+import com.poly.entity.TaiKhoan;
 import com.poly.repository.BienTheSanPhamRepository;
 import com.poly.repository.ChiTietGioHangRepository;
 import com.poly.repository.GioHangRepository;
@@ -94,7 +94,6 @@ public class GioHangService {
         ChiTietGioHang ctgh = chitietgiohangRepository.findById(maCTGH)
             .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm trong giỏ"));
 
-        // Kiểm tra xem sản phẩm có thuộc giỏ hàng của người dùng này không (an toàn)
         if (!ctgh.getGioHang().getTaiKhoan().getMaTK().equals(taiKhoan.getMaTK())) {
             throw new RuntimeException("Không có quyền xóa sản phẩm này");
         }

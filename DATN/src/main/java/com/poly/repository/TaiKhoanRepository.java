@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.poly.model.TaiKhoan;
+import com.poly.entity.TaiKhoan;
 @Repository
 public interface TaiKhoanRepository extends JpaRepository<TaiKhoan, Integer>{
 	TaiKhoan findByEmailOrTenDangNhap(String email, String tenDangNhap);

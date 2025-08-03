@@ -568,7 +568,7 @@ INSERT INTO AnhSanPham (MaSP, URLAnhSP) VALUES
 (49, '/AnhSanPham/MoHinh/MotorNuclear/MNP-XH07WeiYuanTrainee/MNP-XH07WeiYuanTrainee1.png'),
 (50, '/AnhSanPham/MoHinh/SNAA/GodsGuardianGAWAINSpecialEditionver.KK/GodsGuardianGAWAINSpecialEditionver.KK1.png'),
 (51, '/AnhSanPham/MoHinh/SNAA/IronSickle(TheRoundTableKnights)/IronSickle(TheRoundTableKnights)1.png'),
-(52, '/AnhSanPham/MoHinh/SNAA/Knightsofth%20RoundTable-GiantAxeLANCELOT/Knightsofth%20RoundTable-GiantAxeLANCELOT1.png'),
+(52, '/AnhSanPham/MoHinh/SNAA/KnightsofthRoundTable-GiantAxeLANCELOT/KnightsofthRoundTable-GiantAxeLANCELOT1.png'),
 (53, '/AnhSanPham/MoHinh/SNAA/YR-03MartialEmperor/YR-03MartialEmperor1.png'),
 (54, '/AnhSanPham/MoHinh/SNAA/YR-04FIRELORD(F.P.A.A)/YR-04FIRELORD(F.P.A.A)1.png'),
 (55, '/AnhSanPham/MoHinh/Khac/Twelve''sWarLittleWhiteSnakeSAMAEL/Twelve''sWarLittleWhiteSnakeSAMAEL1.png'),
@@ -1056,7 +1056,7 @@ INSERT INTO TrangThaiDH (TenTTDH) VALUES
 (N'Đang giao hàng'),
 (N'Đã giao hàng'),
 (N'Đã hủy'),
-(N'Giao không thành công'),
+(N'Giao hàng thành công'),
 (N'Hoàn trả');
 GO 
 INSERT INTO GiamGiaSP (TenGG, PhanTramGiam, GiaGiam, ThoiGianBatDau, ThoiGianKetThuc, TrangThai)

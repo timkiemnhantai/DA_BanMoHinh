@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
 import com.poly.dto.GiaGiamDTO;
-import com.poly.model.BienTheSanPham;
-import com.poly.model.BienThe_GiamGiaSP;
-import com.poly.model.GiamGiaSP;
+import com.poly.entity.BienTheSanPham;
+import com.poly.entity.BienThe_GiamGiaSP;
+import com.poly.entity.GiamGiaSP;
 
 @Component
 public class GiamGiaUtil {

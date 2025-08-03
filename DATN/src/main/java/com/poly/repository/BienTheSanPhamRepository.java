@@ -7,8 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-
-import com.poly.model.BienTheSanPham;
+import com.poly.entity.BienTheSanPham;
 @Repository
 public interface BienTheSanPhamRepository extends JpaRepository<BienTheSanPham, Integer>{
     List<BienTheSanPham> findBySanPham_MaSP(Integer maSP);

@@ -2,10 +2,8 @@ package com.poly.dto;
 
 import java.util.List;
 
-
-import com.poly.model.ChiTietDonHang;
-import com.poly.model.DonHang;
-
+import com.poly.entity.ChiTietDonHang;
+import com.poly.entity.DonHang;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
