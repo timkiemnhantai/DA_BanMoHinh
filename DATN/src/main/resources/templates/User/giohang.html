@@ -341,45 +341,43 @@ document.querySelector(".delete-selected-link").addEventListener("click", functi
     const checkedBoxes = document.querySelectorAll('input[name="chonCTGH"]:checked');
 
     if (checkedBoxes.length === 0) {
-    	hienThongBaoHeThong("❌ Vui lòng chọn ít nhất một sản phẩm để xoá!", false);
+        hienThongBaoHeThong("❌ Vui lòng chọn ít nhất một sản phẩm để xoá!", false);
         return;
     }
 
     showConfirm("Bạn chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?", () => {
+        const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
 
-    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
-    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+        const danhSachMaCTGH = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
 
-    const danhSachMaCTGH = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
+        fetch("/gio-hang/xoa-nhieu", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify({ dsMaCTGH: danhSachMaCTGH })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                checkedBoxes.forEach(cb => {
+                    const item = cb.closest(".shop-item");
+                    if (item) item.remove();
+                });
 
-    fetch("/gio-hang/xoa-nhieu", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            [csrfHeader]: csrfToken
-        },
-        body: JSON.stringify({ dsMaCTGH: danhSachMaCTGH })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            // Xoá từng DOM phần tử
-            checkedBoxes.forEach(cb => {
-                const item = cb.closest(".shop-item");
-                if (item) item.remove();
-            });
-
-            capNhatTongTienToanBo();
-            capNhatSoLuongDaChon();
-            masterCheckbox.checked = false;
-            hienThongBaoHeThong("✅ Đã xoá tất cả sản phẩm được chọn!", true);
-        } else {
-            throw new Error(data.error || "Không thể xoá!");
-        }
-    })
-})
-    .catch(err => {
-    	hienThongBaoHeThong("❌ Lỗi! Không xóa được sản phẩm" , false);
+                capNhatTongTienToanBo();
+                capNhatSoLuongDaChon();
+                masterCheckbox.checked = false;
+                hienThongBaoHeThong("✅ Đã xoá tất cả sản phẩm được chọn!", true);
+            } else {
+                throw new Error(data.error || "Không thể xoá!");
+            }
+        })
+        .catch(err => {
+            hienThongBaoHeThong("❌ Lỗi! Không xóa được sản phẩm", false);
+        });
     });
 });
 

@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -108,7 +109,7 @@ public class HomeController {
     
 	private final Pattern pattern = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d])[\\S]{8,}$");
     
-	@GetMapping("/home")
+	@GetMapping({"/home", "/"})
 	public String home(Model model, HttpSession session) {
 		// Mới nhất (mặc định)
 		SanPhamDTO filterMoiNhat = new SanPhamDTO();
@@ -223,7 +224,8 @@ public class HomeController {
 	        @RequestParam String soDT,
 	        @RequestParam int gioiTinh,
 	        @RequestParam String ngaySinh,
-	        @AuthenticationPrincipal CustomUserDetails userDetails
+	        @AuthenticationPrincipal CustomUserDetails userDetails,
+	        RedirectAttributes redirectAttributes
 	) {
 	    // Lấy đối tượng đang đăng nhập
 
@@ -244,9 +246,9 @@ public class HomeController {
 	        }
 
 	        taiKhoanService.saveTaiKhoan(taiKhoan);
-	        System.out.println("success Cập nhật thành công!");
+	        redirectAttributes.addFlashAttribute("success", "✅ Lưu thông tin thành công");
 	    } else {
-	    	System.out.print("error Không tìm thấy tài khoản.");
+	        redirectAttributes.addFlashAttribute("error", "❌ Lưu thông tin thất bại");
 	    }
 
 	    return "redirect:/TrangCaNhan";
@@ -263,16 +265,74 @@ public class HomeController {
 
 
 		model.addAttribute("dsDiaChi", dsDiaChi);
-		for (DiaChi d : dsDiaChi) {
-		    String sdt = SoDienThoaiUtils.chuyenDinhDangQuocTe(d.getSoDienThoai());
-		    d.setSoDienThoai(sdt);
-		}
-
 		model.addAttribute("dsDiaChi", dsDiaChi);
-
 		model.addAttribute("content","User/DiaChi.html");
 		return "User/index";
 	}
+	@PostMapping("/DiaChi/CapNhat")
+	public String hienFormCapNhatDiaChi(
+	        @RequestParam("maDC") Integer maDC,
+	        Model model,
+	        @AuthenticationPrincipal CustomUserDetails userDetails) {
+	    
+	    Integer maTK = userDetails.getTaiKhoan().getMaTK();
+	    TaiKhoan taiKhoan = taiKhoanRepository.findById(maTK).orElse(null);
+	    DiaChi diaChi = diaChiRepository.findById(maDC).orElse(null);
+
+	    model.addAttribute("tendn", taiKhoan.getTenDangNhap());
+	    model.addAttribute("avatar", taiKhoan.getAvatar());
+	    
+	    List<DiaChi> dsDiaChi = diaChiRepository.findByTaiKhoan_MaTK(maTK);
+	    for (DiaChi d : dsDiaChi) {
+	        String sdt = SoDienThoaiUtils.chuyenDinhDangQuocTe(d.getSoDienThoai());
+	        d.setSoDienThoai(sdt);
+	    }
+	    model.addAttribute("dsDiaChi", dsDiaChi);
+
+	    if (diaChi == null || !diaChi.getTaiKhoan().getMaTK().equals(maTK)) {
+	        return "redirect:/DiaChi";
+	    }
+
+	    // Đổi SDT về số 0
+	    String sdtGoc = SoDienThoaiUtils.chuyenVeSo0(diaChi.getSoDienThoai());
+	    diaChi.setSoDienThoai(sdtGoc);
+	    
+	    model.addAttribute("diaChi", diaChi);
+	    
+	    
+	    model.addAttribute("content", "User/DiaChi.html");
+	    return "User/index";
+	}
+
+	@PostMapping("/DiaChi/Xoa")
+	public String xoaDiaChi(@RequestParam("maDC") Integer maDC,
+	                        @AuthenticationPrincipal CustomUserDetails userDetails,
+	                        RedirectAttributes redirectAttributes) {
+	    Integer maTK = userDetails.getTaiKhoan().getMaTK();
+
+	    DiaChi diaChi = diaChiRepository.findById(maDC).orElse(null);
+	    if (diaChi != null && diaChi.getTaiKhoan().getMaTK().equals(maTK)) {
+	        boolean laMacDinh = diaChi.getMacDinh(); 
+	        diaChiRepository.deleteById(maDC);
+	        if (laMacDinh) {
+	            List<DiaChi> danhSachConLai = diaChiRepository.findByTaiKhoan_MaTK(maTK);
+
+	            if (!danhSachConLai.isEmpty()) {
+	                DiaChi moi = danhSachConLai.get(0);
+	                moi.setMacDinh(true);
+	                diaChiRepository.save(moi);
+	            }
+	        }
+
+	        redirectAttributes.addFlashAttribute("success", "✅ Đã xóa địa chỉ thành công!");
+	    } else {
+	        redirectAttributes.addFlashAttribute("error", "❌ Không thể xóa địa chỉ.");
+	    }
+
+	    return "redirect:/DiaChi";
+	}
+
+
 	@PostMapping("/DiaChi/mac-dinh/{id}")
 	public String thietLapMacDinh(@PathVariable("id") Integer idDiaChi,
 	                              @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -294,7 +354,58 @@ public class HomeController {
 
 	    return "redirect:/DiaChi";
 	}
-	
+	@PostMapping("/Themdiachi")
+	public String themHoacCapNhatDiaChi(@RequestParam(required = false) Integer maDC,
+	                                    @RequestParam String fullName,
+	                                    @RequestParam String phoneNumber,
+	                                    @RequestParam String provinceName,
+	                                    @RequestParam String districtName,
+	                                    @RequestParam String wardName,
+	                                    @RequestParam String street,
+	                                    @AuthenticationPrincipal CustomUserDetails userDetails,
+	                                    RedirectAttributes redirectAttributes) {
+
+	    Integer maTK = userDetails.getTaiKhoan().getMaTK();
+	    TaiKhoan taiKhoan = taiKhoanRepository.findById(maTK).orElse(null);
+
+	    DiaChi diaChi;
+	    boolean isUpdate = false;
+	    if (maDC != null) {
+	        // Nếu có mã địa chỉ, tìm và cập nhật
+	        diaChi = diaChiRepository.findById(maDC).orElse(null);
+	        if (diaChi == null || !diaChi.getTaiKhoan().getMaTK().equals(maTK)) {
+	            redirectAttributes.addFlashAttribute("error", "Không thể cập nhật địa chỉ này.");
+	            return "redirect:/DiaChi"; // Không hợp lệ
+	        }
+	        isUpdate = true;
+	    } else {
+	        // Nếu không có mã địa chỉ, tạo mới
+	        diaChi = new DiaChi();
+	        diaChi.setTaiKhoan(taiKhoan);
+
+	        boolean daCoDiaChi = diaChiRepository.existsByTaiKhoan_MaTK(maTK);
+	        diaChi.setMacDinh(!daCoDiaChi); // Lần đầu tạo thì đặt mặc định
+	    }
+
+	    // Gán thông tin
+	    diaChi.setHoTen(fullName);
+
+	    diaChi.setSoDienThoai(phoneNumber);
+	    diaChi.setTinh(provinceName);
+	    diaChi.setQuan(districtName);
+	    diaChi.setPhuong(wardName);
+	    diaChi.setDiaChiChiTiet(street);
+
+	    diaChiRepository.save(diaChi);
+	    if (isUpdate) {
+	        redirectAttributes.addFlashAttribute("success", "✅ Cập nhật địa chỉ thành công!");
+	    } else {
+	        redirectAttributes.addFlashAttribute("success", "✅ Thêm địa chỉ mới thành công!");
+	    }
+	    
+	    return "redirect:/DiaChi";
+	}
+
 
 
 	
@@ -470,11 +581,10 @@ public class HomeController {
 	    	    model.addAttribute("diaChi", "(Chưa có địa chỉ)");
 	    	} else {
 	    	    model.addAttribute("diaChi", diaChiMacDinh.getDiaChiDayDu());
-		        String sdtGoc = diaChiMacDinh.getSoDienThoai();
-		        String sdtDinhDang = SoDienThoaiUtils.chuyenDinhDangQuocTe(sdtGoc);
+
+		        String sdtDinhDang = diaChiMacDinh.getSoDienThoaiQuocTe();
 		        model.addAttribute("soDienThoai", sdtDinhDang);
 		        model.addAttribute("hoTen", diaChiMacDinh.getHoTen());
-		        System.out.print("name: " + diaChiMacDinh.getHoTen());
 			    if (sdtDinhDang != null && !sdtDinhDang.trim().isEmpty()) {
 			        model.addAttribute("soDienThoai", sdtDinhDang);
 			    } else {
@@ -650,33 +760,42 @@ public class HomeController {
 	        // Lấy thông tin người dùng
 	        Integer maTK = userDetails.getTaiKhoan().getMaTK();
 
-	        // Tạo tên file ngẫu nhiên (UUID + đuôi gốc)
+	        // Lấy tên file gốc
 	        String originalFilename = file.getOriginalFilename();
 	        if (originalFilename == null || originalFilename.isEmpty()) {
 	            redirectAttributes.addFlashAttribute("error", "File không hợp lệ!");
 	            return "redirect:/TrangCaNhan";
 	        }
 
-	        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+	        // Lấy và kiểm tra đuôi file
+	        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+	        List<String> allowedExtensions = Arrays.asList(".jpg", ".jpeg", ".png", ".gif");
+	        if (!allowedExtensions.contains(extension)) {
+	            redirectAttributes.addFlashAttribute("error", "Chỉ chấp nhận các định dạng ảnh: JPG, JPEG, PNG, GIF");
+	            return "redirect:/TrangCaNhan";
+	        }
+
+
+	        // Tạo tên file mới ngẫu nhiên
 	        String randomFileName = UUID.randomUUID().toString() + extension;
 
-	        // Đường dẫn lưu file (thư mục static/meme)
+	        // Đường dẫn lưu file (thư mục static/avatar)
 	        String uploadDir = new File("src/main/resources/static/avatar").getAbsolutePath();
 	        File destFile = new File(uploadDir, randomFileName);
 	        file.transferTo(destFile);
 
-	        // Tạo URL truy cập
+	        // Tạo URL để lưu vào DB
 	        String url = "/avatar/" + randomFileName;
 
-	        // Cập nhật avatar trong database
+	        // Cập nhật avatar trong DB
 	        TaiKhoan taiKhoan = taiKhoanRepository.findById(maTK).orElse(null);
 	        if (taiKhoan != null) {
 	            taiKhoan.setAvatar(url);
 	            taiKhoanRepository.save(taiKhoan);
 
-	            // Cập nhật lại trong session (nếu có dùng để hiển thị)
-	            userDetails.getTaiKhoan().setAvatar(url); // cập nhật thông tin trong phiên hiện tại
-	            session.setAttribute("userDetails", userDetails); // nếu bạn dùng session lưu
+	            // Cập nhật session
+	            userDetails.getTaiKhoan().setAvatar(url);
+	            session.setAttribute("userDetails", userDetails);
 	        }
 
 	        redirectAttributes.addFlashAttribute("success", "Tải ảnh thành công!");
@@ -687,6 +806,7 @@ public class HomeController {
 
 	    return "redirect:/TrangCaNhan";
 	}
+
 
 
 

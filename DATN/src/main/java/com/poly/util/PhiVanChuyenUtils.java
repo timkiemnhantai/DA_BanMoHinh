@@ -26,13 +26,6 @@ public class PhiVanChuyenUtils {
     private static final String API_TINH = "https://provinces.open-api.vn/api/p/";
     private static final Set<String> danhSachTinhThanh = new HashSet<>();
 
-    static {
-        try {
-            napDanhSachTinhThanh();
-        } catch (IOException | InterruptedException e) {
-            System.err.println("Không thể tải danh sách tỉnh thành từ API: " + e.getMessage());
-        }
-    }
 
     public static KetQuaVanChuyen tinhVanChuyen(String diaChiDayDu, int tongTien) {
         int phi = tinhPhi(diaChiDayDu, tongTien);
@@ -90,18 +83,36 @@ public class PhiVanChuyenUtils {
         return PHI_THUONG;
     }
 
-    private static void napDanhSachTinhThanh() throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(API_TINH)).GET().build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    private static void napDanhSachTinhThanh() {
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(API_TINH))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode json = mapper.readTree(response.body());
+            // Kiểm tra xem response có phải JSON không
+            String contentType = response.headers().firstValue("Content-Type").orElse("");
+            if (!contentType.contains("application/json")) {
+                System.err.println("API trả về không phải JSON. Content-Type: " + contentType);
+                return; // Không tiếp tục xử lý nữa
+            }
 
-        for (JsonNode node : json) {
-            danhSachTinhThanh.add(node.get("name").asText());
+            // Parse JSON như bình thường
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode json = mapper.readTree(response.body());
+
+            for (JsonNode node : json) {
+                danhSachTinhThanh.add(node.get("name").asText());
+            }
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Không thể tải danh sách tỉnh thành từ API: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Lỗi không xác định khi nạp tỉnh thành: " + e.getMessage());
         }
     }
+
 
     private static String chuanHoaChuoi(String input) {
         if (input == null) return "";

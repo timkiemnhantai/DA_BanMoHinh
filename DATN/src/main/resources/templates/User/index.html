@@ -93,7 +93,8 @@
 			</div>
 		</nav>
 	</div>
-
+	
+	
 	<!-- banner -->
 	<div th:replace="~{${content}}"></div>
 
@@ -368,6 +369,28 @@ function hienThongBao(noiDung, maThongBao, url) {
 	}
   
 </script>
+<!-- Thêm đoạn này trong TrangCaNhan.html -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let error = /*[[${error}]]*/ null;
+    let success = /*[[${success}]]*/ null;
+    /*]]>*/
+</script>
+
+<script>
+    if (error !== null && error !== '') {
+        hienThongBaoHeThong(error, false);
+    }
+
+    if (success !== null && success !== '') {
+        hienThongBaoHeThong(success, true);
+    }
+</script>
+
+
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 <script th:inline="javascript">
