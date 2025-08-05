@@ -1,220 +1,251 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Quản lý tài khoản</title>
 
-<link rel="stylesheet" href="/css/Style_QuanLyThanhToan.css">
+	<!-- Icon Font -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="/css/Style_QuanLyThanhToan.css">
 
-	<!-- ========== MAIN CONTAINER ========== -->
-	<div class="container-admin">
-
-
-		<h2>Quản lý thanh toán</h2>
-		<table
-			class="table table-bordered table-hover text-center align-middle">
-			<thead class="table-dark">
-				<tr>
-					<th>Mã TT</th>
-					<th>Mã ĐH</th>
-					<th>Số Tiền</th>
-					<th>Ngày TT</th>
-					<th>Phương Thức</th>
-					<th>Trạng Thái</th>
-					<th>Ghi Chú</th>
-					<th>Hành động</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="tt : ${listThanhToan}">
-					<td th:text="'TT' + ${tt.maThanhToan}"></td>
-					<td th:text="'DH' + ${tt.donHang.maDH}"></td>
-					<td
-						th:text="${#numbers.formatDecimal(tt.soTien, 0, 'COMMA', 0, 'POINT')} + '₫'"></td>
-
-					<!-- ✅ Fix dòng này -->
-					<td th:text="${#temporals.format(tt.ngayThanhToan, 'yyyy-MM-dd')}"></td>
-
-					<td th:text="${tt.phuongThucTT}"></td>
-					<td
-						th:classappend="${tt.trangThai == 'Đã thanh toán' ? 'status-paid' : 'status-unpaid'}"
-						th:text="${tt.trangThai}"></td>
-					<td class="note-cell" th:attr="title=${tt.ghiChuTT}"
-						th:text="${tt.ghiChuTT}"></td>
-					<td>
-						<button class="btn btn-warning btn-sm"
-							onclick="showEditForm(this)">Sửa</button>
-						<button class="btn btn-danger btn-sm">Xóa</button>
-					</td>
-				</tr>
-			</tbody>
-
-
-		</table>
-
-
-
-
-
-
-
-
-		<!-- FORM CHỈNH SỬA THÔNG TIN THANH TOÁN -->
-		<div id="editForm" class="mt-5 p-4 border rounded bg-white shadow"
-			style="display: none;">
-			<h4 class="mb-3">Chỉnh sửa thanh toán</h4>
-			<form id="paymentEditForm">
-				<div class="row g-3">
-					<div class="col-md-4">
-						<label for="maTT" class="form-label">Mã Thanh Toán</label> <input
-							type="text" class="form-control" id="maTT" readonly>
-					</div>
-					<div class="col-md-4">
-						<label for="maDH" class="form-label">Mã Đơn Hàng</label> <input
-							type="text" class="form-control" id="maDH">
-					</div>
-					<div class="col-md-4">
-						<label for="soTien" class="form-label">Số Tiền</label> <input
-							type="number" class="form-control" id="soTien">
-					</div>
-					<div class="col-md-4">
-						<label for="ngayTT" class="form-label">Ngày Thanh Toán</label> <input
-							type="date" class="form-control" id="ngayTT">
-					</div>
-					<div class="col-md-4">
-						<label for="phuongThuc" class="form-label">Phương Thức TT</label>
-						<select class="form-select" id="phuongThuc">
-							<option value="COD">COD</option>
-							<option value="Chuyển khoản">Chuyển khoản</option>
-						</select>
-					</div>
-					<div class="col-md-4">
-						<label for="trangThai" class="form-label">Trạng Thái</label> <select
-							class="form-select" id="trangThai">
-							<option value="Đã thanh toán">Đã thanh toán</option>
-							<option value="Đang xử lý">Đang xử lý</option>
-							<option value="Thất bại">Thất bại</option>
-						</select>
-					</div>
-					<div class="col-12">
-						<label for="ghiChu" class="form-label">Ghi Chú</label>
-						<textarea class="form-control" id="ghiChu" rows="2"></textarea>
-					</div>
-				</div>
-				<div class="mt-4 d-flex justify-content-end">
-					<button type="button" class="btn btn-secondary me-2"
-						onclick="hideEditForm()">Hủy</button>
-					<button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-				</div>
-			</form>
+</head>
+<body>
+<!-- ========== NAVBAR ========== -->
+<nav id="navbar">
+	<div class="nav-left">
+		<div class="logo-wrapper">
+			<img src="/img/processed_no_white.png" alt="Logo" />
+			<div class="logo-title">Gundam Shop</div>
 		</div>
+	</div>
+	<div class="nav-right">
+		<span>Tài khoản |</span>
+		<a href="#">
+			<img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Tài khoản" />
+		</a>
+	</div>
+</nav>
 
+
+<!-- ========== TASKBAR ========== -->
+<div class="taskbar">
+	<a href="/QuanLySanPham.html" title="Quản lý sản phẩm"><img src="/img/box.png" alt="" /></a>
+	<a href="/QuanLyTaiKhoan.html" title="Quản lý tài khoản"><img src="/img/account.png" alt="" /></a>
+	<a href="/QuanLyDonHang.html" title="Quản lý đơn hàng"><img src="/img/booking.png" alt="" /></a>
+	<a href="#" title="Quản lý đánh giá"><img src="/img/review.png" alt="" /></a>
+	<a href="/QuanLyBanner.html" title="Quản lý banner"><img src="/img/advertisement.png" alt="" /></a>
+	<a href="/QuanLyThanhToan.html" title="Quản lý thanh toán"><img src="/img/credit-card.png" alt="" /></a>
+</div>
+
+<!-- ========== MAIN CONTAINER ========== -->
+<div class="container-admin">
+
+
+	<h2>Quản lý thanh toán</h2>
+	<table class="table table-bordered table-hover text-center align-middle">
+		<thead class="table-dark">
+		<tr>
+			<th>Mã TT</th>
+			<th>Mã ĐH</th>
+			<th>Số Tiền</th>
+			<th>Ngày TT</th>
+			<th>Phương Thức</th>
+			<th>Trạng Thái</th>
+			<th>Ghi Chú</th>
+			<th>Hành động</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="tt : ${listThanhToan}">
+			<td th:text="'TT' + ${tt.maThanhToan}"></td>
+			<td th:text="'DH' + ${tt.donHang.maDH}"></td>
+			<td th:text="${#numbers.formatDecimal(tt.soTien, 0, 'COMMA', 0, 'POINT')} + '₫'"></td>
+
+			<!-- ✅ Fix dòng này -->
+			<td th:text="${#temporals.format(tt.ngayThanhToan, 'yyyy-MM-dd')}"></td>
+
+			<td th:text="${tt.phuongThucTT}"></td>
+			<td th:classappend="${tt.trangThai == 'Đã thanh toán' ? 'status-paid' : 'status-unpaid'}" th:text="${tt.trangThai}"></td>
+			<td class="note-cell" th:attr="title=${tt.ghiChuTT}" th:text="${tt.ghiChuTT}"></td>
+			<td>
+				<button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
+				<button class="btn btn-danger btn-sm">Xóa</button>
+			</td>
+		</tr>
+		</tbody>
+
+
+	</table>
+
+
+
+
+
+
+
+
+	<!-- FORM CHỈNH SỬA THÔNG TIN THANH TOÁN -->
+	<div id="editForm" class="mt-5 p-4 border rounded bg-white shadow" style="display: none;">
+		<h4 class="mb-3">Chỉnh sửa thanh toán</h4>
+		<form id="paymentEditForm">
+			<div class="row g-3">
+				<div class="col-md-4">
+					<label for="maTT" class="form-label">Mã Thanh Toán</label>
+					<input type="text" class="form-control" id="maTT" readonly>
+				</div>
+				<div class="col-md-4">
+					<label for="maDH" class="form-label">Mã Đơn Hàng</label>
+					<input type="text" class="form-control" id="maDH">
+				</div>
+				<div class="col-md-4">
+					<label for="soTien" class="form-label">Số Tiền</label>
+					<input type="number" class="form-control" id="soTien">
+				</div>
+				<div class="col-md-4">
+					<label for="ngayTT" class="form-label">Ngày Thanh Toán</label>
+					<input type="date" class="form-control" id="ngayTT">
+				</div>
+				<div class="col-md-4">
+					<label for="phuongThuc" class="form-label">Phương Thức TT</label>
+					<select class="form-select" id="phuongThuc">
+						<option value="COD">COD</option>
+						<option value="Chuyển khoản">Chuyển khoản</option>
+					</select>
+				</div>
+				<div class="col-md-4">
+					<label for="trangThai" class="form-label">Trạng Thái</label>
+					<select class="form-select" id="trangThai">
+						<option value="Đã thanh toán">Đã thanh toán</option>
+						<option value="Đang xử lý">Đang xử lý</option>
+						<option value="Thất bại">Thất bại</option>
+					</select>
+				</div>
+				<div class="col-12">
+					<label for="ghiChu" class="form-label">Ghi Chú</label>
+					<textarea class="form-control" id="ghiChu" rows="2"></textarea>
+				</div>
+			</div>
+			<div class="mt-4 d-flex justify-content-end">
+				<button type="button" class="btn btn-secondary me-2" onclick="hideEditForm()">Hủy</button>
+				<button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+			</div>
+		</form>
 	</div>
 
-	<!-- SCRIPT xử lý sự kiện Sửa -->
-	<script>
-  function showEditForm(button) {
-  const row = button.closest("tr");
-  document.getElementById("editForm").style.display = "block";
+</div>
 
-  document.getElementById("maTT").value = row.children[0].innerText;
-  document.getElementById("maDH").value = row.children[1].innerText;
+<!-- SCRIPT xử lý sự kiện Sửa -->
+<script>
+	function showEditForm(button) {
+		const row = button.closest("tr");
+		document.getElementById("editForm").style.display = "block";
 
-  // 👉 Sửa dòng này:
-  const soTienRaw = row.children[2].innerText.replace(/[^0-9]/g, '');
-  document.getElementById("soTien").value = parseInt(soTienRaw);
+		document.getElementById("maTT").value = row.children[0].innerText;
+		document.getElementById("maDH").value = row.children[1].innerText;
 
-  document.getElementById("ngayTT").value = row.children[3].innerText;
+		// 👉 Sửa dòng này:
+		const soTienRaw = row.children[2].innerText.replace(/[^0-9]/g, '');
+		document.getElementById("soTien").value = parseInt(soTienRaw);
 
-  document.getElementById("phuongThuc").value = row.children[4].innerText.trim();
-  document.getElementById("trangThai").value = row.children[5].innerText.trim();
-  document.getElementById("ghiChu").value = row.children[6].innerText;
-}
+		document.getElementById("ngayTT").value = row.children[3].innerText;
 
-  function hideEditForm() {
-    document.getElementById("editForm").style.display = "none";
-  }
+		document.getElementById("phuongThuc").value = row.children[4].innerText.trim();
+		document.getElementById("trangThai").value = row.children[5].innerText.trim();
+		document.getElementById("ghiChu").value = row.children[6].innerText;
+	}
 
-  // Khi submit form
-  document.getElementById("paymentEditForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-    alert("Thông tin thanh toán đã được cập nhật (giả lập)");
-    hideEditForm();
-    // TODO: Gửi request cập nhật vào DB
-  });
+	function hideEditForm() {
+		document.getElementById("editForm").style.display = "none";
+	}
+
+	// Khi submit form
+	document.getElementById("paymentEditForm").addEventListener("submit", function (e) {
+		e.preventDefault();
+		alert("Thông tin thanh toán đã được cập nhật (giả lập)");
+		hideEditForm();
+		// TODO: Gửi request cập nhật vào DB
+	});
 </script>
 
-	<script>
-  function showEditForm(button) {
-    const row = button.closest("tr");
-    document.getElementById("editForm").style.display = "block";
+<script>
+	function showEditForm(button) {
+		const row = button.closest("tr");
+		document.getElementById("editForm").style.display = "block";
 
-    document.getElementById("maTT").value = row.children[0].innerText.replace("TT", "");
-    document.getElementById("maDH").value = row.children[1].innerText.replace("DH", "");
+		document.getElementById("maTT").value = row.children[0].innerText.replace("TT", "");
+		document.getElementById("maDH").value = row.children[1].innerText.replace("DH", "");
 
-    const soTienRaw = row.children[2].innerText.replace(/[^0-9]/g, '');
-    document.getElementById("soTien").value = parseInt(soTienRaw);
+		const soTienRaw = row.children[2].innerText.replace(/[^0-9]/g, '');
+		document.getElementById("soTien").value = parseInt(soTienRaw);
 
-    document.getElementById("ngayTT").value = row.children[3].innerText;
-    document.getElementById("phuongThuc").value = row.children[4].innerText.trim();
-    document.getElementById("trangThai").value = row.children[5].innerText.trim();
-    document.getElementById("ghiChu").value = row.children[6].innerText;
-  }
+		document.getElementById("ngayTT").value = row.children[3].innerText;
+		document.getElementById("phuongThuc").value = row.children[4].innerText.trim();
+		document.getElementById("trangThai").value = row.children[5].innerText.trim();
+		document.getElementById("ghiChu").value = row.children[6].innerText;
+	}
 
-  function hideEditForm() {
-    document.getElementById("editForm").style.display = "none";
-  }
+	function hideEditForm() {
+		document.getElementById("editForm").style.display = "none";
+	}
 
-  document.getElementById("paymentEditForm").addEventListener("submit", function (e) {
-    e.preventDefault();
+	document.getElementById("paymentEditForm").addEventListener("submit", function (e) {
+		e.preventDefault();
 
-    const data = {
-      maThanhToan: document.getElementById("maTT").value,
-      maDH: document.getElementById("maDH").value,
-      soTien: document.getElementById("soTien").value,
-      ngayThanhToan: document.getElementById("ngayTT").value,
-      phuongThuc: document.getElementById("phuongThuc").value,
-      trangThai: document.getElementById("trangThai").value,
-      ghiChu: document.getElementById("ghiChu").value
-    };
+		const data = {
+			maThanhToan: document.getElementById("maTT").value,
+			maDH: document.getElementById("maDH").value,
+			soTien: document.getElementById("soTien").value,
+			ngayThanhToan: document.getElementById("ngayTT").value,
+			phuongThuc: document.getElementById("phuongThuc").value,
+			trangThai: document.getElementById("trangThai").value,
+			ghiChu: document.getElementById("ghiChu").value
+		};
 
-    fetch("/ThanhToan/update", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: new URLSearchParams(data)
-    })
-    .then(response => response.text())
-    .then(res => {
-      if (res === "success") {
-        alert("Cập nhật thành công!");
-        location.reload();
-      } else {
-        alert("Lỗi cập nhật!");
-      }
-    });
-  });
+		fetch("/ThanhToan/update", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			},
+			body: new URLSearchParams(data)
+		})
+				.then(response => response.text())
+				.then(res => {
+					if (res === "success") {
+						alert("Cập nhật thành công!");
+						location.reload();
+					} else {
+						alert("Lỗi cập nhật!");
+					}
+				});
+	});
 
-  // XÓA
-  document.querySelectorAll(".btn-danger").forEach(btn => {
-    btn.addEventListener("click", function () {
-      if (confirm("Bạn có chắc muốn xóa thanh toán này không?")) {
-        const row = this.closest("tr");
-        const maTT = row.children[0].innerText.replace("TT", "");
+	// XÓA
+	document.querySelectorAll(".btn-danger").forEach(btn => {
+		btn.addEventListener("click", function () {
+			if (confirm("Bạn có chắc muốn xóa thanh toán này không?")) {
+				const row = this.closest("tr");
+				const maTT = row.children[0].innerText.replace("TT", "");
 
-        fetch("/ThanhToan/delete", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: "maThanhToan=" + maTT
-        })
-        .then(response => response.text())
-        .then(res => {
-          if (res === "success") {
-            alert("Xóa thành công!");
-            location.reload();
-          } else {
-            alert("Lỗi xóa!");
-          }
-        });
-      }
-    });
-  });
+				fetch("/ThanhToan/delete", {
+					method: "POST",
+					headers: { "Content-Type": "application/x-www-form-urlencoded" },
+					body: "maThanhToan=" + maTT
+				})
+						.then(response => response.text())
+						.then(res => {
+							if (res === "success") {
+								alert("Xóa thành công!");
+								location.reload();
+							} else {
+								alert("Lỗi xóa!");
+							}
+						});
+			}
+		});
+	});
 </script>
 
 

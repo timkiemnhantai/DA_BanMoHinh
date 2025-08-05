@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.poly.dto.BienTheSanPhamDTO;
 import com.poly.dto.ChiTietSanPhamDTO;
@@ -273,6 +274,67 @@ public class SanPhamService {
 		dto.setDiemTrungBinh(diemTrungBinh);
 		dto.setTongSoLuongBan(tongSoLuongBan);
 		return dto;
+	}
+
+
+	/** ========== HÀM THÊM MỚI SẢN PHẨM FULL (LƯU ẢNH + BIẾN THỂ) ========== **/
+	@Transactional
+	public void saveSanPhamFull(SanPham sanPham, MultipartFile fileAnh, String urlAnh, Integer giamGia) {
+		sanphamRepository.save(sanPham);
+
+		// Lưu ảnh sản phẩm (chỉ khi có ảnh và có url đã xử lý bên controller truyền vào)
+		if (fileAnh != null && !fileAnh.isEmpty() && urlAnh != null) {
+			AnhSanPham anh = new AnhSanPham();
+			anh.setSanPham(sanPham);
+			anh.setUrlAnhSP(urlAnh);
+			anhSanPhamRepository.save(anh);
+		}
+
+		// Lưu biến thể (không xử lý giảm giá tại đây nếu không cần)
+		if (sanPham.getBienTheSanPham() != null) {
+			for (BienTheSanPham bienThe : sanPham.getBienTheSanPham()) {
+				bienThe.setSanPham(sanPham);
+				bienthesanphamRepository.save(bienThe);
+			}
+		}
+	}
+
+	/** ========== HÀM UPDATE SẢN PHẨM FULL (LƯU ẢNH + BIẾN THỂ) ========== **/
+	@Transactional
+	public void updateSanPhamFull(Integer id, SanPham sanPham, MultipartFile fileAnh, String urlAnh, Integer giamGia) {
+		Optional<SanPham> spOpt = sanphamRepository.findById(id);
+		if (spOpt.isPresent()) {
+			SanPham spCu = spOpt.get();
+
+			// Cập nhật thông tin cơ bản
+			spCu.setTenSP(sanPham.getTenSP());
+			spCu.setMoTaChung(sanPham.getMoTaChung());
+			spCu.setThuongHieu(sanPham.getThuongHieu());
+			spCu.setLoaiSanPham(sanPham.getLoaiSanPham());
+
+			sanphamRepository.save(spCu);
+
+			// Cập nhật ảnh (nếu có upload mới)
+			if (fileAnh != null && !fileAnh.isEmpty() && urlAnh != null) {
+				AnhSanPham anh = new AnhSanPham();
+				anh.setSanPham(spCu);
+				anh.setUrlAnhSP(urlAnh);
+				anhSanPhamRepository.save(anh);
+			}
+
+			// Cập nhật biến thể (chỉ lấy biến thể đầu tiên như form đang thiết kế)
+			if (sanPham.getBienTheSanPham() != null && !sanPham.getBienTheSanPham().isEmpty()) {
+				BienTheSanPham bienTheMoi = sanPham.getBienTheSanPham().get(0);
+				List<BienTheSanPham> bienTheCuList = bienthesanphamRepository.findBySanPham_MaSP(id);
+				if (!bienTheCuList.isEmpty()) {
+					BienTheSanPham bienTheCu = bienTheCuList.get(0);
+					bienTheCu.setGia(bienTheMoi.getGia());
+					bienTheCu.setSoLuongTonKho(bienTheMoi.getSoLuongTonKho());
+					bienTheCu.setTrangThaiKH(bienTheMoi.getTrangThaiKH());
+					bienthesanphamRepository.save(bienTheCu);
+				}
+			}
+		}
 	}
 
 }
