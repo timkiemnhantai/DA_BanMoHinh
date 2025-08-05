@@ -9,5 +9,5 @@ import com.poly.model.DiaChi;
 @Repository
 public interface DiaChiRepository extends JpaRepository<DiaChi, Integer> {
     List<DiaChi> findByTaiKhoan_MaTK(Integer maTK);
-    
+    boolean existsByTaiKhoan_MaTK(Integer maTK);
 }
