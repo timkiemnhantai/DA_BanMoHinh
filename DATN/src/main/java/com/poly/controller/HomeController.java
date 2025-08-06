@@ -73,8 +73,6 @@ public class HomeController {
 	private static final String ID2 = "id";
 	@Autowired
 	private SanPhamService sanphamService;
-//	@Autowired
-//	private ChiTietDonHangService chitietdonhangService;
 	@Autowired
 	private BienTheSanPhamRepository bienthesanphamRepository;
 	@Autowired
@@ -85,8 +83,6 @@ public class HomeController {
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private ThongBaoService thongBaoService;
-//	@Autowired
-//	private AnhChiTietRepository anhChiTietRepository;
 	@Autowired
 	private ThanhToanRepository thanhToanRepo;
 	@Autowired
@@ -218,18 +214,18 @@ public class HomeController {
 	
 	@PostMapping("/TrangCaNhan/CapNhat")
 	public String capNhatThongTin(
-			@RequestParam String tenDangNhap,			
+	        @RequestParam String tenDangNhap,
 	        @RequestParam String hoTen,
 	        @RequestParam String email,
 	        @RequestParam String soDT,
 	        @RequestParam int gioiTinh,
 	        @RequestParam String ngaySinh,
+	        @RequestParam(name = "file", required = false) MultipartFile file,
 	        @AuthenticationPrincipal CustomUserDetails userDetails,
+	        HttpSession session,
 	        RedirectAttributes redirectAttributes
 	) {
-	    // Lấy đối tượng đang đăng nhập
-
-		TaiKhoan taiKhoan = userDetails.getTaiKhoan();
+	    TaiKhoan taiKhoan = userDetails.getTaiKhoan();
 
 	    if (taiKhoan != null) {
 	        taiKhoan.setTenDangNhap(tenDangNhap);
@@ -239,20 +235,57 @@ public class HomeController {
 	        taiKhoan.setGioiTinh(gioiTinh);
 
 	        try {
-	            taiKhoan.setNgaySinh(LocalDate.parse(ngaySinh)); // định dạng yyyy-MM-dd
+	            taiKhoan.setNgaySinh(LocalDate.parse(ngaySinh));
 	        } catch (Exception e) {
-	        	System.out.println("error Ngày sinh không hợp lệ.");
+	            redirectAttributes.addFlashAttribute("error", "Ngày sinh không hợp lệ.");
 	            return "redirect:/TrangCaNhan";
 	        }
 
+	        if (file != null && !file.isEmpty()) {
+	            try {
+	                String originalFilename = file.getOriginalFilename();
+	                String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+	                List<String> allowedExtensions = Arrays.asList(".jpg", ".jpeg", ".png", ".gif");
+
+	                if (!allowedExtensions.contains(extension)) {
+	                    redirectAttributes.addFlashAttribute("error", "❌ Định dạng ảnh không hợp lệ!");
+	                    return "redirect:/TrangCaNhan";
+	                }
+
+	                // Tạo tên file ngẫu nhiên
+	                String randomFileName = UUID.randomUUID().toString() + extension;
+
+	                // Đường dẫn thư mục lưu file
+	                String uploadDir = new File("uploads/avatar").getAbsolutePath();
+	    
+	                // Tạo file đích và lưu
+	                File destFile = new File(uploadDir, randomFileName);
+	                file.transferTo(destFile);
+
+	                // Đường dẫn truy cập ảnh
+	                String url = "/uploads/avatar/" + randomFileName;
+	                taiKhoan.setAvatar(url);
+
+	                // Cập nhật session
+	                userDetails.getTaiKhoan().setAvatar(url);
+	                session.setAttribute("userDetails", userDetails);
+
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	                redirectAttributes.addFlashAttribute("error", "❌ Lỗi khi lưu ảnh!");
+	                return "redirect:/TrangCaNhan";
+	            }
+	        }
+
 	        taiKhoanService.saveTaiKhoan(taiKhoan);
-	        redirectAttributes.addFlashAttribute("success", "✅ Lưu thông tin thành công");
+	        redirectAttributes.addFlashAttribute("success", "✅ Cập nhật hồ sơ thành công!");
 	    } else {
-	        redirectAttributes.addFlashAttribute("error", "❌ Lưu thông tin thất bại");
+	        redirectAttributes.addFlashAttribute("error", "❌ Không tìm thấy tài khoản.");
 	    }
 
 	    return "redirect:/TrangCaNhan";
 	}
+
 
 	@Transactional
 	@GetMapping("/DiaChi")
@@ -281,6 +314,7 @@ public class HomeController {
 
 	    model.addAttribute("tendn", taiKhoan.getTenDangNhap());
 	    model.addAttribute("avatar", taiKhoan.getAvatar());
+	    System.out.print("avatar:" + taiKhoan.getAvatar());
 	    
 	    List<DiaChi> dsDiaChi = diaChiRepository.findByTaiKhoan_MaTK(maTK);
 	    for (DiaChi d : dsDiaChi) {
@@ -751,61 +785,61 @@ public class HomeController {
 	    return "User/thanh-cong";
 	}
 
-	@PostMapping("/upload-avatar")
-	public String uploadAvatar(@RequestParam("file") MultipartFile file,
-	                           @AuthenticationPrincipal CustomUserDetails userDetails,
-	                           HttpSession session,
-	                           RedirectAttributes redirectAttributes) {
-	    try {
-	        // Lấy thông tin người dùng
-	        Integer maTK = userDetails.getTaiKhoan().getMaTK();
-
-	        // Lấy tên file gốc
-	        String originalFilename = file.getOriginalFilename();
-	        if (originalFilename == null || originalFilename.isEmpty()) {
-	            redirectAttributes.addFlashAttribute("error", "File không hợp lệ!");
-	            return "redirect:/TrangCaNhan";
-	        }
-
-	        // Lấy và kiểm tra đuôi file
-	        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-	        List<String> allowedExtensions = Arrays.asList(".jpg", ".jpeg", ".png", ".gif");
-	        if (!allowedExtensions.contains(extension)) {
-	            redirectAttributes.addFlashAttribute("error", "Chỉ chấp nhận các định dạng ảnh: JPG, JPEG, PNG, GIF");
-	            return "redirect:/TrangCaNhan";
-	        }
-
-
-	        // Tạo tên file mới ngẫu nhiên
-	        String randomFileName = UUID.randomUUID().toString() + extension;
-
-	        // Đường dẫn lưu file (thư mục static/avatar)
-	        String uploadDir = new File("src/main/resources/static/avatar").getAbsolutePath();
-	        File destFile = new File(uploadDir, randomFileName);
-	        file.transferTo(destFile);
-
-	        // Tạo URL để lưu vào DB
-	        String url = "/avatar/" + randomFileName;
-
-	        // Cập nhật avatar trong DB
-	        TaiKhoan taiKhoan = taiKhoanRepository.findById(maTK).orElse(null);
-	        if (taiKhoan != null) {
-	            taiKhoan.setAvatar(url);
-	            taiKhoanRepository.save(taiKhoan);
-
-	            // Cập nhật session
-	            userDetails.getTaiKhoan().setAvatar(url);
-	            session.setAttribute("userDetails", userDetails);
-	        }
-
-	        redirectAttributes.addFlashAttribute("success", "Tải ảnh thành công!");
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        redirectAttributes.addFlashAttribute("error", "Lỗi khi tải ảnh!");
-	    }
-
-	    return "redirect:/TrangCaNhan";
-	}
+//	@PostMapping("/upload-avatar")
+//	public String uploadAvatar(@RequestParam("file") MultipartFile file,
+//	                           @AuthenticationPrincipal CustomUserDetails userDetails,
+//	                           HttpSession session,
+//	                           RedirectAttributes redirectAttributes) {
+//	    try {
+//	        // Lấy thông tin người dùng
+//	        Integer maTK = userDetails.getTaiKhoan().getMaTK();
+//
+//	        // Lấy tên file gốc
+//	        String originalFilename = file.getOriginalFilename();
+//	        if (originalFilename == null || originalFilename.isEmpty()) {
+//	            redirectAttributes.addFlashAttribute("error", "File không hợp lệ!");
+//	            return "redirect:/TrangCaNhan";
+//	        }
+//
+//	        // Lấy và kiểm tra đuôi file
+//	        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+//	        List<String> allowedExtensions = Arrays.asList(".jpg", ".jpeg", ".png", ".gif");
+//	        if (!allowedExtensions.contains(extension)) {
+//	            redirectAttributes.addFlashAttribute("error", "Chỉ chấp nhận các định dạng ảnh: JPG, JPEG, PNG, GIF");
+//	            return "redirect:/TrangCaNhan";
+//	        }
+//
+//
+//	        // Tạo tên file mới ngẫu nhiên
+//	        String randomFileName = UUID.randomUUID().toString() + extension;
+//
+//	        // Đường dẫn lưu file (thư mục static/avatar)
+//	        String uploadDir = new File("src/main/resources/static/avatar").getAbsolutePath();
+//	        File destFile = new File(uploadDir, randomFileName);
+//	        file.transferTo(destFile);
+//
+//	        // Tạo URL để lưu vào DB
+//	        String url = "/avatar/" + randomFileName;
+//
+//	        // Cập nhật avatar trong DB
+//	        TaiKhoan taiKhoan = taiKhoanRepository.findById(maTK).orElse(null);
+//	        if (taiKhoan != null) {
+//	            taiKhoan.setAvatar(url);
+//	            taiKhoanRepository.save(taiKhoan);
+//
+//	            // Cập nhật session
+//	            userDetails.getTaiKhoan().setAvatar(url);
+//	            session.setAttribute("userDetails", userDetails);
+//	        }
+//
+//	        redirectAttributes.addFlashAttribute("success", "Tải ảnh thành công!");
+//	    } catch (IOException e) {
+//	        e.printStackTrace();
+//	        redirectAttributes.addFlashAttribute("error", "Lỗi khi tải ảnh!");
+//	    }
+//
+//	    return "redirect:/TrangCaNhan";
+//	}
 
 
 

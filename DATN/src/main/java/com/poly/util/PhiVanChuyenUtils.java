@@ -24,16 +24,18 @@ public class PhiVanChuyenUtils {
     private static final int GIO_CAT_DON = 14;
 
     private static final String API_TINH = "https://provinces.open-api.vn/api/p/";
+
     private static final Set<String> danhSachTinhThanh = new HashSet<>();
 
 
     public static KetQuaVanChuyen tinhVanChuyen(String diaChiDayDu, int tongTien) {
         int phi = tinhPhi(diaChiDayDu, tongTien);
 
-        int soNgayTu = 3, soNgayDen = 5; // Mặc định: tỉnh thường
+        int soNgayTu = 3, soNgayDen = 5; // Mặc định tỉnh thường
 
         String diaChiChuan = chuanHoaChuoi(diaChiDayDu);
 
+        // Ưu tiên check vùng nội thành
         for (String tp : NOI_THANH) {
             if (diaChiChuan.contains(chuanHoaChuoi(tp))) {
                 soNgayTu = 1;
@@ -42,12 +44,28 @@ public class PhiVanChuyenUtils {
             }
         }
 
+        // Nếu không phải nội thành, check vùng xa
         for (String xa : VUNG_XA) {
             if (diaChiChuan.contains(chuanHoaChuoi(xa))) {
                 soNgayTu = 4;
                 soNgayDen = 6;
                 break;
             }
+        }
+
+        // Nếu vẫn không nằm trong 2 nhóm trên, check tỉnh thành từ API
+        if (danhSachTinhThanh.isEmpty()) {
+            napDanhSachTinhThanh();
+        }
+
+        boolean khopTinhAPI = danhSachTinhThanh.stream()
+            .map(PhiVanChuyenUtils::chuanHoaChuoi)
+            .anyMatch(diaChiChuan::contains);
+
+        if (!khopTinhAPI) {
+            // Không khớp bất kỳ tỉnh nào -> Giao hàng chậm hơn
+            soNgayTu = 5;
+            soNgayDen = 7;
         }
 
         LocalDate ngayBatDau = LocalTime.now().getHour() >= GIO_CAT_DON
@@ -66,6 +84,10 @@ public class PhiVanChuyenUtils {
         if (tongTien >= MUC_MIEN_PHI) return 0;
         if (diaChiDayDu == null || diaChiDayDu.isBlank()) return PHI_THUONG;
 
+        if (danhSachTinhThanh.isEmpty()) {
+            napDanhSachTinhThanh();
+        }
+
         String diaChiChuan = chuanHoaChuoi(diaChiDayDu);
 
         for (String tp : NOI_THANH) {
@@ -80,12 +102,16 @@ public class PhiVanChuyenUtils {
             if (diaChiChuan.contains(chuanHoaChuoi(tinh))) return PHI_THUONG;
         }
 
+        // Nếu không khớp tỉnh nào → xử lý fallback
         return PHI_THUONG;
     }
 
+
     private static void napDanhSachTinhThanh() {
         try {
-            HttpClient client = HttpClient.newHttpClient();
+            HttpClient client = HttpClient.newBuilder()
+                    .followRedirects(HttpClient.Redirect.ALWAYS) 
+                    .build();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(API_TINH))
                     .GET()
@@ -96,6 +122,8 @@ public class PhiVanChuyenUtils {
             String contentType = response.headers().firstValue("Content-Type").orElse("");
             if (!contentType.contains("application/json")) {
                 System.err.println("API trả về không phải JSON. Content-Type: " + contentType);
+                System.err.println("Body trả về là:\n" + response.body());
+
                 return; // Không tiếp tục xử lý nữa
             }
 
