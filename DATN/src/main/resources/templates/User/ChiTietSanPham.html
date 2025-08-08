@@ -86,7 +86,7 @@
 				</div>
 
 				<p class="max-purchase" id="tonkho-text">Kho: <span id="tonkho-value" th:text="${chiTiet[0].bienThe.soLuongTonKho}"></span></p>
-				
+
 			</div>
 
 			<!-- NÚt HÀNH ĐỘNG -->
@@ -289,7 +289,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			}
 		}
 
-		
+
 		const giaSauGiamElem = document.getElementById("giaSauGiamText");
 		if (giaSauGiamElem && giaGiam !== undefined && giaGiam !== null) {
 			giaSauGiamElem.textContent = parseFloat(giaGiam).toLocaleString("vi-VN") + " VND";
@@ -323,7 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 		thumbnails.forEach(t => t.classList.remove("active"));
 		thumbnail.classList.add("active");
-		
+
 	}
 
 
