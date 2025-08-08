@@ -4,7 +4,7 @@
 	<!-- Sidebar -->
 	<div class="sidebar">
 		<div class="user-info">
-			
+
 			<img style="margin-left: 75px" th:src="${avatar}" alt="Avatar"
 				onerror="this.onerror=null; this.src='/img/Screenshot_2025-06-19_220523-removebg-preview.png';">
 			<strong th:text="${tendn}"></strong> <a th:href="@{/TrangCaNhan}">✎
@@ -46,20 +46,22 @@
 					</div>
 					<div class="address-actions">
 
-					<form th:action="@{/DiaChi/CapNhat}" method="post" style="display: inline; margin-left: 40px;">
-					    <input type="hidden" name="maDC" th:value="${dc.maDiaChi}" />
-					    <button type="submit" class="btn btn-link p-0" style="color: blue; background: none; border: none;">Cập nhật</button>
-					</form>
+						<form th:action="@{/DiaChi/CapNhat}" method="post"
+							style="display: inline; margin-left: 40px;">
+							<input type="hidden" name="maDC" th:value="${dc.maDiaChi}" />
+							<button type="submit" class="btn btn-link p-0"
+								style="color: blue; background: none; border: none;">Cập
+								nhật</button>
+						</form>
 
-					<form th:action="@{/DiaChi/Xoa}" method="post" 
-					      th:id="'form-xoa-' + ${dc.maDiaChi}" style="display: inline;">
-					  <input type="hidden" name="maDC" th:value="${dc.maDiaChi}" />
-					  <button type="button" style="color: blue; background: none; border: none;"
-					          class="btn-xoa-dia-chi"
-					          th:data-id="'form-xoa-' + ${dc.maDiaChi}">
-					    Xóa
-					  </button>
-					</form>
+						<form th:action="@{/DiaChi/Xoa}" method="post"
+							th:id="'form-xoa-' + ${dc.maDiaChi}" style="display: inline;">
+							<input type="hidden" name="maDC" th:value="${dc.maDiaChi}" />
+							<button type="button"
+								style="color: blue; background: none; border: none;"
+								class="btn-xoa-dia-chi"
+								th:data-id="'form-xoa-' + ${dc.maDiaChi}">Xóa</button>
+						</form>
 
 
 
@@ -89,8 +91,10 @@
 						th:value="${diaChi != null ? diaChi.hoTen : ''}" required /> <label>Số
 						điện thoại</label> <input type="tel" name="phoneNumber"
 						th:value="${diaChi != null ? diaChi.soDienThoai : ''}"
-						pattern="[0-9]{10,11}" required /> <label>Tỉnh/Thành phố</label>
-					<select id="province" name="provinceName" required>
+						pattern="[0-9]{10,11}"
+						oninvalid="this.setCustomValidity('Số điện thoại phải có 10 chữ số và bắt đầu bằng 0')"
+						oninput="this.setCustomValidity('')" required /> <label>Tỉnh/Thành
+						phố</label> <select id="province" name="provinceName" required>
 						<option th:value="${diaChi?.tinh}" th:text="${diaChi?.tinh}"
 							th:if="${diaChi != null}"></option>
 					</select> <label>Quận/Huyện</label> <select id="district"
@@ -123,9 +127,6 @@ const addressModal = document.getElementById('address-form-modal');
 openBtn.onclick = () => addressModal.style.display = 'flex';
 closeBtn.onclick = () => addressModal.style.display = 'none';
 
-window.onclick = (e) => {
-  if (e.target === addressModal) addressModal.style.display = 'none';
-};
 </script>
 <script th:inline="javascript">
   async function loadProvinces() {
@@ -230,15 +231,14 @@ window.onclick = (e) => {
 
 <script>
 function editAddress(hoTen, sdt, tinh, huyen, xa, duong) {
-  // Hiện form
+  
   document.getElementById('address-form-modal').style.display = 'flex';
 
-  // Gán vào các input
   document.querySelector('input[name="fullName"]').value = hoTen;
   document.querySelector('input[name="phoneNumber"]').value = sdt;
   document.querySelector('input[name="street"]').value = duong;
 
-  // Gán sẵn các select nếu bạn dùng tên thay vì code
+  
   document.getElementById('province').innerHTML = `<option selected>${tinh}</option>`;
   document.getElementById('district').innerHTML = `<option selected>${huyen}</option>`;
   document.getElementById('ward').innerHTML = `<option selected>${xa}</option>`;

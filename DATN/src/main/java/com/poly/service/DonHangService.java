@@ -7,15 +7,18 @@ import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.poly.repository.BienTheSanPhamRepository;
 import com.poly.repository.ChiTietDonHangRepository;
+import com.poly.repository.ChiTietGioHangRepository;
 import com.poly.repository.DonHangRepository;
 import com.poly.repository.ThanhToanRepository;
 import com.poly.repository.TrangThaiDHRepository;
 
 
 import com.poly.dto.DonHangDTO;
+import com.poly.dto.DonHangTrangThaiDTO;
 import com.poly.model.BienTheSanPham;
 import com.poly.model.ChiTietDonHang;
 import com.poly.model.DonHang;
@@ -51,46 +54,34 @@ public class DonHangService {
         return dsDTO;
     }
 	
-//	public void capNhatTrangThaiDonHang(int maDH, int trangThaiMoi, String trangThaiThanhToan) {
-//	    Optional<DonHang> optionalDonHang = donHangRepo.findById(maDH);
-//	    if (optionalDonHang.isPresent()) {
-//	        DonHang donHang = optionalDonHang.get();
-//	        ThanhToan thanhToan = thanhToanRepo.findByDonHang_MaDH(maDH);
-//	        if ("Đã thanh toán".equalsIgnoreCase(trangThaiThanhToan)
-//	                && (thanhToan == null || !"Đã thanh toán".equalsIgnoreCase(thanhToan.getTrangThai()))){
-//
-//	            // Nếu trạng thái đơn hàng chưa phải 4 (đã thanh toán), mới thực hiện trừ tồn kho
-//	            if (donHang.getTrangThaiDH().getMaTTDH() != 4 && trangThaiMoi == 4) {
-//	                List<ChiTietDonHang> chiTietList = chiTietDonHangRepo.findByDonHang(donHang);
-//
-//	                for (ChiTietDonHang chiTiet : chiTietList) {
-//	                    BienTheSanPham bienThe = chiTiet.getBienTheSanPham();
-//
-//	                    int tonKhoTruoc = bienThe.getSoLuongTonKho();
-//	                    int soLuongMua = chiTiet.getSoLuongSP();
-//
-//	                    bienThe.setSoLuongTonKho(tonKhoTruoc - soLuongMua);
-//
-//	                    System.out.println(">> Trừ tồn kho cho mã biến thể: " + bienThe.getMaCTSP() +
-//	                            " | Từ " + tonKhoTruoc + " → " + bienThe.getSoLuongTonKho() +
-//	                            " | Số lượng mua: " + soLuongMua);
-//
-//	                    bienTheSanPhamRepo.save(bienThe);
-//	                }
-//	            }
-//	        }
-//
-//	        // Cập nhật trạng thái đơn hàng dù có trừ kho hay không
-//	        TrangThaiDH trangThai = trangThaiDHRepo.findById(trangThaiMoi)
-//	                .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái"));
-//
-//	        donHang.setTrangThaiDH(trangThai);
-//	        donHangRepo.save(donHang);
-//	    } else {
-//	        throw new RuntimeException("Không tìm thấy đơn hàng có mã: " + maDH);
-//	    }
-//	}
+    @Transactional(readOnly = true)
+    public List<DonHangTrangThaiDTO> getDonHangTheoTrangThai(Integer maTTDH) {
+        List<DonHang> donHangs = donHangRepo.findByTrangThaiDH_MaTTDH(maTTDH);
+        return donHangs.stream().map(dh -> {
+            DonHangTrangThaiDTO dto = new DonHangTrangThaiDTO();
+            dto.setMaDH(dh.getMaDH());
+            dto.setTenNguoiDung(dh.getTaiKhoan().getHoTen());
+            dto.setTenTrangThai(dh.getTrangThaiDH().getTenTTDH());
+            dto.setNgayDat(dh.getNgayDat());
+            dto.setThanhTien(dh.getThanhTien());
+            return dto;
+        }).toList();
+    }
+    
+    public List<DonHangDTO> layDonHangVaChiTietTheoMaTKVaTrangThai(int maTK, int maTTDH) {
+        List<DonHang> ds = donHangRepo.findByTaiKhoan_MaTKAndTrangThaiDH_MaTTDHOrderByNgayDatDesc(maTK, maTTDH);
+        List<DonHangDTO> dsDTO = new ArrayList<>();
 
+        for (DonHang dh : ds) {
+            List<ChiTietDonHang> chiTiet = chiTietDonHangRepo.findByDonHang_MaDH(dh.getMaDH());
+            DonHangDTO dto = new DonHangDTO();
+            dto.setDonHang(dh);
+            dto.setChiTietDonHangs(chiTiet);
+            dsDTO.add(dto);
+        }
+
+        return dsDTO;
+    }
 
 
 
@@ -146,6 +137,19 @@ public class DonHangService {
 	        throw new RuntimeException("Không tìm thấy đơn hàng mã: " + maDH);
 	    }
 	}
+
+    @Autowired
+    private ChiTietGioHangRepository chiTietGioHangRepository;
+
+
+    @Transactional
+    public void xoaSanPhamTrongGioSauKhiDatHang(Integer maTK, List<Integer> dsMaBienTheDaDat) {
+        chiTietGioHangRepository.deleteByGioHang_TaiKhoan_MaTKAndChiTietSanPham_MaCTSPIn(maTK, dsMaBienTheDaDat);
+    }
+
+
+
+
 
 
 
