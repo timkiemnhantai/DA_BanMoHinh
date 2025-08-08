@@ -28,14 +28,41 @@
 		<h2>Đơn hàng của tôi</h2>
 
 		<!-- Bộ lọc trạng thái -->
-		<div class="filter">
-			<a href="/XemTrangThai.html"><button class="btn active">Tất
-					cả</button></a> <a href="/TrangThai_ChoXacNhan.html"><button class="btn ">Chờ
-					xác nhận</button></a> <a href="/TrangThai_DangGiao.html"><button class="btn">Đang
-					giao</button></a> <a href="/TrangThai_DaGiao.html"><button class="btn">Đã
-					giao</button></a> <a href="/TrangThai_DaHuy.html"><button class="btn">Đã
-					hủy</button></a>
-		</div>
+	<div class="filter">
+		<a th:href="@{/DonHang}">
+			<button class="btn" th:classappend="${trangThai == null} ? ' active'">Tất cả</button>
+		</a>
+	
+		<a th:href="@{/DonHang(trangThai=1)}">
+			<button class="btn" th:classappend="${trangThai == 1} ? ' active'">Chờ xác nhận</button>
+		</a>
+	
+		<a th:href="@{/DonHang(trangThai=2)}">
+			<button class="btn" th:classappend="${trangThai == 2} ? ' active'">Chờ lấy hàng</button>
+		</a>
+	
+		<a th:href="@{/DonHang(trangThai=3)}">
+			<button class="btn" th:classappend="${trangThai == 3} ? ' active'">Đang giao</button>
+		</a>
+	
+		<a th:href="@{/DonHang(trangThai=4)}">
+			<button class="btn" th:classappend="${trangThai == 4} ? ' active'">Đã giao</button>
+		</a>
+	
+		<a th:href="@{/DonHang(trangThai=6)}">
+			<button class="btn" th:classappend="${trangThai == 6} ? ' active'">Hoàn thành</button>
+		</a>
+	
+		<a th:href="@{/DonHang(trangThai=5)}">
+			<button class="btn" th:classappend="${trangThai == 5} ? ' active'">Đã hủy</button>
+		</a>
+	
+		<a th:href="@{/DonHang(trangThai=7)}">
+			<button class="btn" th:classappend="${trangThai == 7} ? ' active'">Trả hàng/Hoàn tiền</button>
+		</a>
+	</div>
+
+
 
 
 		<th:block th:each="dh, iterStat : ${dsDonHang}">
@@ -81,5 +108,19 @@
 			</div>
 		</th:block>
 	</div>
-
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.filter .btn');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                // Bỏ class active khỏi tất cả nút
+                buttons.forEach(btn => btn.classList.remove('active'));
+                
+                // Thêm class active vào nút vừa được bấm
+                this.classList.add('active');
+            });
+        });
+    });
+</script>

@@ -15,5 +15,4 @@ import lombok.NoArgsConstructor;
 public class DonHangDTO {
     private DonHang donHang;
     private List<ChiTietDonHang> chiTietDonHangs;
-
 }

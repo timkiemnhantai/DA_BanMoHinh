@@ -60,7 +60,8 @@ import com.poly.service.TaiKhoanService;
 import com.poly.service.ThongBaoService;
 import com.poly.util.PhiVanChuyenUtils;
 import com.poly.util.SoDienThoaiUtils;
-
+import com.poly.util.ThongTinDatHangValidator;
+import com.poly.util.ThongTinDatHangValidator.ThongTinDatHangResult;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -99,9 +100,11 @@ public class HomeController {
 	private DiaChiRepository diaChiRepository;
 	@Autowired
 	private DiaChiService diaChiService;
-	@Autowired DonHangService donHangService;
+	@Autowired
+	private DonHangService donHangService;
     @Autowired
     private WebSocketNotificationController webSocketNotificationController;
+
     
 	private final Pattern pattern = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d])[\\S]{8,}$");
     
@@ -314,7 +317,6 @@ public class HomeController {
 
 	    model.addAttribute("tendn", taiKhoan.getTenDangNhap());
 	    model.addAttribute("avatar", taiKhoan.getAvatar());
-	    System.out.print("avatar:" + taiKhoan.getAvatar());
 	    
 	    List<DiaChi> dsDiaChi = diaChiRepository.findByTaiKhoan_MaTK(maTK);
 	    for (DiaChi d : dsDiaChi) {
@@ -496,18 +498,30 @@ public class HomeController {
 	
 
     @GetMapping("/DonHang")
-    public String XemDonHang(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Integer maTK = userDetails.getTaiKhoan().getMaTK();
-		model.addAttribute("tendn",userDetails.getTaiKhoan().getTenDangNhap());
-		model.addAttribute("avatar",userDetails.getTaiKhoan().getAvatar());	
-        // Gọi service để lấy danh sách DonHangDTO gồm DonHang và list ChiTietDonHang
-        List<DonHangDTO> dsDonHang = donHangService.layDonHangVaChiTietTheoMaTK(maTK);
+    public String XemDonHang(Model model,
+                              @AuthenticationPrincipal CustomUserDetails userDetails,
+                              @RequestParam(value = "trangThai", required = false) Integer maTTDH) {
+
+    	Integer maTK = userDetails.getTaiKhoan().getMaTK();
+    	TaiKhoan taiKhoan = taiKhoanRepository.findById(maTK).orElse(null);
+		model.addAttribute("tendn",taiKhoan.getTenDangNhap());
+		model.addAttribute("avatar",taiKhoan.getAvatar());	
+
+        List<DonHangDTO> dsDonHang;
+
+        if (maTTDH != null) {
+            dsDonHang = donHangService.layDonHangVaChiTietTheoMaTKVaTrangThai(maTK, maTTDH);
+        } else {
+            dsDonHang = donHangService.layDonHangVaChiTietTheoMaTK(maTK);
+        }
 
         model.addAttribute("dsDonHang", dsDonHang);
-        
+        model.addAttribute("trangThai", maTTDH); // 🔥 Giống như model.addAttribute("sapXepDangChon", ...) ở trên
         model.addAttribute("content", "User/XemDonHang.html");
         return "User/index";
     }
+
+
 
 	
 	
@@ -604,32 +618,28 @@ public class HomeController {
 	    	Integer maTK = userDetails.getTaiKhoan().getMaTK();
 	    	TaiKhoan taiKhoan = taiKhoanRepository.findById(maTK).orElse(null);
 
-	    	if (taiKhoan == null) {
-	    	    model.addAttribute("diaChi", "(Không tìm thấy tài khoản)");
-	    	    return "User/index";
-	    	}
+	    	ThongTinDatHangResult ketQua1 = ThongTinDatHangValidator.kiemTraThongTinDatHang(taiKhoan);
+	    	if (ketQua1 != null && ketQua1.coLoi()) {
+	    	    String noiDung = ketQua1.getLoi();
+	    	    String url = ketQua1.getUrl();
+	    	    ThongBao thongBao = new ThongBao();
+	    	    thongBao.setTaiKhoan(taiKhoan);
+	    	    thongBao.setNoiDung(noiDung);
+	    	    thongBao.setUrl(url);
+	    	    thongBao.setNgayTao(LocalDateTime.now());
+	    	    thongBao.setDaDoc(false);
 
+	    	    ThongBao daLuu = thongBaoService.taoThongBao(thongBao);
+	    	    webSocketNotificationController.guiThongBaoDonHang(maTK, noiDung, daLuu.getMaThongBao(), daLuu.getUrl() );
+	            return "redirect:/gio-hang";
+	        }
 	    	DiaChi diaChiMacDinh = taiKhoan.getDiaChiMacDinh();
+	    	model.addAttribute("diaChi", diaChiMacDinh.getDiaChiDayDu());
 
-	    	if (diaChiMacDinh == null) {
-	    	    model.addAttribute("diaChi", "(Chưa có địa chỉ)");
-	    	} else {
-	    	    model.addAttribute("diaChi", diaChiMacDinh.getDiaChiDayDu());
+	        String sdtDinhDang = diaChiMacDinh.getSoDienThoaiQuocTe();
+	        model.addAttribute("soDienThoai", sdtDinhDang);
+	        model.addAttribute("hoTen", diaChiMacDinh.getHoTen());
 
-		        String sdtDinhDang = diaChiMacDinh.getSoDienThoaiQuocTe();
-		        model.addAttribute("soDienThoai", sdtDinhDang);
-		        model.addAttribute("hoTen", diaChiMacDinh.getHoTen());
-			    if (sdtDinhDang != null && !sdtDinhDang.trim().isEmpty()) {
-			        model.addAttribute("soDienThoai", sdtDinhDang);
-			    } else {
-			        model.addAttribute("soDienThoai", "(Chưa có số điện thoại)");
-			    }
-			    if (diaChiMacDinh.getHoTen() != null && !diaChiMacDinh.getHoTen().trim().isEmpty()) {
-			        model.addAttribute("hoTen", diaChiMacDinh.getHoTen());
-			    } else {
-			        model.addAttribute("hoTen", "(Chưa có họ và tên)");
-			    }
-	    	}
 	        List<GioHangDTO> dsThanhToan = chitietgiohangService
 	                .layGioHangDTOTheoDanhSachCTGH(maTK, maCTGHList);
 
@@ -764,9 +774,16 @@ public class HomeController {
 	    donHang.setGiamGiaThucTe(tongGiamGia);
 	    donHang.setThanhTien(tongTienCTT.subtract(tongGiamGia).add(donHang.getPhiVanChuyen()));
 
+
 	    // ✅ Bước 5: Lưu đơn hàng và chi tiết
 	    donhangRepository.save(donHang);
 	    chitietdonhangRepository.saveAll(chiTietList);
+	    List<Integer> dsMaBienTheDaDat = maBienTheList; // hoặc tự build lại nếu cần
+	    donHangService.xoaSanPhamTrongGioSauKhiDatHang(maTK, dsMaBienTheDaDat);
+
+
+
+
 
 	    System.out.println(">>> ✅ Đặt hàng thành công. Đơn hàng mã: " + donHang.getMaDH());
 	 // ✅ Bước 6: Tạo bản ghi thanh toán
@@ -859,7 +876,7 @@ public class HomeController {
 	@GetMapping("/xac-nhan-da-thanh-toan/{maDH}")
 	public ResponseEntity<?> xacNhanDaThanhToan(@PathVariable int maDH) {
 	    DonHang dh = donHangService.capNhatTrangThaiThanhToan(maDH);
-	    String noiDung = "Đơn hàng: DH" + maDH + " đã giao. Vui lòng kiểm tra và xác nhận nếu không có vấn đề!";
+	    String noiDung = "Đơn hàng: DH" + maDH + " của bạn đã giao. Vui lòng kiểm tra và xác nhận nếu không có vấn đề!";
 
 	    // 🌟 1. Lưu thông báo vào DB
 	    Integer maTK = dh.getTaiKhoan().getMaTK(); // Lấy ra ID
