@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .requestMatchers("/QuanLySanPham/**", "/QuanLyDanhGia/**").hasAnyAuthority("Admin", "Nhân viên")
                 .requestMatchers("/curd", "/QuanLyThanhToan","/QuanLyTaiKhoan").hasAuthority("Admin")
 
-                .requestMatchers("/gio-hang/**","/thanh-toan/**","/Doimatkhau/**","/DiaChi/**","/TrangCaNhan/**","/DonHang/**").hasAuthority("Khách hàng")
+                .requestMatchers("/gio-hang/**","/thanh-toan/**","/Doimatkhau/**","/DiaChi/**","/TrangCaNhan/**","/DonHang/**","/Xac-nhan-nhan-hang/**").hasAuthority("Khách hàng")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

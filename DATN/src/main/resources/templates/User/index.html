@@ -281,6 +281,7 @@ function hienThongBaoHeThong(message, isSuccess = true) {
 
 
 function hienThongBao(noiDung, maThongBao, url) {
+    console.log("Nhận thông báo:", noiDung, maThongBao, url);
     const container = document.getElementById('toast-container');
 
     const toast = document.createElement("div");
@@ -292,7 +293,7 @@ function hienThongBao(noiDung, maThongBao, url) {
     toast.style.padding = "12px 16px";
 
     toast.setAttribute("data-id", maThongBao);
-
+    toast.setAttribute("data-url", url);
     toast.innerHTML = `
         <div class="toast-content" style="display: flex; justify-content: space-between; align-items: center;">
             <span>${noiDung}</span>
@@ -322,9 +323,11 @@ function hienThongBao(noiDung, maThongBao, url) {
     });
 
     toast.addEventListener("click", () => {
-    	const id = toast.getAttribute("data-id");
+        console.log("Click toast, url =", toast.getAttribute("data-url"));
+        const id = toast.getAttribute("data-id");
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        const url = toast.getAttribute('data-url'); // lấy url từ attribute
 
         fetch(`/thong-bao/${id}/da-doc`, {
             method: 'POST',
@@ -332,9 +335,12 @@ function hienThongBao(noiDung, maThongBao, url) {
                 [csrfHeader]: csrfToken
             }
         }).finally(() => {
-            window.location.href = url;
+            if (url) {
+                window.location.href = url;
+            }
         });
     });
+
 
     container.appendChild(toast);
 }

@@ -147,6 +147,19 @@ public class DonHangService {
         chiTietGioHangRepository.deleteByGioHang_TaiKhoan_MaTKAndChiTietSanPham_MaCTSPIn(maTK, dsMaBienTheDaDat);
     }
 
+    public DonHangDTO layDonHangVaChiTietTheoMaDH(int maDH) {
+        Optional<DonHang> optionalDonHang = donHangRepo.findById(maDH);
+        if (optionalDonHang.isEmpty()) {
+            return null; // hoặc ném exception tùy ý
+        }
+        DonHang donHang = optionalDonHang.get();
+        List<ChiTietDonHang> chiTiet = chiTietDonHangRepo.findByDonHang_MaDH(maDH);
+
+        DonHangDTO dto = new DonHangDTO();
+        dto.setDonHang(donHang);
+        dto.setChiTietDonHangs(chiTiet);
+        return dto;
+    }
 
 
 
