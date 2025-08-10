@@ -55,6 +55,7 @@ import com.poly.service.ChiTietGioHangService;
 import com.poly.service.DiaChiService;
 import com.poly.service.DonHangService;
 import com.poly.service.GioHangService;
+import com.poly.service.OrderTokenService;
 import com.poly.service.SanPhamService;
 import com.poly.service.TaiKhoanService;
 import com.poly.service.ThongBaoService;
@@ -104,7 +105,8 @@ public class HomeController {
 	private DonHangService donHangService;
     @Autowired
     private WebSocketNotificationController webSocketNotificationController;
-
+	@Autowired
+    private OrderTokenService tokenService;
     
 	private final Pattern pattern = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d])[\\S]{8,}$");
     
@@ -802,106 +804,79 @@ public class HomeController {
 	    return "User/thanh-cong";
 	}
 
-//	@PostMapping("/upload-avatar")
-//	public String uploadAvatar(@RequestParam("file") MultipartFile file,
-//	                           @AuthenticationPrincipal CustomUserDetails userDetails,
-//	                           HttpSession session,
-//	                           RedirectAttributes redirectAttributes) {
-//	    try {
-//	        // Lấy thông tin người dùng
-//	        Integer maTK = userDetails.getTaiKhoan().getMaTK();
-//
-//	        // Lấy tên file gốc
-//	        String originalFilename = file.getOriginalFilename();
-//	        if (originalFilename == null || originalFilename.isEmpty()) {
-//	            redirectAttributes.addFlashAttribute("error", "File không hợp lệ!");
-//	            return "redirect:/TrangCaNhan";
-//	        }
-//
-//	        // Lấy và kiểm tra đuôi file
-//	        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-//	        List<String> allowedExtensions = Arrays.asList(".jpg", ".jpeg", ".png", ".gif");
-//	        if (!allowedExtensions.contains(extension)) {
-//	            redirectAttributes.addFlashAttribute("error", "Chỉ chấp nhận các định dạng ảnh: JPG, JPEG, PNG, GIF");
-//	            return "redirect:/TrangCaNhan";
-//	        }
-//
-//
-//	        // Tạo tên file mới ngẫu nhiên
-//	        String randomFileName = UUID.randomUUID().toString() + extension;
-//
-//	        // Đường dẫn lưu file (thư mục static/avatar)
-//	        String uploadDir = new File("src/main/resources/static/avatar").getAbsolutePath();
-//	        File destFile = new File(uploadDir, randomFileName);
-//	        file.transferTo(destFile);
-//
-//	        // Tạo URL để lưu vào DB
-//	        String url = "/avatar/" + randomFileName;
-//
-//	        // Cập nhật avatar trong DB
-//	        TaiKhoan taiKhoan = taiKhoanRepository.findById(maTK).orElse(null);
-//	        if (taiKhoan != null) {
-//	            taiKhoan.setAvatar(url);
-//	            taiKhoanRepository.save(taiKhoan);
-//
-//	            // Cập nhật session
-//	            userDetails.getTaiKhoan().setAvatar(url);
-//	            session.setAttribute("userDetails", userDetails);
-//	        }
-//
-//	        redirectAttributes.addFlashAttribute("success", "Tải ảnh thành công!");
-//	    } catch (IOException e) {
-//	        e.printStackTrace();
-//	        redirectAttributes.addFlashAttribute("error", "Lỗi khi tải ảnh!");
-//	    }
-//
-//	    return "redirect:/TrangCaNhan";
-//	}
 
+	@GetMapping("/Xac-nhan-nhan-hang")
+	public String XacNhan(@RequestParam String token,
+		    @RequestParam Integer maDH,
+		    Model model) {
+	    DonHangDTO donHangDTO = donHangService.layDonHangVaChiTietTheoMaDH(maDH);
+	    model.addAttribute("donHang", donHangDTO);
+		model.addAttribute("content","User/XacnhanDH.html");
+		return "User/index";
+	}
+	
+
+
+	@PostMapping("/xac-nhan-nhan-hang")
+	public String xacNhanNhanHang(@RequestParam("maDH") Integer maDH,
+	                             RedirectAttributes redirectAttributes) {
+	    try {
+	        donHangService.xacNhanNhanHang(maDH);
+	        redirectAttributes.addFlashAttribute("success", "✅ Đã xác nhận đơn hàng thành công!");
+	    } catch (RuntimeException e) {
+	        redirectAttributes.addFlashAttribute("error", "❌ Xác nhận đơn hàng thất bại: " + e.getMessage());
+	    }
+	    return "redirect:/DonHang"; // ví dụ: /don-hang hoặc trang bạn muốn
+	}
 
 
 
 
 	
-	@GetMapping("/xac-nhan-nhan-hang/{maDH}")
-    public ResponseEntity<String> xacNhanNhanHang(@PathVariable("maDH") int maDH) {
-        try {
-            donHangService.xacNhanNhanHang(maDH);
-            return ResponseEntity.ok("Đơn hàng đã được xác nhận là đã nhận hàng.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Lỗi: " + e.getMessage());
-        }
-    }
+//	@PostMapping("/xac-nhan-nhan-hang")
+//    public ResponseEntity<String> xacNhanNhanHang(@RequestParam("maDH") Integer maDH) {
+//        try {
+//            donHangService.xacNhanNhanHang(maDH);
+//            return ResponseEntity.ok("Đơn hàng đã được xác nhận là đã nhận hàng.");
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.badRequest().body("Lỗi: " + e.getMessage());
+//        }
+//    }
 	
 	@GetMapping("/xac-nhan-da-thanh-toan/{maDH}")
 	public ResponseEntity<?> xacNhanDaThanhToan(@PathVariable int maDH) {
 	    DonHang dh = donHangService.capNhatTrangThaiThanhToan(maDH);
 	    String noiDung = "Đơn hàng: DH" + maDH + " của bạn đã giao. Vui lòng kiểm tra và xác nhận nếu không có vấn đề!";
 
-	    // 🌟 1. Lưu thông báo vào DB
-	    Integer maTK = dh.getTaiKhoan().getMaTK(); // Lấy ra ID
-
-	    TaiKhoan taiKhoan = new TaiKhoan(); // Tạo đối tượng rỗng
-	    taiKhoan.setMaTK(maTK); // Chỉ cần set MaTK
+	    Integer maTK = dh.getTaiKhoan().getMaTK();
+	    TaiKhoan taiKhoan = new TaiKhoan();
+	    taiKhoan.setMaTK(maTK);
 
 	    ThongBao thongBao = new ThongBao();
-	    thongBao.setTaiKhoan(taiKhoan);// ✅ Đã được attach vào context// Truyền đối tượng TaiKhoan, KHÔNG phải MaTK
+	    thongBao.setTaiKhoan(taiKhoan);
 	    thongBao.setNoiDung(noiDung);
-	    thongBao.setUrl("/DonHang");
 	    thongBao.setNgayTao(LocalDateTime.now());
 	    thongBao.setDaDoc(false);
 
+	    // ✅ Chỉ tạo token ở đây
+	    String token = tokenService.createToken(maDH, 259200L);
+	    System.out.println(">>> Token tạo: " + token);
+
+	    String url = "/Xac-nhan-nhan-hang?token=" + token + "&maDH=" + maDH;
+	    thongBao.setUrl(url);
+
 	    ThongBao daLuu = thongBaoService.taoThongBao(thongBao);
 
+	    // ✅ Truyền token đã tạo xuống WebSocket
+	    webSocketNotificationController.guiThongBaoDonHang(
+	        maTK, noiDung, daLuu.getMaThongBao(), url, token
+	    );
 
-
-
-	    // 🌟 2. Gửi WebSocket tới client
-	    webSocketNotificationController.guiThongBaoDonHang(dh.getTaiKhoan().getMaTK(), noiDung, daLuu.getMaThongBao(), daLuu.getUrl() );
-	    System.out.println(">>> Gửi WebSocket tới /topic/user/" + dh.getTaiKhoan().getMaTK() + " với nội dung: " + noiDung);
+	    System.out.println(">>> Gửi WebSocket tới /topic/user/" + maTK + " với nội dung: " + noiDung);
 
 	    return ResponseEntity.ok("Xác nhận thành công");
 	}
+
 
 
 	

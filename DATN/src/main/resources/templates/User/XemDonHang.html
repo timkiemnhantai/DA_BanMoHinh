@@ -6,12 +6,13 @@
 	<div class="sidebar">
 		<div class="user-info">
 
-			<img style="margin-left: 75px" th:src="${avatar}" alt="Avatar" onerror="this.onerror=null; this.src='/img/Screenshot_2025-06-19_220523-removebg-preview.png';">
-			<strong th:text="${tendn}"></strong> <a th:href="@{/TrangCaNhan}">✎ Sửa Hồ Sơ</a>
+			<img style="margin-left: 75px" th:src="${avatar}" alt="Avatar"
+				onerror="this.onerror=null; this.src='/img/Screenshot_2025-06-19_220523-removebg-preview.png';">
+			<strong th:text="${tendn}"></strong> <a th:href="@{/TrangCaNhan}">✎
+				Sửa Hồ Sơ</a>
 		</div>
 		<ul>
-			<li><a th:href="@{/TrangCaNhan}" >Tài Khoản
-					Của Tôi</a></li>
+			<li><a th:href="@{/TrangCaNhan}">Tài Khoản Của Tôi</a></li>
 			<li><a th:href="@{/DiaChi}">Địa Chỉ</a></li>
 
 			<li><a th:href="@{/Doimatkhau}">Đổi Mật Khẩu</a></li>
@@ -28,39 +29,33 @@
 		<h2>Đơn hàng của tôi</h2>
 
 		<!-- Bộ lọc trạng thái -->
-	<div class="filter">
-		<a th:href="@{/DonHang}">
-			<button class="btn" th:classappend="${trangThai == null} ? ' active'">Tất cả</button>
-		</a>
-	
-		<a th:href="@{/DonHang(trangThai=1)}">
-			<button class="btn" th:classappend="${trangThai == 1} ? ' active'">Chờ xác nhận</button>
-		</a>
-	
-		<a th:href="@{/DonHang(trangThai=2)}">
-			<button class="btn" th:classappend="${trangThai == 2} ? ' active'">Chờ lấy hàng</button>
-		</a>
-	
-		<a th:href="@{/DonHang(trangThai=3)}">
-			<button class="btn" th:classappend="${trangThai == 3} ? ' active'">Đang giao</button>
-		</a>
-	
-		<a th:href="@{/DonHang(trangThai=4)}">
-			<button class="btn" th:classappend="${trangThai == 4} ? ' active'">Đã giao</button>
-		</a>
-	
-		<a th:href="@{/DonHang(trangThai=6)}">
-			<button class="btn" th:classappend="${trangThai == 6} ? ' active'">Hoàn thành</button>
-		</a>
-	
-		<a th:href="@{/DonHang(trangThai=5)}">
-			<button class="btn" th:classappend="${trangThai == 5} ? ' active'">Đã hủy</button>
-		</a>
-	
-		<a th:href="@{/DonHang(trangThai=7)}">
-			<button class="btn" th:classappend="${trangThai == 7} ? ' active'">Trả hàng/Hoàn tiền</button>
-		</a>
-	</div>
+		<div class="filter">
+			<a th:href="@{/DonHang}">
+				<button class="btn"
+					th:classappend="${trangThai == null} ? ' active'">Tất cả</button>
+			</a> <a th:href="@{/DonHang(trangThai=1)}">
+				<button class="btn" th:classappend="${trangThai == 1} ? ' active'">Chờ
+					xác nhận</button>
+			</a> <a th:href="@{/DonHang(trangThai=2)}">
+				<button class="btn" th:classappend="${trangThai == 2} ? ' active'">Chờ
+					lấy hàng</button>
+			</a> <a th:href="@{/DonHang(trangThai=3)}">
+				<button class="btn" th:classappend="${trangThai == 3} ? ' active'">Đang
+					giao</button>
+			</a> <a th:href="@{/DonHang(trangThai=4)}">
+				<button class="btn" th:classappend="${trangThai == 4} ? ' active'">Đã
+					giao</button>
+			</a> <a th:href="@{/DonHang(trangThai=6)}">
+				<button class="btn" th:classappend="${trangThai == 6} ? ' active'">Hoàn
+					thành</button>
+			</a> <a th:href="@{/DonHang(trangThai=5)}">
+				<button class="btn" th:classappend="${trangThai == 5} ? ' active'">Đã
+					hủy</button>
+			</a> <a th:href="@{/DonHang(trangThai=7)}">
+				<button class="btn" th:classappend="${trangThai == 7} ? ' active'">Trả
+					hàng/Hoàn tiền</button>
+			</a>
+		</div>
 
 
 
@@ -96,12 +91,27 @@
 							alt="" class="product-img">-->
 							<div class="item-info">
 								<p th:text="${ct.bienTheSanPham.sanPham.tenSP}"></p>
-								<p th:text="'Số lượng: ' + ${ct.soLuongSP} + '  |  ' + 'Đơn giá: ' + ${ct.donGia}"></p>
+								<p>
+									Số lượng: <span th:text="${ct.soLuongSP}"></span> | 
+									<span
+										 th:if="${ct.giamGiaThucTe == 0}">
+										Thành tiền: <span style="color: red;"
+										th:text="${#numbers.formatDecimal(ct.thanhTien, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+
+									</span> <span th:if="${ct.giamGiaThucTe > 0}"> Đơn giá: <span
+										th:text="${#numbers.formatDecimal(ct.donGia, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+										| Giảm giá: <span
+										th:text="${#numbers.formatDecimal(ct.giamGiaThucTe, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+										| Thành tiền: <span style="color: red;"
+										th:text="${#numbers.formatDecimal(ct.thanhTien, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+
+									</span>
+								</p>
 							</div>
 						</div>
 					</div>
 				</th:block>
-				<div class="order-foot">
+				<div class="order-foot" style="font-size: 18px">
 					Tổng tiền: <span
 						th:text="${#numbers.formatDecimal(dh.donHang.thanhTien, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
 				</div>
