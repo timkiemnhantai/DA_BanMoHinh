@@ -69,13 +69,12 @@
         /* Thêm một số CSS cơ bản cho thumbnails nếu bạn muốn chúng hiển thị nhưng không click đổi ảnh chính */
         .thumbnail-images {
             display: flex;
-            justify-content: center;
+            justify-content: flex-start; /* Đẩy tất cả ảnh về bên trái */        
             gap: 10px;
             margin-top: 15px;
             overflow-x: auto;
-            /* Cho phép cuộn ngang nếu có nhiều thumbnails */
             padding-bottom: 5px;
-            /* Để tránh scrollbar che ảnh */
+            scroll-behavior: smooth;
         }
 
         .thumbnail-images img {
@@ -91,7 +90,7 @@
 
         .thumbnail-images img.active {
             border-color: #007bff;
-            /* Màu viền cho ảnh đang hiển thị (nếu bạn muốn) */
+            /* Màu viền cho ảnh đang hiển thị*/
         }
 
         /* Các style cũ từ code của bạn (có thể đã có trong style_ChiTietSanPham.css) */
@@ -197,6 +196,8 @@
                     <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.2.png" alt="Thumbnail 3" class="thumbnail">
                     <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.3.png" alt="Thumbnail 4" class="thumbnail">
                     <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.4.png" alt="Thumbnail 5" class="thumbnail">
+                    <img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.4.png" alt="Thumbnail 5" class="thumbnail">
+                    
 
                 </div>
 
