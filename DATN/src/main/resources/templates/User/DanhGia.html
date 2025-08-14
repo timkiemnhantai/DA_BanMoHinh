@@ -1,0 +1,198 @@
+<div id="content" style="display: none;">
+	<link rel="stylesheet" href="/css/style_DanhGia.css" />
+	<div class="accordion">
+		<th:block th:each="dh, iterStat : ${donHang}">
+			<p style="font-size: 20px; font-weight: bold;" th:text="'Đánh giá sản phẩm: Mã đơn ' + ${dh.donHang.maDH}"></p>
+			<th:block th:each="ct, iterStat : ${dh.chiTietDonHangs}">
+				<div class="accordion-item"
+				     th:attr="data-product-id=${ct.bienTheSanPham != null ? ct.bienTheSanPham.sanPham.maSP : ct.sanPham.maSP},
+				               data-variant-id=${ct.bienTheSanPham != null ? ct.bienTheSanPham.maCTSP : ''}">
+
+					<div class="accordion-header">
+						<img
+							th:src="@{${ ct.bienTheSanPham != null and !#lists.isEmpty(ct.bienTheSanPham.anhChiTietList) 
+						 ? ct.bienTheSanPham.anhChiTietList[0].urlAnhCT : (!#lists.isEmpty(ct.bienTheSanPham.sanPham.anhSanPham) 
+						 ? ct.bienTheSanPham.sanPham.anhSanPham[0].urlAnhSP  : '/img/default.png') } }"
+							alt="product">
+						<h4 th:text="${ct.bienTheSanPham.sanPham.tenSP}"></h4>
+						<span>+</span>
+					</div>
+					<div class="accordion-content">
+						<div class="stars">
+							<span data-value="1">&#9733;</span> <span data-value="2">&#9733;</span>
+							<span data-value="3">&#9733;</span> <span data-value="4">&#9733;</span>
+							<span data-value="5">&#9733;</span>
+						</div>
+						<textarea placeholder="Viết bình luận..."></textarea>
+						<div class="upload-area">
+							Nhấp hoặc kéo thả ảnh/video vào đây <input type="file" multiple
+								accept="image/*,video/*" hidden>
+						</div>
+						<div class="preview"></div>
+					</div>
+				</div>
+			</th:block>
+
+
+		</th:block>
+
+
+	</div>
+
+	<button class="submit-btn" id="submitAll">Gửi tất cả đánh giá</button>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const maDH = params.get('maDH');
+
+    function goBackOrHome() {
+        if (document.referrer) {
+            window.history.back();
+        } else {
+            window.location.href = '/';
+        }
+    }
+
+    if (!token || !maDH) {
+        goBackOrHome();
+        return;
+    }
+
+    fetch(`/verify-token?token=${token}&maDH=${maDH}`)
+        .then(res => {
+            if (res.ok) {
+                document.getElementById('content').style.display = 'block';
+            } else {
+                goBackOrHome();
+            }
+        })
+        .catch(err => {
+            console.error("Verify token error:", err);
+            goBackOrHome();
+        });
+});
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Accordion
+    document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('span');
+            const isOpen = content.style.display === 'block';
+            document.querySelectorAll('.accordion-content').forEach(c => c.style.display = 'none');
+            document.querySelectorAll('.accordion-header span').forEach(i => i.textContent = '+');
+            if (!isOpen) {
+                content.style.display = 'block';
+                icon.textContent = '-';
+            }
+        });
+    });
+
+    // Star rating & upload preview
+    document.querySelectorAll('.accordion-item').forEach(block => {
+        const stars = block.querySelectorAll('.stars span');
+        let rating = 0;
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                rating = parseInt(star.dataset.value) || 0;
+                stars.forEach(s => s.classList.remove('active'));
+                for (let i = 0; i < rating; i++) stars[i].classList.add('active');
+                block.dataset.rating = rating;
+            });
+        });
+
+        const uploadArea = block.querySelector('.upload-area');
+        const fileInput = uploadArea.querySelector('input[type=file]');
+        const previewArea = block.querySelector('.preview');
+
+        uploadArea?.addEventListener('click', () => fileInput.click());
+        uploadArea?.addEventListener('dragover', e => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#28a745';
+        });
+        uploadArea?.addEventListener('dragleave', () => uploadArea.style.borderColor = '#aaa');
+        uploadArea?.addEventListener('drop', e => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#aaa';
+            handleFiles(e.dataTransfer.files, previewArea);
+        });
+        fileInput?.addEventListener('change', e => handleFiles(e.target.files, previewArea));
+
+        function handleFiles(files, previewArea) {
+            [...files].forEach(file => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const item = document.createElement('div');
+                    item.classList.add('preview-item');
+                    item.file = file; // gắn file thật
+                    let media;
+                    if (file.type.startsWith('image/')) media = document.createElement('img');
+                    else if (file.type.startsWith('video/')) {
+                        media = document.createElement('video');
+                        media.controls = true;
+                    }
+                    media.src = e.target.result;
+                    const removeBtn = document.createElement('button');
+                    removeBtn.innerHTML = '×';
+                    removeBtn.classList.add('remove-btn');
+                    removeBtn.addEventListener('click', () => item.remove());
+                    item.appendChild(media);
+                    item.appendChild(removeBtn);
+                    previewArea.appendChild(item);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    });
+
+    // Submit all
+    const submitBtn = document.getElementById('submitAll');
+    submitBtn?.addEventListener('click', async () => {
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.content || '';
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || '';
+
+        const blocks = document.querySelectorAll('.accordion-item');
+        let lastMsg = ''; // lưu thông báo cuối cùng
+
+        for (let block of blocks) {
+            const formData = new FormData();
+            const productId = parseInt(block.dataset.productId || 0);
+            const variantId = parseInt(block.dataset.variantId || 0);
+            const rating = parseInt(block.dataset.rating || 0);
+            const comment = block.querySelector('textarea')?.value || '';
+
+            formData.append('productId', productId);
+            formData.append('variantId', variantId);
+            formData.append('rating', rating);
+            formData.append('comment', comment);
+
+            block.querySelectorAll('.preview-item').forEach(fileItem => {
+                if (fileItem.file) formData.append('files', fileItem.file);
+            });
+
+            try {
+                const res = await fetch('/danh-gia', {
+                    method: 'POST',
+                    headers: csrfHeader ? { [csrfHeader]: csrfToken } : {},
+                    body: formData
+                });
+                lastMsg = await res.text(); // lưu thông báo từ backend
+                console.log(`Sản phẩm ${productId} gửi xong:`, lastMsg);
+            } catch (err) {
+                console.error(`Lỗi gửi sản phẩm ${productId}:`, err);
+                lastMsg = '❌ Có lỗi xảy ra khi gửi đánh giá!';
+            }
+        }
+
+        // Lưu thông báo cuối cùng và chuyển hướng
+        sessionStorage.setItem('thongBaoDanhGia', lastMsg);
+        window.location.href = "/DonHang?trangThai=6";
+    });
+
+});
+
+</script>

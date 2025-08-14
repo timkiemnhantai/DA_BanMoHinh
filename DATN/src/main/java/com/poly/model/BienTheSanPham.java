@@ -47,13 +47,9 @@ public class BienTheSanPham {
     
     @OneToMany(mappedBy = "chiTietSanPham", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<AnhChiTiet> anhChiTietList;
-//    @ManyToMany
-//    @JoinTable(
-//        name = "BienThe_GiamGiaSP", // tên bảng trung gian
-//        joinColumns = @JoinColumn(name = "MaCTSP"),
-//        inverseJoinColumns = @JoinColumn(name = "MaGiamGia")
-//    )
-//    private List<GiamGiaSP> danhSachGiamGia;
+
+    @Column(name = "SoLuongDatGiu")
+    private Integer soLuongDatGiu = 0;
 
 
 }

@@ -29,7 +29,7 @@ public class GioHangService {
 
 
     @Transactional
-    public boolean themSanPhamVaoGio(TaiKhoan tk, Integer maCT, Integer soLuong) {
+    public ChiTietGioHang themSanPhamVaoGio(TaiKhoan tk, Integer maCT, Integer soLuong) {
         Optional<GioHang> optGioHang = gioHangRepository.findByTaiKhoan(tk);
         GioHang gioHang = optGioHang.orElseGet(() -> {
             GioHang gh = new GioHang();
@@ -70,12 +70,13 @@ public class GioHangService {
         Optional<ChiTietGioHang> optCTGH = chitietgiohangRepository
             .findByGioHangAndChiTietSanPhamAndGiaTienThucTe(gioHang, bienThe, giaSauGiam);
 
+        ChiTietGioHang ctgh;
         if (optCTGH.isPresent()) {
-            ChiTietGioHang ctgh = optCTGH.get();
+            ctgh = optCTGH.get();
             ctgh.setSoLuong(ctgh.getSoLuong() + soLuong);
             chitietgiohangRepository.save(ctgh);
         } else {
-            ChiTietGioHang ctgh = new ChiTietGioHang();
+            ctgh = new ChiTietGioHang();
             ctgh.setGioHang(gioHang);
             ctgh.setChiTietSanPham(bienThe);
             ctgh.setSoLuong(soLuong);
@@ -85,8 +86,9 @@ public class GioHangService {
             chitietgiohangRepository.save(ctgh);
         }
 
-        return true;
+        return ctgh; // ✅ Trả về ChiTietGioHang để controller gửi maCTGH cho frontend
     }
+
 
 
     @Transactional

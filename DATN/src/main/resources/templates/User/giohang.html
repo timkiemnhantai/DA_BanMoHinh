@@ -130,7 +130,10 @@
 
 	</div>
 </div>
+
 <script>
+
+
 function thayDoiSoLuong(button, delta) {
     const parent = button.closest('.product-quantity-control');
     const input = parent.querySelector('.quantity-input');
@@ -379,5 +382,37 @@ document.querySelector(".delete-selected-link").addEventListener("click", functi
         });
     });
 });
+
+</script>
+<script>
+window.addEventListener("load", function () {
+    const tickMaCTGH = sessionStorage.getItem('tickNewItem');
+    console.log("tickMaCTGH trong sessionStorage:", tickMaCTGH);
+
+    if (!tickMaCTGH) return;
+
+    const checkboxes = document.querySelectorAll('.product-checkbox');
+    console.log("Tổng số checkbox tìm thấy:", checkboxes.length);
+
+    let found = false;
+    checkboxes.forEach(cb => {
+        console.log("Checkbox value:", cb.value);
+        if (cb.value === tickMaCTGH) { // so sánh đúng kiểu
+            cb.checked = true;
+            found = true;
+            console.log("Đã tick checkbox với value:", cb.value);
+        }
+    });
+
+    if (!found) console.log("Không tìm thấy checkbox có value bằng tickMaCTGH");
+
+    // Cập nhật tổng tiền và số lượng
+    if (typeof capNhatTongTienToanBo === "function") capNhatTongTienToanBo();
+    if (typeof capNhatSoLuongDaChon === "function") capNhatSoLuongDaChon();
+
+    // Xóa sessionStorage để tránh tick lại lần sau
+    sessionStorage.removeItem('tickNewItem');
+});
+
 
 </script>

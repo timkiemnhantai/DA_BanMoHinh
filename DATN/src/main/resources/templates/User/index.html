@@ -71,7 +71,7 @@
 							<!-- Avatar có thể click được -->
 							<a th:href="@{/TrangCaNhan}" class="anh"> <img
 								id="avatar-img" th:src="${session.user.avatar}" alt="Avatar"
-								onerror="this.onerror=null; this.src='/img/Screenshot_2025-06-19_220523-removebg-preview.png';">
+								onerror="this.onerror=null; this.src='/img/account.png';">
 							</a>
 				
 							<!-- Dropdown xuất hiện khi hover toàn khối account-container -->
@@ -80,7 +80,7 @@
 									th:href="@{/logout}">Đăng Xuất</a>
 							</div>
 						</div>
-						<a class="anh" th:href="@{/gio-hang}"><img
+						<a class="anh1" th:href="@{/gio-hang}"><img
 							src="/img/Screenshot_2025-06-19_220342-removebg-preview.png"
 							alt=""></a>
 					</th:block>
@@ -283,6 +283,13 @@ function hienThongBaoHeThong(message, isSuccess = true) {
 	}, 4000);
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    const msg = sessionStorage.getItem('thongBaoDanhGia');
+    if(msg) {
+        hienThongBaoHeThong(msg, true);
+        sessionStorage.removeItem('thongBaoDanhGia'); // xóa sau khi hiển thị
+    }
+});
 
 
 
@@ -391,6 +398,7 @@ function hienThongBao(noiDung, maThongBao, url) {
     if (success !== null && success !== '') {
         hienThongBaoHeThong(success, true);
     }
+
 </script>
 
 
