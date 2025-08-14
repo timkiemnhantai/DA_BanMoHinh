@@ -104,6 +104,25 @@ public class DonHangService {
 	        throw new RuntimeException("Không tìm thấy thông tin thanh toán của đơn hàng mã: " + maDH);
 	    }
 	}
+	public DonHang capNhatTrangThaiDaHuy(int maDH) {
+	    ThanhToan thanhToan = thanhToanRepo.findByDonHang_MaDH(maDH);
+	    if (thanhToan != null) {
+	        // Cập nhật trạng thái thanh toán nếu cần (có thể thay đổi hoặc bỏ dòng này tùy yêu cầu)
+	        thanhToan.setTrangThai("Đã hủy");
+	        thanhToanRepo.save(thanhToan);
+
+	        DonHang donHang = thanhToan.getDonHang();
+	        TrangThaiDH trangThai = trangThaiDHRepo.findById(5)
+	            .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái đơn hàng 'Đã hủy'"));
+
+	        donHang.setTrangThaiDH(trangThai);
+	        donHangRepo.save(donHang);
+
+	        return donHang; // Trả về để controller sử dụng
+	    } else {
+	        throw new RuntimeException("Không tìm thấy thông tin thanh toán của đơn hàng mã: " + maDH);
+	    }
+	}
 
 	
 	
@@ -113,20 +132,25 @@ public class DonHangService {
 	        DonHang donHang = optionalDonHang.get();
 	        ThanhToan thanhToan = thanhToanRepo.findByDonHang_MaDH(maDH);
 
-	        // Chỉ khi trạng thái thanh toán là "Đã thanh toán", mới cho cập nhật trạng thái đơn hàng
 	        if (thanhToan != null && "Đã thanh toán".equalsIgnoreCase(thanhToan.getTrangThai())) {
-	            // Tránh trừ kho nhiều lần
-	            if (donHang.getTrangThaiDH().getMaTTDH() != 7) {
+	            if (donHang.getTrangThaiDH().getMaTTDH() != 6) { // 6 = Giao hàng thành công
 	                List<ChiTietDonHang> chiTietList = chiTietDonHangRepo.findByDonHang(donHang);
 	                for (ChiTietDonHang chiTiet : chiTietList) {
 	                    BienTheSanPham bienThe = chiTiet.getBienTheSanPham();
-	                    bienThe.setSoLuongTonKho(bienThe.getSoLuongTonKho() - chiTiet.getSoLuongSP());
+
+	                    int slGiao = chiTiet.getSoLuongSP();
+
+	                    int slDatGiu = bienThe.getSoLuongDatGiu() != null ? bienThe.getSoLuongDatGiu() : 0;
+	                    int soLuongDatGiuMoi = slDatGiu - slGiao;
+	                    if (soLuongDatGiuMoi < 0) soLuongDatGiuMoi = 0;
+	                    bienThe.setSoLuongDatGiu(soLuongDatGiuMoi);
+
 	                    bienTheSanPhamRepo.save(bienThe);
 	                }
 	            }
 
-	            // Cập nhật trạng thái đơn hàng
-	            TrangThaiDH trangThai = trangThaiDHRepo.findById(6) // 4: Đã thanh toán
+	            // Cập nhật trạng thái đơn hàng sang "Giao hàng thành công" (6)
+	            TrangThaiDH trangThai = trangThaiDHRepo.findById(6)
 	                    .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái"));
 	            donHang.setTrangThaiDH(trangThai);
 	            donHangRepo.save(donHang);
@@ -137,6 +161,7 @@ public class DonHangService {
 	        throw new RuntimeException("Không tìm thấy đơn hàng mã: " + maDH);
 	    }
 	}
+
 
     @Autowired
     private ChiTietGioHangRepository chiTietGioHangRepository;

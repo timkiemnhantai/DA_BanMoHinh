@@ -107,17 +107,71 @@
 
 									</span>
 								</p>
+								<p>
+									Phí vận chuyển: <span style="color: red;" th:text="${#numbers.formatDecimal(dh.donHang.phiVanChuyen, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+								</p>
 							</div>
 						</div>
 					</div>
 				</th:block>
-				<div class="order-foot" style="font-size: 18px">
-					Tổng tiền: <span
-						th:text="${#numbers.formatDecimal(dh.donHang.thanhTien, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+				<div class="order-foot" style="font-size: 18px; display: flex; justify-content: space-between; align-items: center;">
+				<form action="">
+					<button th:if="${dh.donHang.trangThaiDH.maTTDH == 1}" 
+					        style="margin-right: 0;" 
+					        class="btn btn-danger btn-huy-don" 
+					        th:attr="data-madh=${dh.donHang.maDH}" 
+					        type="button">
+					    Hủy đơn
+					</button>
+				</form>
+				<form action="">
+					<button th:if="${dh.donHang.trangThaiDH.maTTDH == 5}" 
+					        style="margin-left: 500px;" 
+					        class="btn btn-danger btn-mua-lai" 
+
+					        type="button">
+					    Mua lại
+					</button>
+				</form>
+				  <span>
+				    Tổng tiền: <span th:text="${#numbers.formatDecimal(dh.donHang.thanhTien, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+				  </span>
 				</div>
+
 			</div>
 		</th:block>
 	</div>
+</div>
+
+<!-- Modal nhập lý do hủy -->
+<div id="popupLyDoHuy" class="modal1">
+  <div class="modal-content1">
+    <span class="close1">&times;</span>
+    <p style="font-size: 24px; font-weight: bold;">Nhập lý do hủy đơn</p>
+    <form id="formLyDoHuy" method="post" th:action="@{/DonHang/huy}" onsubmit="return prepareLyDoHuy()" style="font-size: 16px;">
+      <input type="hidden" name="maDH" id="maDHInput" value="" />
+
+      <p style="margin-top: 10px;">Chọn lý do hủy (có thể chọn nhiều):</p>
+      <div style="margin-top: 5px;">
+		<label><input type="checkbox" name="lyDoMau" value="Thay đổi ý định mua hàng" /> Thay đổi ý định mua hàng, không muốn tiếp tục đặt</label><br/>
+		<label><input type="checkbox" name="lyDoMau" value="Phát hiện lỗi thông tin đơn hàng" /> Phát hiện sai sót hoặc lỗi thông tin trong đơn hàng</label><br/>
+		<label><input type="checkbox" name="lyDoMau" value="Chờ xác nhận lâu" /> Chờ xác nhận đơn hàng quá lâu</label><br/>
+		<label><input type="checkbox" name="lyDoMau" value="Muốn thay đổi sản phẩm hoặc số lượng" /> Muốn thay đổi sản phẩm hoặc số lượng nhưng không tiện chỉnh sửa</label><br/>
+		<label><input type="checkbox" name="lyDoMau" value="Phát hiện giá tốt hơn nơi khác" /> Phát hiện giá sản phẩm tốt hơn ở nơi khác nên hủy đơn</label><br/>
+		<label><input type="checkbox" name="lyDoMau" value="Không còn nhu cầu mua hàng" /> Không còn nhu cầu mua hàng</label><br/>
+		<label><input type="checkbox" name="lyDoMau" value="Khác" id="khacCheckbox" /> Khác (vui lòng ghi rõ)</label>
+      </div>
+
+      <p style="margin-top: 10px;">Ghi chú thêm (nếu có):</p>
+      <textarea id="lyDoKhac" rows="3" placeholder="Nhập lý do khác nếu có..." style="width: 100%;"></textarea>
+
+      <!-- Ẩn trường thực gửi lên server -->
+      <input type="hidden" name="lyDoHuy" id="lyDoHuy" />
+
+      <br/>
+      <button type="submit" class="btn btn-danger">Gửi yêu cầu hủy</button>
+    </form>
+  </div>
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -133,4 +187,69 @@
             });
         });
     });
+</script>
+<script>
+  // Lấy modal, nút đóng và các nút hủy đơn
+  const modal = document.getElementById('popupLyDoHuy');
+  const closeBtn = modal.querySelector('.close1');
+  const maDHInput = document.getElementById('maDHInput');
+  const lyDoKhacTextarea = document.getElementById('lyDoKhac');
+  const khacCheckbox = document.getElementById('khacCheckbox');
+  const checkboxes = modal.querySelectorAll('input[name="lyDoMau"]');
+
+  // Mở modal khi bấm nút hủy đơn
+	document.addEventListener("DOMContentLoaded", function () {
+	    const btnsHuy = document.querySelectorAll(".btn-huy-don");
+	
+	    btnsHuy.forEach(btn => {
+	        btn.addEventListener("click", function () {
+	            // 'this' ở đây sẽ là btn đúng
+	            showConfirm("Bạn có chắc chắn muốn hủy đơn hàng này?", () => {
+	                const maDH = this.getAttribute('data-madh');
+	                maDHInput.value = maDH;
+	                checkboxes.forEach(cb => cb.checked = false);
+	                lyDoKhacTextarea.value = '';
+	                khacCheckbox.checked = false;
+
+	                modal.style.display = 'block';
+	            });
+	        });
+	    });
+	});
+
+  closeBtn.addEventListener('click', function () {
+    modal.style.display = 'none';
+  });
+
+
+  khacCheckbox.addEventListener('change', function () {
+    if (this.checked) {
+      lyDoKhacTextarea.style.display = 'block';
+      lyDoKhacTextarea.focus();
+    } else {
+      lyDoKhacTextarea.style.display = 'none';
+      lyDoKhacTextarea.value = '';
+    }
+  });
+
+  lyDoKhacTextarea.style.display = 'none';
+
+  // Hàm xử lý khi submit form: tổng hợp lý do thành 1 chuỗi duy nhất
+  function prepareLyDoHuy() {
+    let lyDoArr = [];
+    checkboxes.forEach(cb => {
+      if (cb.checked && cb.value !== 'Khác') {
+        lyDoArr.push(cb.value);
+      }
+    });
+    if (khacCheckbox.checked && lyDoKhacTextarea.value.trim() !== '') {
+      lyDoArr.push(lyDoKhacTextarea.value.trim());
+    }
+    if (lyDoArr.length === 0) {
+      alert('Vui lòng chọn hoặc nhập lý do hủy đơn');
+      return false;
+    }
+    document.getElementById('lyDoHuy').value = lyDoArr.join('; ');
+    return true; // cho phép submit form
+  }
 </script>

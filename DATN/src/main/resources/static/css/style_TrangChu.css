@@ -251,7 +251,7 @@
   font-size: 14px;
   font-weight: bold;
   border-radius: 4px;
-  z-index: 1;
+  z-index: 999;
 }
 .product-card img {
 	max-width: 100%;
@@ -333,4 +333,30 @@
 	object-fit: cover;
 	/* Đảm bảo ảnh bao phủ diện tích mà không bị biến dạng */
 	min-height: 180px; /* Đảm bảo chiều cao tối thiểu cho banner */
+}
+.product-image-container {
+    position: relative;
+}
+
+.overlay-het-hang {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 1.2em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+      pointer-events: none;
+    z-index: 2;
+}
+
+.product-image-container img {
+    display: block;
+    width: 100%;
+    height: auto;
 }
