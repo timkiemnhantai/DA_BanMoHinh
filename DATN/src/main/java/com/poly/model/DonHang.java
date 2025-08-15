@@ -39,6 +39,11 @@ public class DonHang {
 	@JoinColumn(name = "MaTTDH")
 	private TrangThaiDH trangThaiDH;
 
+    @Column(name = "HoTen", nullable = false)
+    private String hoTen;
+
+    @Column(name = "SoDienThoai", nullable = false)
+    private String soDienThoai;
 
 	@Column(name = "DiaChiGiaoHang")
 	private String diaChiGiaoHang;

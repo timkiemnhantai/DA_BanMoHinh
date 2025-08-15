@@ -176,7 +176,9 @@ CREATE TABLE DonHang (
     MaTTDH INT,
  --   MaGiamGia INT NULL,
 	MaVoucher INT NULL,
-    DiaChiGiaoHang NVARCHAR(255),
+	HoTen NVARCHAR(100) NOT NULL,
+    SoDienThoai NVARCHAR(20) NOT NULL,
+    DiaChiGiaoHang NVARCHAR(255) NOT NULL,
     NgayDat DATETIME,
     NgayGiaoDuKien NVARCHAR(50),
     NgayGiaoThucTe DATETIME,
@@ -192,6 +194,15 @@ CREATE TABLE DonHang (
 	FOREIGN KEY (MaVoucher) REFERENCES Voucher(MaVoucher)
 
 );
+ALTER TABLE DonHang
+ADD HoTen NVARCHAR(100) NOT NULL DEFAULT 'Chưa cập nhật',
+    SoDienThoai NVARCHAR(20) NOT NULL DEFAULT '0000000000';
+
+
+ALTER TABLE DonHang
+ALTER COLUMN SoDienThoai NVARCHAR(20) NOT NULL;
+
+
 GO 
 -- 12. ThanhToan
 CREATE TABLE ThanhToan (
@@ -235,13 +246,14 @@ GO
 CREATE TABLE GioHang (
     MaGH INT PRIMARY KEY IDENTITY(1,1),
     MaTK INT UNIQUE,
-    TongTien DECIMAL(18,2),
     TrangThaiGH NVARCHAR(50),
     NgayTao DATETIME,
 
     FOREIGN KEY (MaTK) REFERENCES TaiKhoan(MaTK)
 );
 GO 
+
+
 -- 15. ChiTietGioHang
 CREATE TABLE ChiTietGioHang (
     MaCTGH INT PRIMARY KEY IDENTITY(1,1),

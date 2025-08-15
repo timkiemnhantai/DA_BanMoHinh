@@ -113,31 +113,30 @@
 							</div>
 						</div>
 					</div>
-				</th:block>
+
 				<div class="order-foot" style="font-size: 18px; display: flex; justify-content: space-between; align-items: center;">
 				<form action="">
 					<button th:if="${dh.donHang.trangThaiDH.maTTDH == 1}" 
 					        style="margin-right: 0;" 
 					        class="btn btn-danger btn-huy-don" 
-					        th:attr="data-madh=${dh.donHang.maDH}" 
+					        th:attr="data-madh=${dh.donHang.maDH}" 				   
 					        type="button">
 					    Hủy đơn
 					</button>
 				</form>
-				<form action="">
-					<button th:if="${dh.donHang.trangThaiDH.maTTDH == 5}" 
-					        style="margin-left: 500px;" 
-					        class="btn btn-danger btn-mua-lai" 
+				<button th:if="${dh.donHang.trangThaiDH.maTTDH == 5}" 
+				        style="margin-left: 500px;" 
+				        class="btn btn-danger buy-again-btn" 
+				                th:data-mact="${ct.bienTheSanPham.maCTSP}"
+				        th:data-soluong="${ct.soLuongSP}">
+				    Mua lại
+				</button>
 
-					        type="button">
-					    Mua lại
-					</button>
-				</form>
 				  <span>
 				    Tổng tiền: <span th:text="${#numbers.formatDecimal(dh.donHang.thanhTien, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
 				  </span>
 				</div>
-
+				</th:block>
 			</div>
 		</th:block>
 	</div>
@@ -252,4 +251,43 @@
     document.getElementById('lyDoHuy').value = lyDoArr.join('; ');
     return true; // cho phép submit form
   }
+</script>
+<script>
+document.querySelectorAll('.buy-again-btn').forEach(btn => {
+    btn.addEventListener('click', async function () {
+        const maCT = this.dataset.mact;
+        const soLuong = parseInt(this.dataset.soluong) || 1;
+
+        try {
+            const res = await fetch('/gio-hang/them', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+                },
+                body: JSON.stringify({ maCT, soLuong })
+            });
+
+            const data = await res.json().catch(() => ({}));
+
+            // Bắt cả khi request lỗi hoặc backend trả thông báo lỗi
+            if (!res.ok || data.error) {
+                hienThongBaoHeThong(data.error , false);
+                return; // ⛔ Dừng, không redirect
+            }
+
+            if (data.maCTGH) {
+                sessionStorage.setItem('tickNewItem', data.maCTGH);
+                window.location.href = '/gio-hang';
+            } else {
+                alert("❌ Lỗi: không nhận được thông tin sản phẩm vừa thêm");
+            }
+
+        } catch (err) {
+            alert("⚠️ Vui lòng đăng nhập để mua hàng");
+        }
+    });
+});
+
+
 </script>
