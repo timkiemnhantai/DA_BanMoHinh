@@ -35,13 +35,18 @@ public class GioHangService {
             GioHang gh = new GioHang();
             gh.setTaiKhoan(tk);
             gh.setNgayTao(LocalDateTime.now());
-            gh.setTrangThaiGH("Đang xử lý");
-            gh.setTongTien(BigDecimal.ZERO);
+            gh.setTrangThaiGH("Đang hoạt động");
             return gioHangRepository.save(gh);
         });
 
         BienTheSanPham bienThe = bienTheSanPhamRepository.findById(maCT)
             .orElseThrow(() -> new RuntimeException("Không tìm thấy biến thể sản phẩm."));
+
+        // ✅ Tính tồn kho thực tế
+        int tonThucTe = bienThe.getSoLuongTonKho() - bienThe.getSoLuongDatGiu();
+        if (tonThucTe <= 0) {
+            throw new RuntimeException("Sản phẩm đã hết hàng");
+        }
 
         BigDecimal giaGoc = bienThe.getGia();
         BigDecimal giamGiaThucTe = BigDecimal.ZERO;
@@ -73,9 +78,11 @@ public class GioHangService {
         ChiTietGioHang ctgh;
         if (optCTGH.isPresent()) {
             ctgh = optCTGH.get();
-            ctgh.setSoLuong(ctgh.getSoLuong() + soLuong);
+            int soLuongMoi = Math.min(ctgh.getSoLuong() + soLuong, tonThucTe);
+            ctgh.setSoLuong(soLuongMoi);
             chitietgiohangRepository.save(ctgh);
         } else {
+            soLuong = Math.min(soLuong, tonThucTe);
             ctgh = new ChiTietGioHang();
             ctgh.setGioHang(gioHang);
             ctgh.setChiTietSanPham(bienThe);
@@ -86,8 +93,9 @@ public class GioHangService {
             chitietgiohangRepository.save(ctgh);
         }
 
-        return ctgh; // ✅ Trả về ChiTietGioHang để controller gửi maCTGH cho frontend
+        return ctgh; 
     }
+
 
 
 

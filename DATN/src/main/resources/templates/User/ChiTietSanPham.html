@@ -324,12 +324,34 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Cập nhật trạng thái nút +, -, thêm giỏ hàng
-    if (btnPlus && btnMinus && addToCartBtn) {
-      btnPlus.disabled = tonKho <= 0;
-      btnMinus.disabled = tonKho <= 0;
-      addToCartBtn.disabled = tonKho <= 0;
-      addToCartBtn.style.cursor = tonKho <= 0 ? "not-allowed" : "pointer";
+const buyNowBtn = document.querySelector(".buy-now-btn");
+const quantityInput = btnMinus?.nextElementSibling; // phần tử ngay sau nút -
+
+if (btnPlus && btnMinus && addToCartBtn && buyNowBtn && quantityInput) {
+    const isOutOfStock = tonKho <= 0;
+
+    // Disable + -
+    btnPlus.disabled = isOutOfStock;
+    btnMinus.disabled = isOutOfStock;
+
+    // Nút thêm giỏ
+    addToCartBtn.disabled = isOutOfStock;
+    addToCartBtn.style.cursor = isOutOfStock ? "not-allowed" : "pointer";
+
+    // Nút mua ngay
+    buyNowBtn.disabled = isOutOfStock;
+    buyNowBtn.style.cursor = isOutOfStock ? "not-allowed" : "pointer";
+
+    // Nếu hết hàng → số lượng = 0
+    if (isOutOfStock) {
+        if (quantityInput.tagName === "INPUT") {
+            quantityInput.value = 0;
+        } else {
+            quantityInput.textContent = "0";
+        }
     }
+}
+
 
     // Cập nhật active thumbnail
     thumbnails.forEach(t => t.classList.remove("active"));

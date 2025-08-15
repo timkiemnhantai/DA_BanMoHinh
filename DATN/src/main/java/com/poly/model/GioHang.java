@@ -1,6 +1,5 @@
 package com.poly.model;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -32,8 +31,6 @@ public class GioHang {
 	@JoinColumn(name = "MaTK") // đây là khóa ngoại trỏ đến bảng TaiKhoan
 	private TaiKhoan taiKhoan;
 
-	@Column(name = "TongTien")
-	private BigDecimal tongTien;
 
 	@Column(name = "TrangThaiGH")
 	private String trangThaiGH;

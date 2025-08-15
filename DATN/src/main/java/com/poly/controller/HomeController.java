@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -62,6 +63,7 @@ import com.poly.repository.TaiKhoanRepository;
 import com.poly.repository.ThanhToanRepository;
 import com.poly.repository.TrangThaiDHRepository;
 import com.poly.security.CustomUserDetails;
+import com.poly.service.BienTheSanPhamService;
 import com.poly.service.ChiTietGioHangService;
 import com.poly.service.DiaChiService;
 import com.poly.service.DonHangService;
@@ -69,6 +71,7 @@ import com.poly.service.GioHangService;
 import com.poly.service.OrderTokenService;
 import com.poly.service.SanPhamService;
 import com.poly.service.TaiKhoanService;
+import com.poly.service.ThanhToanService;
 import com.poly.service.ThongBaoService;
 import com.poly.util.PhiVanChuyenUtils;
 import com.poly.util.SoDienThoaiUtils;
@@ -82,7 +85,8 @@ import jakarta.transaction.Transactional;
 
 @Controller
 public class HomeController {
-	private static final String PHI_VAN_CHUYEN = "phiVanChuyen";
+	private static final String PHI_VAN_CHUYEN2 = "phiVanChuyen";
+	private static final String PHUONG_THUC_THANH_TOAN = "phuongThucThanhToan";
 	private static final String ID2 = "id";
 	@Autowired
 	private SanPhamService sanphamService;
@@ -90,6 +94,8 @@ public class HomeController {
 	private SanPhamRepository sanPhamRepository;
 	@Autowired
 	private BienTheSanPhamRepository bienthesanphamRepository;
+	@Autowired
+	private BienTheSanPhamService bienTheSanPhamService;
 	@Autowired
 	private DonHangRepository donhangRepository;
 	@Autowired
@@ -130,6 +136,8 @@ public class HomeController {
 	private DanhGiaMediaRepository danhGiaMediaRepository;
     @Autowired
     private TrangThaiDHRepository trangThaiRepository;
+    @Autowired
+    private ThanhToanService thanhToanService;
 	private final Pattern pattern = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d])[\\S]{8,}$");
     
 	@GetMapping({"/home", "/"})
@@ -612,6 +620,7 @@ public class HomeController {
             bienThe.setSoLuongDatGiu(soLuongDatGiuMoi > 0 ? soLuongDatGiuMoi : 0);
 
             bienTheSanPhamRepository.save(bienThe);
+            bienTheSanPhamService.capNhatTrangThaiKho(bienThe);
         }
 
 
@@ -680,28 +689,47 @@ public class HomeController {
 	public ResponseEntity<?> themVaoGio(@RequestBody Map<String, Object> data,
 	                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
 	    try {
-	        TaiKhoan taiKhoan = userDetails.getTaiKhoan(); // ✅
+	        TaiKhoan taiKhoan = userDetails.getTaiKhoan();
 
 	        Integer maCT = Integer.parseInt(data.get("maCT").toString());
 	        Integer soLuong = Integer.parseInt(data.get("soLuong").toString());
 
-	        // Gọi hàm thêm sản phẩm, trả về ChiTietGioHang mới
+	        BienTheSanPham bienThe = bienTheSanPhamRepository.findById(maCT)
+	                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
+
+	        int tonThucTe = bienThe.getSoLuongTonKho() - bienThe.getSoLuongDatGiu();
+	        if (tonThucTe <= 0) {
+	            return ResponseEntity.badRequest().body(Map.of(
+	                "error", "❌ Sản phẩm đã hết hàng"
+	            ));
+	        }
+
+	        if (soLuong > tonThucTe) {
+	            return ResponseEntity.badRequest().body(Map.of(
+	                "error", "⚠️ Chỉ còn " + tonThucTe + " sản phẩm trong kho"
+	            ));
+	        }
+
 	        ChiTietGioHang ctghMoi = giohangService.themSanPhamVaoGio(taiKhoan, maCT, soLuong);
 
 	        if (ctghMoi != null) {
-	            // Trả về maCTGH mới cho frontend
 	            return ResponseEntity.ok(Map.of(
 	                "message", "✅ Đã thêm vào giỏ hàng!",
 	                "maCTGH", ctghMoi.getMaCTGH()
 	            ));
 	        } else {
-	            return ResponseEntity.badRequest().body(Map.of("error", "❌ Không thể thêm sản phẩm."));
+	            return ResponseEntity.badRequest().body(Map.of(
+	                "error", "❌ Không thể thêm sản phẩm."
+	            ));
 	        }
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        return ResponseEntity.status(500).body(Map.of("error", "Lỗi máy chủ"));
+	        return ResponseEntity.status(500).body(Map.of(
+	            "error", "Lỗi máy chủ"
+	        ));
 	    }
 	}
+
 
 	@PostMapping("/gio-hang/xoa")
 	@ResponseBody
@@ -750,10 +778,9 @@ public class HomeController {
 	        String sdtDinhDang = diaChiMacDinh.getSoDienThoaiQuocTe();
 	        model.addAttribute("soDienThoai", sdtDinhDang);
 	        model.addAttribute("hoTen", diaChiMacDinh.getHoTen());
-
+	        model.addAttribute("macDinh", diaChiMacDinh.getMacDinh());
 	        List<GioHangDTO> dsThanhToan = chitietgiohangService
 	                .layGioHangDTOTheoDanhSachCTGH(maTK, maCTGHList);
-
 	        int tongSoLuong = 0;
 	        BigDecimal tongTien = BigDecimal.ZERO;
 
@@ -768,14 +795,18 @@ public class HomeController {
 	        int phiVanChuyen = ketQua.getPhiVanChuyen();
 	        String ngayGiaoTu = ketQua.getNgayGiaoDuKienTu();
 	        String ngayGiaoDen = ketQua.getNgayGiaoDuKienDen();
+	        List<PhiVanChuyenUtils.KetQuaVanChuyen> dsPhuongThuc =
+	                PhiVanChuyenUtils.tinhTatCaPhuongThuc(diaChiMacDinh.getDiaChiDayDu(), tongTien.intValue());
+	        model.addAttribute("dsPhuongThuc", dsPhuongThuc);
 
 	        BigDecimal tongThanhToan = tongTien.add(BigDecimal.valueOf(phiVanChuyen));
-
-
+	        List<DiaChi> dsDiaChi = diaChiRepository.findByTaiKhoan_MaTK(maTK);
+	        
+	        model.addAttribute("dsDiaChi",dsDiaChi);
 	        model.addAttribute("dsThanhToan", dsThanhToan);
 	        model.addAttribute("tongSoLuong", tongSoLuong);
 	        model.addAttribute("tongTien", tongTien);
-	        model.addAttribute("phiVanChuyen", phiVanChuyen);
+	        model.addAttribute(PHI_VAN_CHUYEN2, phiVanChuyen);
 	        model.addAttribute("tongThanhToan", tongThanhToan);
 	        model.addAttribute("ngayGiaoTu", ngayGiaoTu);
 	        model.addAttribute("ngayGiaoDen", ngayGiaoDen);
@@ -785,13 +816,41 @@ public class HomeController {
 	    return "User/index";
 	}
 
+
+	@GetMapping("/lay-phi-van-chuyen")
+	@ResponseBody
+	public ResponseEntity<?> layPhiVanChuyen(
+	        @RequestParam String phuongThuc,
+	        @RequestParam String diaChi,
+	        @RequestParam int tongTien) {
+	    PhiVanChuyenUtils.KetQuaVanChuyen ketQua =
+	            PhiVanChuyenUtils.layKetQuaTheoPhuongThuc(diaChi, tongTien, phuongThuc);
+
+	    if (ketQua == null) {
+	        return ResponseEntity.badRequest()
+	                .body(Map.of("error", "Phương thức vận chuyển không hợp lệ"));
+	    }
+	    Map<String, Object> result = new HashMap<>();
+	    result.put("phiVanChuyen", ketQua.getPhiVanChuyen());
+	    result.put("ngayGiaoTu", ketQua.getNgayGiaoDuKienTu());
+	    result.put("ngayGiaoDen", ketQua.getNgayGiaoDuKienDen());
+
+	    return ResponseEntity.ok(result);
+	}
+
+
+
+
+	
+	
+	
 	@PostMapping("/gio-hang/xoa-nhieu")
 	@ResponseBody
 	public ResponseEntity<?> xoaNhieuSanPham(@RequestBody Map<String, List<Integer>> payload) {
 	    List<Integer> dsMaCTGH = payload.get("dsMaCTGH");
 
 	    try {
-	        chitietgiohangService.xoaNhieuTheoMa(dsMaCTGH); // bạn cần có service xử lý
+	        chitietgiohangService.xoaNhieuTheoMa(dsMaCTGH); 
 	        return ResponseEntity.ok(Map.of("success", true));
 	    } catch (Exception e) {
 	        return ResponseEntity.badRequest().body(Map.of("success", false, "error", e.getMessage()));
@@ -804,8 +863,11 @@ public class HomeController {
 	        @RequestParam("soLuong") List<Integer> soLuongList,
 	        @RequestParam("donGia") List<BigDecimal> donGiaList,
 	        @RequestParam("giaThucTe") List<BigDecimal> giaThucTeList,
-	        @RequestParam("phuongThucThanhToan") String phuongThucThanhToan,
-	        @RequestParam(PHI_VAN_CHUYEN) BigDecimal phiVanChuyen,
+	        @RequestParam(PHUONG_THUC_THANH_TOAN) String phuongThucThanhToan,
+	        @RequestParam("hoTen") String hoTenForm,
+	        @RequestParam("soDienThoai") String soDienThoaiForm,
+	        @RequestParam("diaChi") String diaChiForm,
+	        @RequestParam(PHI_VAN_CHUYEN2) BigDecimal phiVanChuyen,
 	        @RequestParam String ngayGiaoDuKien,
 	        Model model,
 	        @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -835,13 +897,15 @@ public class HomeController {
     	} else {
     	    model.addAttribute("diaChi", diaChiMacDinh.getDiaChiDayDu());
     	}
-	    String diaChiDayDu = diaChiMacDinh.getDiaChiDayDu(); // ✅ Đây là String
+    	String diaChiGiaoHang = diaChiForm;  // ✅ Đây là String
 	    // ✅ Bước 2: Tạo đơn hàng mới
 	    DonHang donHang = new DonHang();
 	    donHang.setTaiKhoan(taiKhoan);
 	    donHang.setTrangThaiDH(trangThaiDHRepo.findById(1).orElse(null)); // 1 = Chờ xác nhận
 	    donHang.setNgayDat(LocalDateTime.now());
-	    donHang.setDiaChiGiaoHang(diaChiDayDu); // hoặc có thể lấy từ form
+	    donHang.setHoTen(hoTenForm);
+	    donHang.setSoDienThoai(soDienThoaiForm);
+	    donHang.setDiaChiGiaoHang(diaChiGiaoHang); // hoặc có thể lấy từ form
 	    donHang.setPhiVanChuyen(phiVanChuyen); 
 	    donHang.setNgayGiaoDuKien(ngayGiaoDuKien);
 
@@ -875,6 +939,7 @@ public class HomeController {
 	        bienThe.setSoLuongTonKho(tonKhoHienTai - sl);
 
 	        bienthesanphamRepository.save(bienThe);
+	        bienTheSanPhamService.capNhatTrangThaiKho(bienThe);
 
 	        // Tính tiền
 	        BigDecimal tienThucTe = giaThucTe.multiply(BigDecimal.valueOf(sl));
@@ -1056,6 +1121,8 @@ public class HomeController {
 	@GetMapping("/xac-nhan-da-thanh-toan/{maDH}")
 	public ResponseEntity<?> xacNhanDaThanhToan(@PathVariable int maDH) {
 	    DonHang dh = donHangService.capNhatTrangThaiThanhToan(maDH);
+	    thanhToanService.capNhatNgayThanhToan(maDH);
+
 	    String noiDung = "Đơn hàng: DH" + maDH + " của bạn đã giao. Vui lòng kiểm tra và xác nhận nếu không có vấn đề!";
 
 	    Integer maTK = dh.getTaiKhoan().getMaTK();
