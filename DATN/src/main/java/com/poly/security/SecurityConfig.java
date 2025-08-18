@@ -30,7 +30,7 @@ public class SecurityConfig {
 //            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/login", "/register", "/css/**", "/js/**", "/img/**", "/home","/", "/AnhSanPham/**","/product","/product/search","/chi-tiet-san-pham/**","/forgot-password","/reset-password","/change-password","/doimatkhau","/ChinhSach","/websocket/**", "/ws/**","/xac-nhan-thanh-toan/**","/thong-bao/**","/uploads/**").permitAll()
-                .requestMatchers("/QuanLySanPham/**", "/QuanLyDanhGia/**").hasAnyAuthority("Admin", "Nhân viên")
+                .requestMatchers("/curd","/QuanLySanPham/**", "/QuanLyDanhGia/**","/QuanLyDonHang/**").hasAnyAuthority("Admin", "Nhân viên")
                 .requestMatchers("/curd", "/QuanLyThanhToan","/QuanLyTaiKhoan").hasAuthority("Admin")
 
                 .requestMatchers("/gio-hang/**","/thanh-toan/**","/Doimatkhau/**","/DiaChi/**","/TrangCaNhan/**","/DonHang/**","/Xac-nhan-nhan-hang/**","/danh-gia/**").hasAuthority("Khách hàng")

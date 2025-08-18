@@ -4,17 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,32 +17,37 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DanhGiaSP {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "MaDG")
-	private Integer maDG;
 
-	@ManyToOne(optional = false,fetch = FetchType.EAGER)
-	@JoinColumn(name = "MaSP")
-	private SanPham sanPham;
-	
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "MaDG")
+    private Integer maDG;
+
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "MaSP")
+    @JsonBackReference // tránh vòng lặp với SanPham
+    private SanPham sanPham;
+
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "MaCTSP", nullable = true) // <- Optional ở đây
+    @JoinColumn(name = "MaCTSP", nullable = true)
+    @JsonBackReference // tránh vòng lặp với BienTheSanPham
     private BienTheSanPham bienTheSanPham;
-    
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "MaTK")
-	private TaiKhoan taiKhoan;
 
-	@Column(name = "SoSao")
-	private Integer soSao;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "MaTK")
+    @JsonBackReference // tránh vòng lặp với TaiKhoan
+    private TaiKhoan taiKhoan;
 
-	@Column(name = "BinhLuan")
-	private String binhLuan;
+    @Column(name = "SoSao")
+    private Integer soSao;
 
-	@Column(name = "NgayDang")
-	private LocalDateTime ngayDang;
-	@OneToMany(mappedBy = "danhGiaSP", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<DanhGiaMedia> mediaList = new ArrayList<>();
+    @Column(name = "BinhLuan")
+    private String binhLuan;
 
+    @Column(name = "NgayDang")
+    private LocalDateTime ngayDang;
+
+    @OneToMany(mappedBy = "danhGiaSP", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference // serialize mediaList an toàn
+    private List<DanhGiaMedia> mediaList = new ArrayList<>();
 }

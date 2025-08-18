@@ -86,10 +86,7 @@
 				<div class="discount-badge"
 					th:if="${sp.phanTramGiam != null or sp.giaGiam != null}">
 					<span
-						th:text="${
-            sp.phanTramGiam != null ? '-' + sp.phanTramGiam + '%' :
-            (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam).replace(',', '.') + 'VND' : '')
-        }"></span>
+						th:text="${sp.phanTramGiam != null ? '-' + sp.phanTramGiam + '%' : (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam).replace(',', '.') + ' đ' : '') }"></span>
 				</div>
 
 				<div class="product-image-container">
@@ -145,7 +142,7 @@
 					<span
 						th:text="${
             sp.phanTramGiam != null ? '-' + sp.phanTramGiam + '%' :
-            (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam).replace(',', '.') + 'VND' : '')
+            (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam).replace(',', '.') + ' đ' : '')
         }"></span>
 				</div>
 
@@ -202,7 +199,7 @@
 					<span
 						th:text="${
             sp.phanTramGiam != null ? '-' + sp.phanTramGiam + '%' :
-            (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam).replace(',', '.') + 'VND' : '')
+            (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam).replace(',', '.') + ' đ' : '')
         }"></span>
 				</div>
 

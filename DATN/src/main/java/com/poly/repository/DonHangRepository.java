@@ -15,5 +15,6 @@ public interface DonHangRepository extends JpaRepository<DonHang, Integer>{
 	List<DonHang> findByTaiKhoan_MaTKOrderByNgayDatDesc(int maTK);
     List<DonHang> findByTrangThaiDH_MaTTDH(int maTTDH);
     List<DonHang> findByTaiKhoan_MaTKAndTrangThaiDH_MaTTDHOrderByNgayDatDesc(int maTK, int maTTDH);
+    List<DonHang> findByMaDHGreaterThanOrderByNgayDatDesc(Integer afterId);
 
 }

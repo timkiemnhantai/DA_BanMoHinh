@@ -50,11 +50,11 @@
 								</div>
 							</td>
 							<td style="text-align: center;"
-								th:text="${#numbers.formatDecimal(sp.chiTietGioHang.giaTienThucTe, 0, 'POINT', 0, 'COMMA')} + ' VND'">>₫980.000</td>
+								th:text="${#numbers.formatDecimal(sp.chiTietGioHang.giaTienThucTe, 0, 'POINT', 0, 'COMMA')} + ' đ'">>₫980.000</td>
 							<td style="text-align: center;"
 								th:text="${sp.chiTietGioHang.soLuong}"></td>
 							<td style="text-align: center;"
-								th:text="${#numbers.formatDecimal(sp.chiTietGioHang.giaTienThucTe * sp.chiTietGioHang.soLuong, 0, 'POINT', 0, 'COMMA')} + ' VND'"></td>
+								th:text="${#numbers.formatDecimal(sp.chiTietGioHang.giaTienThucTe * sp.chiTietGioHang.soLuong, 0, 'POINT', 0, 'COMMA')} + ' đ'"></td>
 						</tr>
 						<input type="hidden" name="maBienThe"
 							th:value="${sp.bienThe.maCTSP}" />
@@ -81,7 +81,7 @@
     <div class="shipping-row">
 <div class="shipping-type" id="displayShippingMethod" th:text="${(phuongThucShipping == 'SIEU_TOC') ? 'Hỏa tốc' : (phuongThucShipping == 'THUONG') ? 'Thường' : 'Nhanh'}"></div>
       <div class="shipping-price" id="displayShippingPrice"
-           th:text="${phiVanChuyen == 0} ? 'Miễn phí' : ${#numbers.formatDecimal(phiVanChuyen,0,'POINT',0,'COMMA')} + ' VND'">
+           th:text="${phiVanChuyen == 0} ? 'Miễn phí' : ${#numbers.formatDecimal(phiVanChuyen,0,'POINT',0,'COMMA')} + ' đ'">
       </div>
     </div>
 
@@ -141,7 +141,7 @@
 		<div class="total-summary-initial">
 			<span th:text="'Tổng số tiền (' + ${tongSoLuong} + ' sản phẩm):'"></span>
 			<span class="price"
-				th:text="${#numbers.formatDecimal(tongThanhToan, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+				th:text="${#numbers.formatDecimal(tongThanhToan, 0, 'POINT', 0, 'COMMA')} + ' đ'"></span>
 
 
 		</div>
@@ -165,19 +165,19 @@
 		<div class="final-summary">
 			<div class="summary-line">
 				<span>Tổng tiền hàng</span> <span
-					th:text="${#numbers.formatDecimal(tongTien, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+					th:text="${#numbers.formatDecimal(tongTien, 0, 'POINT', 0, 'COMMA')} + ' đ'"></span>
 			</div>
 			<div class="summary-line">
 			  <span>Tổng tiền phí vận chuyển</span>
 			  <span id="finalShippingFee"
-			        th:text="${phiVanChuyen == 0 ? 'Miễn phí' : (#numbers.formatDecimal(phiVanChuyen, 0, 'POINT', 0, 'COMMA') + ' VND')}">
+			        th:text="${phiVanChuyen == 0 ? 'Miễn phí' : (#numbers.formatDecimal(phiVanChuyen, 0, 'POINT', 0, 'COMMA') + ' đ')}">
 			    <!-- fallback text nếu JS chưa chạy -->
 			  </span>
 			</div>
 
 			<div class="summary-line total">
 				<span>Tổng thanh toán</span> <span
-					th:text="${#numbers.formatDecimal(tongThanhToan, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+					th:text="${#numbers.formatDecimal(tongThanhToan, 0, 'POINT', 0, 'COMMA')} + ' đ'"></span>
 			</div>
 		</div>
 
@@ -285,12 +285,9 @@
                 if (selectedAddress) {
                     const addressId = selectedAddress.dataset.addressId;
                     console.log('Địa chỉ đã chọn:', addressId);
-                    // TODO: Cập nhật thông tin địa chỉ trên trang chính ở đây
-                    // Ví dụ:
-                    // document.querySelector('.address-info .name-phone').textContent = selectedAddress.querySelector('.name-phone').textContent;
-                    // ... và các thông tin địa chỉ khác
+                   
                 }
-                closeAddressModal(); // Đóng modal sau khi xác nhận
+                closeAddressModal(); 
             });
         }
 
@@ -307,9 +304,8 @@
         if (addressItems && addressItems.length > 0) {
             addressItems.forEach(item => {
                 item.addEventListener('click', function() {
-                    // Xóa trạng thái 'selected' khỏi tất cả các mục
+     
                     addressItems.forEach(i => i.classList.remove('selected'));
-                    // Thêm trạng thái 'selected' vào mục được nhấp
                     this.classList.add('selected');
                 });
             });
@@ -322,13 +318,13 @@
 
   paymentTabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      // Bỏ class active ở tất cả tab
+
       paymentTabs.forEach(t => t.classList.remove('active'));
 
-      // Gán active cho tab được chọn
+   
       tab.classList.add('active');
 
-      // Gán giá trị phương thức thanh toán vào input ẩn
+   
       inputPhuongThuc.value = tab.getAttribute('data-method');
     });
   });
@@ -559,7 +555,7 @@ if (confirmModalBtn) {
     const finalFeeEl = document.getElementById('finalShippingFee');
     if (finalFeeEl && initialPhi != null) {
       const feeNum = safeNum(initialPhi);
-      finalFeeEl.textContent = (feeNum === 0) ? 'Miễn phí' : feeNum.toLocaleString('vi-VN') + ' VND';
+      finalFeeEl.textContent = (feeNum === 0) ? 'Miễn phí' : feeNum.toLocaleString('vi-VN') + ' đ';
     }
   })();
 
