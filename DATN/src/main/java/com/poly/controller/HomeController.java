@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -691,44 +692,42 @@ public class HomeController {
 	    try {
 	        TaiKhoan taiKhoan = userDetails.getTaiKhoan();
 
-	        Integer maCT = Integer.parseInt(data.get("maCT").toString());
-	        Integer soLuong = Integer.parseInt(data.get("soLuong").toString());
-
-	        BienTheSanPham bienThe = bienTheSanPhamRepository.findById(maCT)
-	                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
-
-	        int tonThucTe = bienThe.getSoLuongTonKho() - bienThe.getSoLuongDatGiu();
-	        if (tonThucTe <= 0) {
-	            return ResponseEntity.badRequest().body(Map.of(
-	                "error", "❌ Sản phẩm đã hết hàng"
-	            ));
+	        int maCT = Integer.parseInt(String.valueOf(data.get("maCT")));
+	        int soLuong = Integer.parseInt(String.valueOf(data.get("soLuong")));
+	        if (soLuong <= 0) {
+	            return ResponseEntity.badRequest().body(Map.of("error", "Số lượng không hợp lệ"));
 	        }
 
-	        if (soLuong > tonThucTe) {
-	            return ResponseEntity.badRequest().body(Map.of(
-	                "error", "⚠️ Chỉ còn " + tonThucTe + " sản phẩm trong kho"
+	        BienTheSanPham bienThe = bienTheSanPhamRepository.findById(maCT)
+	            .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
+
+	        // VÌ bạn đã trừ tồn khi đặt hàng → KHÔNG trừ đặt giữ nữa
+	        int tonCoTheBan = Math.max(0, Optional.ofNullable(bienThe.getSoLuongTonKho()).orElse(0));
+
+	        if (tonCoTheBan <= 0) {
+	            return ResponseEntity.status(409).body(Map.of("error", "❌ Sản phẩm đã hết hàng"));
+	        }
+	        if (soLuong > tonCoTheBan) {
+	            return ResponseEntity.status(409).body(Map.of(
+	                "error", "⚠️ Chỉ còn " + tonCoTheBan + " sản phẩm trong kho",
+	                "available", tonCoTheBan
 	            ));
 	        }
 
 	        ChiTietGioHang ctghMoi = giohangService.themSanPhamVaoGio(taiKhoan, maCT, soLuong);
-
-	        if (ctghMoi != null) {
-	            return ResponseEntity.ok(Map.of(
-	                "message", "✅ Đã thêm vào giỏ hàng!",
-	                "maCTGH", ctghMoi.getMaCTGH()
-	            ));
-	        } else {
-	            return ResponseEntity.badRequest().body(Map.of(
-	                "error", "❌ Không thể thêm sản phẩm."
-	            ));
+	        if (ctghMoi == null) {
+	            return ResponseEntity.badRequest().body(Map.of("error", "❌ Không thể thêm sản phẩm."));
 	        }
+	        return ResponseEntity.ok(Map.of(
+	            "message", "✅ Đã thêm vào giỏ hàng!",
+	            "maCTGH", ctghMoi.getMaCTGH()
+	        ));
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        return ResponseEntity.status(500).body(Map.of(
-	            "error", "Lỗi máy chủ"
-	        ));
+	        return ResponseEntity.status(500).body(Map.of("error", "Lỗi máy chủ"));
 	    }
 	}
+
 
 
 	@PostMapping("/gio-hang/xoa")
@@ -867,6 +866,7 @@ public class HomeController {
 	        @RequestParam("hoTen") String hoTenForm,
 	        @RequestParam("soDienThoai") String soDienThoaiForm,
 	        @RequestParam("diaChi") String diaChiForm,
+	        @RequestParam("phuongThucShipping") String phuongThucShipping,
 	        @RequestParam(PHI_VAN_CHUYEN2) BigDecimal phiVanChuyen,
 	        @RequestParam String ngayGiaoDuKien,
 	        Model model,
@@ -904,7 +904,9 @@ public class HomeController {
 	    donHang.setTrangThaiDH(trangThaiDHRepo.findById(1).orElse(null)); // 1 = Chờ xác nhận
 	    donHang.setNgayDat(LocalDateTime.now());
 	    donHang.setHoTen(hoTenForm);
-	    donHang.setSoDienThoai(soDienThoaiForm);
+	    
+	    donHang.setSoDienThoai(SoDienThoaiUtils.chuyenVeSo0(soDienThoaiForm));
+	    donHang.setPhuongThucVanChuyen(phuongThucShipping);
 	    donHang.setDiaChiGiaoHang(diaChiGiaoHang); // hoặc có thể lấy từ form
 	    donHang.setPhiVanChuyen(phiVanChuyen); 
 	    donHang.setNgayGiaoDuKien(ngayGiaoDuKien);
@@ -928,10 +930,10 @@ public class HomeController {
 	        int tonKhoHienTai = bienThe.getSoLuongTonKho() != null ? bienThe.getSoLuongTonKho() : 0;
 	        int datGiuHienTai = bienThe.getSoLuongDatGiu() != null ? bienThe.getSoLuongDatGiu() : 0;
 
-	        if (tonKhoHienTai - datGiuHienTai < sl) {
+	        if (tonKhoHienTai < sl) {
 	            // Không đủ hàng, có thể xử lý trả về lỗi hoặc bỏ sản phẩm này
 	            redirectAttributes.addFlashAttribute("error", "Sản phẩm " + bienThe.getSanPham().getTenSP() + " không đủ hàng.");
-	            return "User/loi-dat-hang"; // hoặc trang lỗi phù hợp
+	            return "User/home"; // hoặc trang lỗi phù hợp
 	        }
 
 	        // Cộng đặt giữ và giảm tồn kho ngay lập tức
@@ -974,11 +976,6 @@ public class HomeController {
 	    chitietdonhangRepository.saveAll(chiTietList);
 	    List<Integer> dsMaBienTheDaDat = maBienTheList; // hoặc tự build lại nếu cần
 	    donHangService.xoaSanPhamTrongGioSauKhiDatHang(maTK, dsMaBienTheDaDat);
-
-
-
-
-
 	    System.out.println(">>> ✅ Đặt hàng thành công. Đơn hàng mã: " + donHang.getMaDH());
 	 // ✅ Bước 6: Tạo bản ghi thanh toán
 	    ThanhToan thanhToan = new ThanhToan();

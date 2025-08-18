@@ -522,7 +522,7 @@ body {
 
 /* ========== NAVIGATION BAR ========== */
     #navbar-curd {
-      position: fixed;
+    position: fixed;
       top: 0;
       left: 0;
       right: 0;
@@ -557,7 +557,7 @@ body {
       color: #000;
     }
 
-    #navbar-curd .nav-right {
+   #navbar-curd .nav-right {
       display: flex;
       align-items: center;
     }

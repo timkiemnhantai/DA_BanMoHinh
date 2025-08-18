@@ -1,5 +1,6 @@
 package com.poly.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +18,8 @@ public class DanhGiaMedia {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MaDG", nullable = false)
-    private DanhGiaSP danhGiaSP; // Liên kết với bảng DanhGiaSP
+    @JsonBackReference // tránh vòng lặp JSON với DanhGiaSP
+    private DanhGiaSP danhGiaSP;
 
     @Column(name = "Url", nullable = false, columnDefinition = "NVARCHAR(MAX)")
     private String url;

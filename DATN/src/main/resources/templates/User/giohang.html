@@ -8,7 +8,6 @@
 			<div class="cart-header">
 
 				<div class="header-item product-header">Sản phẩm</div>
-				<div class="header-item price-header">Phân loại</div>
 				<div class="header-item price-header">Đơn giá</div>
 				<div class="header-item quantity-header">Số lượng</div>
 				<div class="header-item total-header">Số tiền</div>
@@ -57,12 +56,12 @@
 							<span class="original-price-strikethrough"
 								th:if="${(sp.giaGiam != null or sp.phanTramGiam != null) 
 	               and sp.chiTietGioHang.giaTienThucTe < sp.bienThe.gia}"
-								th:text="${#numbers.formatDecimal(sp.bienThe.gia, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+								th:text="${#numbers.formatDecimal(sp.bienThe.gia, 0, 'POINT', 0, 'COMMA')} + ' đ'"></span>
 
 							<!-- ✅ Luôn hiển thị giá thực tế hiện tại -->
 							<span class="current-price"
 								th:data-giasaugiam="${sp.chiTietGioHang.giaTienThucTe}"
-								th:text="${#numbers.formatDecimal(sp.chiTietGioHang.giaTienThucTe, 0, 'POINT', 0, 'COMMA')} + ' VND'">
+								th:text="${#numbers.formatDecimal(sp.chiTietGioHang.giaTienThucTe, 0, 'POINT', 0, 'COMMA')} + ' đ'">
 							</span>
 						</div>
 						<div class="product-quantity-control"
@@ -85,7 +84,7 @@
 
 
 						<div class="product-total-price"
-							th:text="${#numbers.formatDecimal(sp.chiTietGioHang.giaTienThucTe * sp.chiTietGioHang.soLuong, 0, 'POINT', 0, 'COMMA')} + ' VND'">
+							th:text="${#numbers.formatDecimal(sp.chiTietGioHang.giaTienThucTe * sp.chiTietGioHang.soLuong, 0, 'POINT', 0, 'COMMA')} + ' đ'">
 						</div>
 						<div class="product-actions">
 							<button type="button" class="delete-btn"
@@ -93,6 +92,7 @@
 								onclick="xoaSanPhamKhoiGio(this)">Xóa</button>
 						</div>
 					</div>
+
 				</div>
 			</th:block>
 
@@ -118,7 +118,7 @@
 					<div class="total-info">
 						<span class="total-text">Tổng cộng (<span id="tongSoLuong">0</span>
 							Sản phẩm):
-						</span> <span class="total-price" id="tongTien">0 VND</span>
+						</span> <span class="total-price" id="tongTien">0 đ</span>
 
 
 						<!-- ✅ Đây là nút submit -->
@@ -188,7 +188,7 @@ function capNhatSoLuongLenServer(maCTGH, soLuongMoi, input, parent) {
         const tongTien = giaSauGiam * soLuongMoi;
 
         if (totalDiv) {
-            totalDiv.textContent = formatCurrency(tongTien) + " VND";
+            totalDiv.textContent = formatCurrency(tongTien) + " đ";
         }
 
         capNhatTongTienToanBo();
@@ -293,7 +293,7 @@ function capNhatTongTienToanBo() {
 
 	// Cập nhật giao diện
 	document.getElementById("tongSoLuong").textContent = tongSoLuong;
-	document.getElementById("tongTien").textContent = tongTien.toLocaleString("vi-VN") + " VND";
+	document.getElementById("tongTien").textContent = tongTien.toLocaleString("vi-VN") + " đ";
 }
 
 
