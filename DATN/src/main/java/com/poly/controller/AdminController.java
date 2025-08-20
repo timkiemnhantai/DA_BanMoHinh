@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import com.poly.model.*;
+import com.poly.service.BannerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -18,11 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.poly.dto.SanPhamDTO;
-import com.poly.model.DanhGiaSP;
-import com.poly.model.DonHang;
-import com.poly.model.SanPham;
-import com.poly.model.TaiKhoan;
-import com.poly.model.ThanhToan;
 import com.poly.repository.DanhGiaSPRepository;
 import com.poly.repository.DonHangRepository;
 import com.poly.repository.SanPhamRepository;
@@ -48,18 +45,12 @@ public class AdminController {
 		model.addAttribute("nhanvien", nhanVien);
 		model.addAttribute("khachhang", khachHang);
 		model.addAttribute("content","Admin_Staff/QuanLyTaiKhoan.html");
-		
+
 		return "Admin_Staff/curd";
 	}
 
-	@GetMapping("/QuanLyBanner")
-	public String sqlBanner(Model model) {
 
-		model.addAttribute("content","Admin_Staff/QuanLyBanner.html");
-		
-		return "Admin_Staff/curd";
-	}
-	
+
 	@GetMapping("/QuanLyThanhToan")
 	public String hienThiThanhToan(Model model) {
 		List<ThanhToan> listThanhToan = thanhToanRepository.findAll();
@@ -100,7 +91,7 @@ public class AdminController {
 			return "fail";
 		}
 	}
-	
+
 
     @Autowired
     private SanPhamService sanPhamService;
@@ -113,7 +104,7 @@ public class AdminController {
         model.addAttribute("content", "Admin_Staff/QuanLySanPham.html");
         return "Admin_Staff/curd";
     }
-    
+
     @GetMapping("/QuanLySanPham/create")
     public String showCreateForm(Model model) {
         model.addAttribute("sanPham", new SanPham());
@@ -143,7 +134,7 @@ public class AdminController {
         sanPhamService.deleteAnhSanPham(id);
         return "redirect:/QuanLySanPham";
     }
-    
+
     @GetMapping("/QuanLySanPham/search")
     public String timKiemSanPham(@RequestParam(value = "keyword", required = false) String keyword,
                                  @RequestParam(value = "loaiKeyword", required = false) String loaiKeyword,
@@ -185,7 +176,7 @@ public class AdminController {
         model.addAttribute("content", "Admin_Staff/QuanLyDanhGia.html");
         return "Admin_Staff/curd";
     }
-    
+
  // Xử lý update
     @PostMapping("/QuanLyDanhGia/update")
     public String updateDanhGia(@RequestParam("maDG") Integer maDG,
@@ -214,11 +205,66 @@ public class AdminController {
         return "Admin_Staff/curd";
     }
 
-    
+
     @GetMapping("/QuanLyDonHang")
     public String qlDonHang(Model model) {
 		model.addAttribute("content", "Admin_Staff/QuanLyDonHang.html");
 		return "Admin_Staff/curd";
     }
-    
+
+
+
+    @Autowired
+    private BannerService bannerService;
+
+    // Hiển thị danh sách Banner
+    @GetMapping("/QuanLyBanner")
+    public String hienThiQuanLyBanner(Model model) {
+        List<Banner> danhSachBanner = bannerService.getAllBanners();
+        model.addAttribute("danhSachBanner", danhSachBanner);
+
+        // 👇 thêm dòng này để fix lỗi
+        model.addAttribute("banner", new Banner());
+
+        model.addAttribute("content", "Admin_Staff/QuanLyBanner.html");
+        return "Admin_Staff/curd";
+    }
+
+
+    // Hiển thị form tạo Banner
+    @GetMapping("/QuanLyBanner/create")
+    public String showCreateBannerForm(Model model) {
+        model.addAttribute("banner", new Banner());
+        return "Admin_Staff/formBanner";
+    }
+
+    // Lưu banner mới
+    @PostMapping("/QuanLyBanner/create")
+    public String createBanner(@ModelAttribute("banner") Banner banner) {
+        bannerService.createBanner(banner);
+        return "redirect:/QuanLyBanner";
+    }
+
+    // Hiển thị form sửa Banner
+    @GetMapping("/QuanLyBanner/edit/{id}")
+    public String showEditBannerForm(@PathVariable("id") Integer id, Model model) {
+        Banner banner = bannerService.getBannerById(id);
+        model.addAttribute("banner", banner);
+        return "Admin_Staff/formBanner";
+    }
+
+    // Cập nhật Banner
+    @PostMapping("/QuanLyBanner/edit/{id}")
+    public String updateBanner(@PathVariable("id") Integer id, @ModelAttribute("banner") Banner banner) {
+        bannerService.updateBanner(id, banner);
+        return "redirect:/QuanLyBanner";
+    }
+
+    // Xóa Banner
+    @GetMapping("/QuanLyBanner/delete/{id}")
+    public String deleteBanner(@PathVariable("id") Integer id) {
+        bannerService.deleteBanner(id);
+        return "redirect:/QuanLyBanner";
+    }
+
 }

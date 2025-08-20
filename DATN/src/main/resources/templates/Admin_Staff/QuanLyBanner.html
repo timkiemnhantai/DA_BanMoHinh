@@ -235,6 +235,7 @@
       <button><i class="fas fa-search"></i> Tìm kiếm</button>
     </div>
 
+
     <table class="data-table">
       <thead>
         <tr>
@@ -248,69 +249,32 @@
           <th>Tác vụ</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><input type="checkbox" checked></td>
-          <td><img src="/img/MoHinh/BanDai/HG/GundamCalibarn/sp4.2.png" alt="Banner Image 1"></td>
-          <td>MH2024</td>
-          <td>Banner</td>
-          <td>san-pham</td>
-          <td>Banner footer</td>
-          <td><input type="checkbox" checked></td>
-          <td class="action-buttons">
-            <button class="btn-edit" title="Sửa"><i class="fas fa-pencil-alt"></i></button>
-            <button class="btn-view" title="Xem"><i class="fas fa-eye"></i></button>
-            <button class="btn-delete" title="Xóa"><i class="fas fa-trash-alt"></i></button>
-          </td>
-        </tr>
+        <tbody>
+        <tr th:each="banner : ${bannerList}">
+            <td><input type="checkbox"></td>
+            <td>
+                <img th:src="@{${banner.anhBanner}}" alt="Banner Image" width="120">
+            </td>
+            <td th:text="${banner.maBanner}"></td>
+            <td th:text="${banner.tieuDeBanner}"></td>
+            <td th:text="${banner.link}"></td>
+            <td th:text="${banner.loaiBanner}"></td>
+            <td><input type="checkbox" th:checked="${banner.hienThi}"></td>
+            <td class="action-buttons">
+                <a th:href="@{'/QuanLyBanner/edit/' + ${banner.maBanner}}"
+                   class="btn-edit" title="Sửa"><i class="fas fa-pencil-alt"></i></a>
 
-         <tr>
-          <td><input type="checkbox" checked></td>
-          <td><img src="/img/MoHinh/BanDai/HG/GundamCalibarn/sp4.2.png" alt="Banner Image 1"></td>
-          <td>MH2024</td>
-          <td>Banner</td>
-          <td>san-pham</td>
-          <td>Banner footer</td>
-          <td><input type="checkbox" checked></td>
-          <td class="action-buttons">
-            <button class="btn-edit" title="Sửa"><i class="fas fa-pencil-alt"></i></button>
-            <button class="btn-view" title="Xem"><i class="fas fa-eye"></i></button>
-            <button class="btn-delete" title="Xóa"><i class="fas fa-trash-alt"></i></button>
-          </td>
-        </tr>
+                <a th:href="@{'/QuanLyBanner/view/' + ${banner.maBanner}}"
+                   class="btn-view" title="Xem"><i class="fas fa-eye"></i></a>
 
-         <tr>
-          <td><input type="checkbox" checked></td>
-          <td><img src="/img/MoHinh/BanDai/HG/GundamCalibarn/sp4.2.png" alt="Banner Image 1"></td>
-          <td>MH2024</td>
-          <td>Banner</td>
-          <td>san-pham</td>
-          <td>Banner footer</td>
-          <td><input type="checkbox" checked></td>
-          <td class="action-buttons">
-            <button class="btn-edit" title="Sửa"><i class="fas fa-pencil-alt"></i></button>
-            <button class="btn-view" title="Xem"><i class="fas fa-eye"></i></button>
-            <button class="btn-delete" title="Xóa"><i class="fas fa-trash-alt"></i></button>
-          </td>
+                <a th:href="@{'/QuanLyBanner/delete/' + ${banner.maBanner}}"
+                   onclick="return confirm('Bạn có chắc chắn muốn xóa banner này không?')"
+                   class="btn-delete" title="Xóa"><i class="fas fa-trash-alt"></i></a>
+            </td>
         </tr>
+        </tbody>
 
-         <tr>
-          <td><input type="checkbox" checked></td>
-          <td><img src="/img/MoHinh/BanDai/HG/GundamCalibarn/sp4.2.png" alt="Banner Image 1"></td>
-          <td>MH2024</td>
-          <td>Banner</td>
-          <td>san-pham</td>
-          <td>Banner footer</td>
-          <td><input type="checkbox" checked></td>
-          <td class="action-buttons">
-            <button class="btn-edit" title="Sửa"><i class="fas fa-pencil-alt"></i></button>
-            <button class="btn-view" title="Xem"><i class="fas fa-eye"></i></button>
-            <button class="btn-delete" title="Xóa"><i class="fas fa-trash-alt"></i></button>
-          </td>
-        </tr>
 
-        <!-- Các dòng khác thêm vào tương tự -->
-      </tbody>
     </table>
 
     <div class="pagination">
@@ -320,41 +284,41 @@
       <button>3</button>
       <button>&raquo;</button>
     </div>
-  
 
 
 
 
-  
-   <div class="form-banner">
-      <div>
-        <label>Mã:</label>
-        <input type="text">
-        <label>Ngày bắt đầu:</label>
-        <input type="date">
-        <label>Ngày kết thúc:</label>
-        <input type="date">
-        <label>Link:</label>
-        <input type="text">
+
+
+      <div class="form-banner">
+          <form th:action="@{/QuanLyBanner/save}" th:object="${banner}" method="post" enctype="multipart/form-data" class="grid grid-cols-3 gap-6 w-full">
+              <div>
+                  <label>Mã:</label>
+                  <input type="text" th:field="*{maBanner}" readonly>
+                  <label>Ngày bắt đầu:</label>
+                  <input type="date" th:field="*{ngayTao}">
+                  <label>Ngày kết thúc:</label>
+                  <input type="date" th:field="*{ngayKetThuc}">
+                  <label>Link:</label>
+                  <input type="text" th:field="*{link}">
+              </div>
+              <div>
+                  <label>Loại Banner:</label>
+                  <input type="text" th:field="*{loaiBanner}">
+                  <label>Tiêu đề Banner:</label>
+                  <input type="text" th:field="*{tieuDeBanner}">
+              </div>
+              <div class="flex flex-col items-center button-column">
+                  <label class="mb-2">Ảnh Banner</label>
+                  <img th:src="@{${banner.anhBanner}}" class="w-24 h-24 object-cover rounded border mb-4">
+                  <input type="file" name="file" class="mb-4">
+                  <button type="submit" class="bg-green-500 text-white"><i class="fas fa-save mr-1"></i> Lưu</button>
+                  <button type="reset" class="bg-blue-400 text-white"><i class="fas fa-sync mr-1"></i> Reset</button>
+              </div>
+          </form>
       </div>
-      <div>
-        <label>Loại Banner:</label>
-        <input type="text">
-        <label>Tiêu đề Banner:</label>
-        <input type="text">
-        <label>Nội dung:</label>
-        <textarea rows="4"></textarea>
-      </div>
-      <div class="flex flex-col items-center button-column">
-        <label class="mb-2">Ảnh Banner</label>
-        <img src="/img/MoHinh/BanDai/HG/GundamCalibarn/sp4.2.png" class="w-24 h-24 object-cover rounded border mb-4">
-        <button class="bg-green-500 text-white"><i class="fas fa-save mr-1"></i> Lưu</button>
-        <button class="bg-red-500 text-white"><i class="fas fa-trash-alt mr-1"></i> Xóa</button>
-        <button class="bg-yellow-400 text-black"><i class="fas fa-sync-alt mr-1"></i> Cập nhật</button>
-        <button class="bg-blue-400 text-white"><i class="fas fa-sync mr-1"></i> Reset</button>
-      </div>
+
+
   </div>
-
-  
 </body>
 </html>
