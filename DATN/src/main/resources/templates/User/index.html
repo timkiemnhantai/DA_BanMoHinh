@@ -60,13 +60,18 @@
 			</div>
 
 			<div class="nav-account">
+				<div class="account-left">
+					<label for="">Kết nối</label> <a href=""><img
+						src="/img/facebook.png" alt="" /></a> <a href=""><img
+						src="/img/instagram.png" alt="" /></a>
+				</div>
 				<div class="account-right">
 					<th:block th:if="${session.user != null}">
 						<div class="account-container">
 							<!-- Avatar có thể click được -->
 							<a th:href="@{/TrangCaNhan}" class="anh"> <img
 								id="avatar-img" th:src="${session.user.avatar}" alt="Avatar"
-								onerror="this.onerror=null; this.src='/img/Screenshot_2025-06-19_220523-removebg-preview.png';">
+								onerror="this.onerror=null; this.src='/img/account.png';">
 							</a>
 				
 							<!-- Dropdown xuất hiện khi hover toàn khối account-container -->
@@ -75,7 +80,7 @@
 									th:href="@{/logout}">Đăng Xuất</a>
 							</div>
 						</div>
-						<a class="anh" th:href="@{/gio-hang}"><img
+						<a class="anh1" th:href="@{/gio-hang}"><img
 							src="/img/Screenshot_2025-06-19_220342-removebg-preview.png"
 							alt=""></a>
 					</th:block>
@@ -145,10 +150,10 @@
 		<div class="footer-column">
 			<h4>Chính sách</h4>
 			<ul>
-				<li th:href="@{/ChinhSach}">Chính sách bảo mật</li>
-				<li th:href="@{/ChinhSach}">Chính sách đổi trả</li>
-				<li th:href="@{/ChinhSach}">Chính sách vận chuyển</li>
-				<li th:href="@{/ChinhSach}">Quy định sử dụng</li>
+				<li>Chính sách bảo mật</li>
+				<li>Chính sách đổi trả</li>
+				<li>Chính sách vận chuyển</li>
+				<li>Quy định sử dụng</li>
 			</ul>
 		</div>
 
@@ -171,7 +176,8 @@
 
 		<div class="footer-column map-column">
 			<h4>Map</h4>
-			<img src="/img/google_map.png" alt="Google Map"  class="footer-map-image" />
+			<img src="/img/google_map.png" alt="Google Map"
+				class="footer-map-image" />
 		</div>
 
 		<div class="footer-column final-column">
@@ -277,6 +283,13 @@ function hienThongBaoHeThong(message, isSuccess = true) {
 	}, 4000);
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    const msg = sessionStorage.getItem('thongBaoDanhGia');
+    if(msg) {
+        hienThongBaoHeThong(msg, true);
+        sessionStorage.removeItem('thongBaoDanhGia'); // xóa sau khi hiển thị
+    }
+});
 
 
 
@@ -385,6 +398,7 @@ function hienThongBao(noiDung, maThongBao, url) {
     if (success !== null && success !== '') {
         hienThongBaoHeThong(success, true);
     }
+
 </script>
 
 

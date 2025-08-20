@@ -15,6 +15,7 @@ public class SanPhamDTO {
     private Long giaGiam;
     private BigDecimal giaSauGiam;
     private Long tongSoLuongBan;
+    private Long tongSoLuongTon;
 
     // Tiêu chí lọc
     private String keyword;
@@ -23,12 +24,13 @@ public class SanPhamDTO {
     private Boolean giamGia;
 	private Boolean banChay;
     private Double diemTrungBinhDanhGia = 0.0;
-    public SanPhamDTO(SanPham sp, Integer phanTramGiam, Long giaGiam, BigDecimal giaSauGiam, Long tongSoLuongBan, Double diemTrungBinhDanhGia) {
+    public SanPhamDTO(SanPham sp, Integer phanTramGiam, Long giaGiam, BigDecimal giaSauGiam, Long tongSoLuongBan, Long tongSoLuongTon, Double diemTrungBinhDanhGia) {
         this.sanPham = sp;
         this.phanTramGiam = phanTramGiam;
         this.giaGiam = giaGiam;
         this.giaSauGiam = giaSauGiam;
         this.tongSoLuongBan = tongSoLuongBan;
+        this.tongSoLuongTon = tongSoLuongTon;
         this.diemTrungBinhDanhGia = diemTrungBinhDanhGia;
     }
 

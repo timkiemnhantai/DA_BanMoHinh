@@ -1,7 +1,7 @@
-﻿CREATE DATABASE DATN;
+﻿CREATE DATABASE DATN1;
 GO
 
-USE DATN;
+USE DATN1;
 GO
 
 -- 1. VaiTro
@@ -73,7 +73,20 @@ CREATE TABLE SanPham (
     FOREIGN KEY (MaLoaiSanPham) REFERENCES LoaiSanPham(MaLoaiSanPham)
 );
 GO 
-
+CREATE TABLE MoTaSanPham (
+    MaMoTa INT PRIMARY KEY IDENTITY(1,1),
+    MaSP INT NOT NULL,
+    ChatLieu NVARCHAR(100),
+    TrongLuong NVARCHAR(50),
+    LoaiBaoHanh NVARCHAR(50),
+    KichThuoc NVARCHAR(50),
+    GuiTu NVARCHAR(100),
+    TiLe NVARCHAR(20),
+    XuatXu NVARCHAR(50),
+    TrinhDo NVARCHAR(50),
+    FOREIGN KEY (MaSP) REFERENCES SanPham(MaSP) ON DELETE CASCADE
+);
+GO
 
 
 
@@ -93,7 +106,9 @@ CREATE TABLE TrangThaiKH (
     MaTrangThaiKH INT PRIMARY KEY IDENTITY(1,1),
     TenTrangThai NVARCHAR(100)
 );
-GO 
+GO
+
+
 -- 7. BienTheSanPham (bỏ MaGiamGia đi vì chuyển sang bảng phụ)
 CREATE TABLE BienTheSanPham (
     MaCTSP INT PRIMARY KEY IDENTITY(1,1),
@@ -101,6 +116,7 @@ CREATE TABLE BienTheSanPham (
     Gia DECIMAL(18,2),
     MoTaChiTiet NVARCHAR(MAX),
     SoLuongTonKho INT,
+	SoLuongDatGiu INT DEFAULT 0,
     PhienBan NVARCHAR(50),
     MaTrangThaiKH INT,
     FOREIGN KEY (MaSP) REFERENCES SanPham(MaSP),
@@ -160,7 +176,10 @@ CREATE TABLE DonHang (
     MaTTDH INT,
  --   MaGiamGia INT NULL,
 	MaVoucher INT NULL,
-    DiaChiGiaoHang NVARCHAR(255),
+	HoTen NVARCHAR(100) NOT NULL,
+    SoDienThoai NVARCHAR(20) NOT NULL,
+    DiaChiGiaoHang NVARCHAR(255) NOT NULL,
+	PhuongThucVanChuyen NVARCHAR(100) NOT NULL,
     NgayDat DATETIME,
     NgayGiaoDuKien NVARCHAR(50),
     NgayGiaoThucTe DATETIME,
@@ -176,6 +195,10 @@ CREATE TABLE DonHang (
 	FOREIGN KEY (MaVoucher) REFERENCES Voucher(MaVoucher)
 
 );
+
+
+
+
 GO 
 -- 12. ThanhToan
 CREATE TABLE ThanhToan (
@@ -189,13 +212,13 @@ CREATE TABLE ThanhToan (
     FOREIGN KEY (MaDH) REFERENCES DonHang(MaDH)
 );
 GO 
--- 13. DanhGiaSP
+-- Bảng DanhGiaSP (đã bỏ UrlAnh, UrlVideo)
 CREATE TABLE DanhGiaSP (
     MaDG INT PRIMARY KEY IDENTITY(1,1),
     MaSP INT NOT NULL, -- Sản phẩm bắt buộc
     MaCTSP INT NULL,   -- Biến thể có thể NULL
     MaTK INT NOT NULL,
-    SoSao INT CHECK (SoSao BETWEEN 1 AND 5), -- Ràng buộc số sao
+	SoSao INT CHECK (SoSao BETWEEN 0 AND 5),
     BinhLuan NVARCHAR(MAX),
     NgayDang DATETIME DEFAULT GETDATE(), -- Tự động lấy ngày đăng
 
@@ -203,18 +226,30 @@ CREATE TABLE DanhGiaSP (
     FOREIGN KEY (MaCTSP) REFERENCES BienTheSanPham(MaCTSP),
     FOREIGN KEY (MaTK) REFERENCES TaiKhoan(MaTK)
 );
-GO 
+GO
+
+-- Bảng phụ để lưu media của đánh giá
+CREATE TABLE DanhGiaMedia (
+    MediaID INT PRIMARY KEY IDENTITY(1,1),
+    MaDG INT NOT NULL,         -- Liên kết với đánh giá
+    Url NVARCHAR(MAX) NOT NULL, -- Link ảnh hoặc video
+    Loai NVARCHAR(10) CHECK (Loai IN ('image', 'video')), -- Loại file
+    FOREIGN KEY (MaDG) REFERENCES DanhGiaSP(MaDG)
+);
+GO
+
 -- 14. GioHang
 CREATE TABLE GioHang (
     MaGH INT PRIMARY KEY IDENTITY(1,1),
     MaTK INT UNIQUE,
-    TongTien DECIMAL(18,2),
     TrangThaiGH NVARCHAR(50),
     NgayTao DATETIME,
 
     FOREIGN KEY (MaTK) REFERENCES TaiKhoan(MaTK)
 );
 GO 
+
+
 -- 15. ChiTietGioHang
 CREATE TABLE ChiTietGioHang (
     MaCTGH INT PRIMARY KEY IDENTITY(1,1),
@@ -389,49 +424,9 @@ GO
 INSERT INTO TaiKhoan (
     TenDangNhap, MatKhau, HoTen, GioiTinh, NgaySinh, SoDT, Email,  Avatar, MaVaiTro
 ) VALUES 
-('admin', '123456', N'Quản trị viên', 1, '1990-01-01', '0900000001', 'admin@example.com', 'admin.jpg', 1),
-('nhanvien1', '123456', N'Lê Thị L', 1, '1995-01-01', '0905400001', 'staff@example.com', 'staff.jpg', 2),
-('user1', '123456', N'Nguyễn Văn A', 1, '2000-05-20', '0900000002', 'user1@example.com',  'user1.jpg', 3),
-('user2', '123456', N'Trần Thị B', 0, '1995-08-12', '0900000003', 'user2@example.com',  'user2.jpg', 3),
-('user3', '123456', N'Lê Văn C', 1, '1992-11-03', '0900000004', 'user3@example.com',  'user3.jpg', 3),
-('user4', '123456', N'Phạm Thị D', 0, '1998-03-28', '0900000005', 'user4@example.com',  'user4.jpg', 3),
-('user5', '123456', N'Hoàng Văn E', 1, '1994-09-15', '0900000006', 'user5@example.com',  'user5.jpg', 3),
-('nhanvien2', '123456', N'Ngô Văn H', 1, '1990-04-10', '0900000007', 'nhanvien1@example.com',  'nhanvien1.jpg', 2),
-('nhanvien3', '123456', N'Lưu Thị I', 0, '1991-07-22', '0900000008', 'nhanvien2@example.com',  'nhanvien2.jpg', 2),
-('nhanvien4', '123456', N'Trịnh Văn K', 1, '1989-12-05', '0900000009', 'nhanvien3@example.com',  'nhanvien3.jpg', 2);
-GO 
-INSERT INTO DiaChi (MaTK, Tinh, Quan, Phuong, DiaChiChiTiet, MacDinh) VALUES
--- Admin
-(1, N'TP Hồ Chí Minh', N'Quận 1', N'Phường Bến Nghé', N'123 Lê Lợi', 1),
+('admin', '123456', N'Quản trị viên', 1, '1990-01-01', '0900000001', 'admin@example.com', 'admin.jpg', 1);
 
--- Nhân viên 1
-(2, N'TP Hồ Chí Minh', N'Quận 3', N'Phường 3', N'45 Nguyễn Thị Minh Khai', 1),
-(2, N'TP Hồ Chí Minh', N'Quận 5', N'Phường 4', N'90 Trần Hưng Đạo', 0),
 
--- User 1
-(3, N'Hà Nội', N'Quận Cầu Giấy', N'Phường Dịch Vọng', N'12 Trần Đăng Ninh', 1),
-
--- User 2
-(4, N'Hà Nội', N'Quận Thanh Xuân', N'Phường Khương Đình', N'56 Nguyễn Trãi', 1),
-
--- User 3
-(5, N'Đà Nẵng', N'Hải Châu', N'Thạch Thang', N'78 Bạch Đằng', 1),
-(5, N'Đà Nẵng', N'Thanh Khê', N'Tân Chính', N'23 Điện Biên Phủ', 0),
-
--- User 4
-(6, N'Cần Thơ', N'Ninh Kiều', N'An Khánh', N'21 Mậu Thân', 1),
-
--- User 5
-(7, N'Hải Phòng', N'Lê Chân', N'An Biên', N'34 Tô Hiệu', 1),
-
--- Nhân viên 2
-(8, N'TP Hồ Chí Minh', N'Quận Bình Thạnh', N'Phường 25', N'145 Phan Văn Trị', 1),
-
--- Nhân viên 3
-(9, N'TP Hồ Chí Minh', N'Quận Tân Bình', N'Phường 2', N'67 Trường Chinh', 1),
-
--- Nhân viên 4
-(10, N'Đồng Nai', N'Biên Hòa', N'Tân Tiến', N'100 Nguyễn Ái Quốc', 1);
 GO
 -- 3. LoaiSanPham (có IDENTITY)
 INSERT INTO LoaiSanPham (TenLoaiSanPham) VALUES 
@@ -516,6 +511,126 @@ GO
 UPDATE SanPham
 SET TenKhongDau = dbo.udf_ChuyenKhongDau(TenSP);
 GO 
+-- INSERT dữ liệu mô tả sản phẩm
+INSERT INTO MoTaSanPham (MaSP, ChatLieu, TrongLuong, LoaiBaoHanh, KichThuoc, GuiTu, TiLe, XuatXu, TrinhDo) VALUES
+-- 1
+(1, N'Nhựa', N'750g', N'Không bảo hành', N'33x23x15 cm', N'TP. Hồ Chí Minh', N'1/144', N'Nhật Bản', N'Trung cấp'),
+-- 2
+(2, N'Nhựa', N'780g', N'Không bảo hành', N'34x24x15 cm', N'TP. Hồ Chí Minh', N'1/144', N'Nhật Bản', N'Trung cấp'),
+-- 3
+(3, N'Nhựa', N'200g', N'Không bảo hành', N'10x5x3 cm', N'TP. Hồ Chí Minh', N'N/A', N'Trung Quốc', N'Người mới'),
+-- 4
+(4, N'Sắt + Nhựa', N'150g', N'Không bảo hành', N'15x5x2 cm', N'TP. Hồ Chí Minh', N'N/A', N'Trung Quốc', N'Người mới'),
+-- 5
+(5, N'Sắt + Nhựa', N'180g', N'Không bảo hành', N'16x6x2 cm', N'TP. Hồ Chí Minh', N'N/A', N'Trung Quốc', N'Người mới'),
+-- 6
+(6, N'Sắt', N'50g', N'Không bảo hành', N'12x2x1 cm', N'TP. Hồ Chí Minh', N'N/A', N'Trung Quốc', N'Người mới'),
+-- 7
+(7, N'Nhựa', N'120g', N'Không bảo hành', N'14x3x2 cm', N'TP. Hồ Chí Minh', N'N/A', N'Trung Quốc', N'Người mới'),
+-- 8
+(8, N'Nhựa', N'760g', N'Không bảo hành', N'33x23x15 cm', N'TP. Hồ Chí Minh', N'1/144', N'Nhật Bản', N'Trung cấp'),
+-- 9
+(9, N'Nhựa', N'770g', N'Không bảo hành', N'33x24x15 cm', N'TP. Hồ Chí Minh', N'1/144', N'Nhật Bản', N'Trung cấp'),
+-- 10
+(10, N'Nhựa', N'800g', N'Không bảo hành', N'34x25x16 cm', N'TP. Hồ Chí Minh', N'1/144', N'Nhật Bản', N'Trung cấp'),
+-- 11
+(11, N'Nhựa', N'750g', N'Không bảo hành', N'33x23x15 cm', N'TP. Hồ Chí Minh', N'1/144', N'Nhật Bản', N'Trung cấp'),
+-- 12
+(12, N'Nhựa', N'755g', N'Không bảo hành', N'33x23x15 cm', N'TP. Hồ Chí Minh', N'1/144', N'Nhật Bản', N'Trung cấp'),
+-- 13
+(13, N'Nhựa', N'1500g', N'Không bảo hành', N'18x12x30 cm', N'TP. Hồ Chí Minh', N'1/100', N'Nhật Bản', N'Khó'),
+-- 14
+(14, N'Nhựa', N'1400g', N'Không bảo hành', N'17x11x28 cm', N'TP. Hồ Chí Minh', N'1/100', N'Nhật Bản', N'Khó'),
+-- 15
+(15, N'Nhựa', N'1450g', N'Không bảo hành', N'17x12x28 cm', N'TP. Hồ Chí Minh', N'1/100', N'Nhật Bản', N'Khó'),
+-- 16
+(16, N'Nhựa', N'1380g', N'Không bảo hành', N'17x11x27 cm', N'TP. Hồ Chí Minh', N'1/100', N'Nhật Bản', N'Khó'),
+-- 17
+(17, N'Nhựa', N'1350g', N'Không bảo hành', N'16x10x26 cm', N'TP. Hồ Chí Minh', N'1/100', N'Nhật Bản', N'Khó'),
+(18, N'Nhựa', N'1370g', N'Không bảo hành', N'16x10x26 cm', N'TP. Hồ Chí Minh', N'1/100', N'Nhật Bản', N'Khó'),
+-- 19
+(19, N'Nhựa', N'1360g', N'Không bảo hành', N'16x10x26 cm', N'TP. Hồ Chí Minh', N'1/100', N'Nhật Bản', N'Khó'),
+-- 20
+(20, N'Nhựa', N'1600g', N'Không bảo hành', N'18x12x30 cm', N'TP. Hồ Chí Minh', N'1/100', N'Nhật Bản', N'Khó'),
+-- 21
+(21, N'Nhựa', N'1650g', N'Không bảo hành', N'19x12x31 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 22
+(22, N'Nhựa', N'1580g', N'Không bảo hành', N'18x11x30 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 23
+(23, N'Nhựa', N'1570g', N'Không bảo hành', N'18x11x29 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 24
+(24, N'Nhựa', N'1620g', N'Không bảo hành', N'19x12x31 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 25
+(25, N'Nhựa', N'1630g', N'Không bảo hành', N'19x12x32 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 26
+(26, N'Nhựa', N'1700g', N'Không bảo hành', N'20x13x33 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 27
+(27, N'Nhựa', N'1710g', N'Không bảo hành', N'20x13x33 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 28
+(28, N'Nhựa', N'1720g', N'Không bảo hành', N'20x14x34 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 29
+(29, N'Nhựa', N'1730g', N'Không bảo hành', N'20x14x34 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 30
+(30, N'Nhựa', N'1750g', N'Không bảo hành', N'21x14x35 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+(31, N'Nhựa', N'1760g', N'Không bảo hành', N'21x14x36 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 32
+(32, N'Nhựa', N'1770g', N'Không bảo hành', N'21x15x36 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 33
+(33, N'Nhựa', N'1780g', N'Không bảo hành', N'21x15x37 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 34
+(34, N'Nhựa', N'1790g', N'Không bảo hành', N'22x15x37 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 35
+(35, N'Nhựa', N'1800g', N'Không bảo hành', N'22x16x38 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 36
+(36, N'Nhựa', N'1850g', N'Không bảo hành', N'23x16x39 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 37
+(37, N'Nhựa', N'1900g', N'Không bảo hành', N'23x17x40 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 38
+(38, N'Nhựa', N'1920g', N'Không bảo hành', N'24x17x41 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 39
+(39, N'Nhựa', N'1950g', N'Không bảo hành', N'24x17x42 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 40
+(40, N'Nhựa', N'2000g', N'Không bảo hành', N'25x18x43 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+(41, N'Nhựa', N'2100g', N'Không bảo hành', N'26x19x44 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 42
+(42, N'Nhựa', N'2150g', N'Không bảo hành', N'26x19x45 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 43
+(43, N'Nhựa', N'2200g', N'Không bảo hành', N'27x20x46 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 44
+(44, N'Nhựa', N'2250g', N'Không bảo hành', N'27x20x47 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 45
+(45, N'Nhựa', N'2300g', N'Không bảo hành', N'28x21x48 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 46
+(46, N'Nhựa', N'2350g', N'Không bảo hành', N'28x21x49 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 47
+(47, N'Nhựa', N'2400g', N'Không bảo hành', N'29x22x50 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 48
+(48, N'Nhựa', N'2450g', N'Không bảo hành', N'29x22x51 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 49
+(49, N'Nhựa', N'2500g', N'Không bảo hành', N'30x23x52 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 50
+(50, N'Nhựa', N'2550g', N'Không bảo hành', N'30x23x53 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 51
+(51, N'Nhựa', N'2600g', N'Không bảo hành', N'31x24x54 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 52
+(52, N'Nhựa', N'2650g', N'Không bảo hành', N'31x24x55 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 53
+(53, N'Nhựa', N'2700g', N'Không bảo hành', N'32x25x56 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 54
+(54, N'Nhựa', N'2750g', N'Không bảo hành', N'32x25x57 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 55
+(55, N'Nhựa', N'2800g', N'Không bảo hành', N'33x26x58 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 56
+(56, N'Nhựa', N'2850g', N'Không bảo hành', N'33x26x59 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 57
+(57, N'Nhựa', N'2900g', N'Không bảo hành', N'34x27x60 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 58
+(58, N'Nhựa', N'2950g', N'Không bảo hành', N'34x27x61 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 59
+(59, N'Nhựa', N'3000g', N'Không bảo hành', N'35x28x62 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó'),
+-- 60
+(60, N'Nhựa', N'3050g', N'Không bảo hành', N'35x28x63 cm', N'TP. Hồ Chí Minh', N'1/60', N'Nhật Bản', N'Khó');
+GO
 INSERT INTO AnhSanPham (MaSP, URLAnhSP) VALUES 
 (1,  '/AnhSanPham/MoHinh/BanDai/HG/GundamAerial/GundamAerial1.png'),
 (2, '/AnhSanPham/MoHinh/BanDai/HG/GundamBarbatosLupus/GundamBarbatosLupus1.png'),
@@ -1057,7 +1172,8 @@ INSERT INTO TrangThaiDH (TenTTDH) VALUES
 (N'Đã giao hàng'),
 (N'Đã hủy'),
 (N'Giao hàng thành công'),
-(N'Hoàn trả');
+(N'Hoàn trả'),
+(N'Yêu cầu hủy');
 GO 
 INSERT INTO GiamGiaSP (TenGG, PhanTramGiam, GiaGiam, ThoiGianBatDau, ThoiGianKetThuc, TrangThai)
 VALUES
@@ -1068,123 +1184,6 @@ VALUES
 (N'Ưu đãi thành viên VIP', 15, NULL, '2025-06-01 00:00:00', '2025-12-31 23:59:59', N'Sắp diễn ra');
 GO 
 
-INSERT INTO DonHang (
-    MaTK, MaTTDH, DiaChiGiaoHang, NgayDat, NgayGiaoDuKien, NgayGiaoThucTe,
-    TongTienCTT, GiamGiaThucTe, PhiVanChuyen, ThanhTien, GhiChu, NgayXacNhanNhanHang
-) VALUES
--- Đơn hàng 1 - Chờ xác nhận
-(6, 1, N'123 Đường ABC, Q1, TP.HCM', '2025-06-27', '2025-07-01', NULL,
-480000, 0, 30000, 510000, N'Khách mới, chờ xác nhận', NULL),
-
--- Đơn hàng 2 - Đang giao
-(3, 3, N'45 Lý Tự Trọng, Q3, TP.HCM', '2025-06-25', '2025-06-28', NULL,
-620000, 50000, 25000, 595000, N'Sử dụng mã giảm giá 50K', NULL),
-
--- Đơn hàng 3 - Đã giao
-(4, 4, N'78 Hoàng Văn Thụ, Q.Tân Bình, TP.HCM', '2025-06-22', '2025-06-25', '2025-06-25',
-700000, 0, 30000, 730000, N'Giao thành công', '2025-06-26'),
-
--- Đơn hàng 4 - Đã hủy
-(5, 5, N'90 Nguyễn Trãi, Q5, TP.HCM', '2025-06-15', '2025-06-17', NULL,
-400000, 20000, 30000, 410000, N'Khách huỷ do thay đổi địa chỉ', NULL),
-
--- Đơn hàng 5 - Đã giao
-(3, 4, N'25 Nguyễn Đình Chiểu, Q.3, TP.HCM', '2025-06-10', '2025-06-13', '2025-06-13',
-300000, 0, 25000, 325000, N'Đã giao, không sử dụng mã giảm', '2025-06-14'),
-
--- Đơn hàng 6 - Đã giao nhưng chưa xác nhận
-(6, 4, N'23 Pasteur, Q1, TP.HCM', '2025-06-18', '2025-06-21', NULL,
-650000, 30000, 20000, 640000, N'Giao vào buổi sáng, gọi trước khi giao', NULL),
-
--- Đơn hàng 7 - Đã giao
-(7, 4, N'151 Hai Bà Trưng, Q3, TP.HCM', '2025-06-10', '2025-06-13', '2025-06-12',
-750000, 50000, 30000, 730000, N'Khách thanh toán tiền mặt, đã nhận đủ hàng', '2025-06-13');
-GO
--- ChiTietDonHang cho 5 đơn hàng tương ứng với MaDH từ 1 đến 5
-INSERT INTO ChiTietDonHang (MaDH, MaCTSP, SoLuongSP, DonGia, GiamGiaThucTe, ThanhTien, GhiChu) VALUES
--- Đơn hàng 1
-(1, 1, 2, 240000, 0, 480000, N'Khách mua 2 sản phẩm'),
--- Đơn hàng 2
-(2, 2, 1, 350000, 50000, 300000, N'Dùng mã giảm giá'),
-(2, 3, 1, 320000, 0, 320000, NULL),
--- Đơn hàng 3
-(3, 4, 1, 700000, 0, 700000, NULL),
--- Đơn hàng 4
-(4, 5, 2, 200000, 20000, 380000, N'Mua combo 2 sản phẩm'),
--- Đơn hàng 5
-(5, 6, 1, 300000, 0, 300000, N'Sản phẩm giao sớm'),
-
-(6, 56, 1, 110000, 0, 110000, N''),
-(6, 9, 1, 270000, 0, 270000, N''),
-
-(7, 57, 1, 110000, 0, 110000, N''),
-(7, 10, 1, 250000, 0, 250000, N'');
-GO 
-INSERT INTO GioHang (MaTK, TongTien, TrangThaiGH, NgayTao) VALUES
-(2, 450000, N'Đang chọn hàng', '2025-06-28 10:15:00'),
-(3, 890000, N'Chờ thanh toán', '2025-06-28 11:00:00'),
-(4, 0, N'Trống', '2025-06-28 12:30:00'),
-(5, 250000, N'Đã lưu', '2025-06-28 13:45:00'),
-(6, 1290000, N'Chờ thanh toán', '2025-06-28 14:10:00');
-GO 
-INSERT INTO ChiTietGioHang (MaGH, MaCTSP, SoLuong, GiamGiaThucTe, GiaTienThucTe, NgayThem) VALUES
--- Giỏ hàng 1
-(1, 1, 2, 0, 480000, GETDATE()),         -- 2 x 240000
-(1, 2, 1, 10000, 230000, GETDATE()),     -- giảm giá 10k
-
--- Giỏ hàng 2
-(2, 3, 1, 20000, 300000, GETDATE()),
-(2, 4, 2, 0, 400000, GETDATE()),         -- 2 x 200000
-
--- Giỏ hàng 3 (trống hoặc đã bị xóa sp)
--- (3, ...) — Không có chi tiết vì trạng thái "Trống"
-
--- Giỏ hàng 4
-(4, 5, 1, 0, 250000, GETDATE()),         -- giá gốc
-
--- Giỏ hàng 5
-(5, 6, 2, 10000, 580000, GETDATE());     -- 2 x 295000 - giảm 10k
-
-GO 
-INSERT INTO DanhGiaSP (MaSP, MaTK, MaCTSP , SoSao, BinhLuan, NgayDang) VALUES
-(1, 2, NULL,5, N'Sản phẩm rất đẹp, chi tiết sắc nét.', '2025-06-25 10:00:00'),
-(1, 3, NULL,4, N'Khá hài lòng, giao hàng nhanh.', '2025-06-26 14:30:00'),
-(2, 4, NULL,5, N'Gundam cực ngầu, đúng mô tả.', '2025-06-24 08:45:00'),
-(3, 5, NULL,3, N'Chất lượng tạm ổn, giá hợp lý.', '2025-06-23 18:20:00'),
-(4, 6, NULL,4, N'Kìm cắt tốt, nhưng giao thiếu phụ kiện.', '2025-06-22 11:15:00'),
-(5, 2, NULL,5, N'Sản phẩm cao cấp, đáng tiền.', '2025-06-20 16:50:00'),
-(6, 3, NULL,2, N'Không đúng như kỳ vọng, hơi lỏng lẻo.', '2025-06-21 13:40:00'),
-(7, 4, NULL,5, N'Rất chắc chắn, giao hàng nhanh.', '2025-06-20 09:00:00'),
-(8, 5, NULL,4, N'Đẹp, dễ lắp ráp.', '2025-06-19 17:10:00'),
-(9, 6, NULL,5, N'Mẫu mới đẹp hơn bản cũ.', '2025-06-18 12:30:00');
-GO 
-INSERT INTO ThanhToan (MaDH, SoTien, NgayThanhToan, PhuongThucTT, TrangThai, GhiChuTT) VALUES
-(1, 510000, '2025-06-27 10:15:00', N'Thanh toán khi nhận hàng', N'Chờ xác nhận', N'Chờ xác nhận thanh toán từ shipper'),
-
-(2, 595000, '2025-06-26 09:30:00', N'Ví điện tử MoMo', N'Đã thanh toán', N'Thanh toán thành công bằng MoMo'),
-
-(3, 730000, '2025-06-25 11:45:00', N'Chuyển khoản ngân hàng', N'Đã thanh toán', N'Thanh toán đầy đủ qua Vietcombank'),
-
-(4, 410000, '2025-06-16 14:00:00', N'Thanh toán khi nhận hàng', N'Đã hủy', N'Hủy đơn, không thực hiện thanh toán'),
-
-(5, 325000, '2025-06-13 08:20:00', N'Ví ZaloPay', N'Đã thanh toán', N'Sử dụng mã giảm giá của ZaloPay'),
-
-(6, 325000, '2025-06-13 08:20:00', N'Ví ZaloPay', N'Đã thanh toán', N'Sử dụng mã giảm giá của ZaloPay'),
-
-(7, 325000, '2025-06-13 08:20:00', N'Ví ZaloPay', N'Đã thanh toán', N'Sử dụng mã giảm giá của ZaloPay');
-GO 
-INSERT INTO YeuThich (MaSP, MaTK, NgayYeuThich) VALUES
-(1, 2, '2025-06-20 10:15:00'),
-(2, 2, '2025-06-21 09:00:00'),
-(3, 3, '2025-06-22 14:45:00'),
-(5, 4, '2025-06-23 11:30:00'),
-(8, 5, '2025-06-24 08:50:00'),
-(10, 6, '2025-06-25 13:15:00'),
-(12, 3, '2025-06-25 15:10:00'),
-(15, 2, '2025-06-26 09:20:00'),
-(20, 4, '2025-06-26 10:05:00'),
-(25, 5, '2025-06-27 17:45:00');
-GO 
 INSERT INTO BienThe_GiamGiaSP (MaCTSP, MaGiamGia) VALUES
 (1, 1),
 (56, 3),
@@ -1195,34 +1194,6 @@ INSERT INTO BienThe_GiamGiaSP (MaCTSP, MaGiamGia) VALUES
 (8, 4),
 (10, 5);
 GO 
-INSERT INTO PhanHoiDanhGia (MaDanhGia, MaNV, NoiDung, NgayPhanHoi) VALUES
-(1, 8, N'Cảm ơn bạn đã đánh giá. Sản phẩm này đang được nhiều người yêu thích!', '2025-06-25 12:00:00'),
-(2, 9, N'Chúng tôi rất vui khi bạn hài lòng. Hẹn bạn lần mua sau!', '2025-06-26 16:00:00'),
-(3, 10, N'Gundam này là hàng hot, cảm ơn bạn đã tin tưởng.', '2025-06-24 10:00:00'),
-(4, 8, N'Cảm ơn bạn đã góp ý. Chúng tôi sẽ cải thiện chất lượng.', '2025-06-23 20:00:00'),
-(5, 9, N'Rất xin lỗi vì thiếu phụ kiện, chúng tôi sẽ liên hệ để bổ sung.', '2025-06-22 13:00:00'),
-(6, 10, N'Cảm ơn đánh giá tích cực của bạn. Mong được phục vụ thêm!', '2025-06-20 18:00:00'),
-(7, 8, N'Rất tiếc vì bạn chưa hài lòng. Chúng tôi sẽ kiểm tra lại sản phẩm.', '2025-06-21 15:00:00'),
-(8, 9, N'Cảm ơn bạn, mong bạn có trải nghiệm lắp ráp thú vị.', '2025-06-19 19:00:00'),
-(9, 10, N'Phiên bản mới này đang được ưu đãi đặc biệt, cảm ơn bạn đã ủng hộ.', '2025-06-18 14:00:00'),
-(10, 8, N'Chúng tôi rất trân trọng phản hồi từ bạn. Hẹn bạn lần tới!', '2025-06-18 16:00:00');
 
 
-INSERT INTO Voucher (MaCode, TenGiamGia, PhanTramGiam, SoLuong, DieuKien, NgayBatDau, NgayKetThuc, MoTa, TrangThai)
-VALUES 
-('SALE10', N'Giảm 10%', 10, 100, 50000, '2025-07-01', '2025-08-01', N'Dùng cho đơn hàng từ 50k', 1),
-('FREESHIP', N'Freeship toàn quốc', 0, 50, 0, '2025-07-01', '2025-07-31', N'Miễn phí vận chuyển', 1),
-('NEWUSER20', N'Ưu đãi người dùng mới', 20, 30, 100000, '2025-07-01', '2025-12-31', N'Chỉ dùng lần đầu', 1);
--- User 4 đã dùng mã SALE10
--- User 4 đã dùng SALE10
-INSERT INTO TaiKhoan_Voucher (MaTK, MaVoucher, NgaySuDung, TrangThaiSuDung)
-VALUES (4, 1, '2025-07-05 10:00:00', 1);
-
--- User 5 chưa dùng NEWUSER20
-INSERT INTO TaiKhoan_Voucher (MaTK, MaVoucher, TrangThaiSuDung)
-VALUES (5, 3, 0);
-
--- User 6 đã dùng FREESHIP
-INSERT INTO TaiKhoan_Voucher (MaTK, MaVoucher, NgaySuDung, TrangThaiSuDung)
-VALUES (6, 2, '2025-07-10 09:30:00', 1);
 

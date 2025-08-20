@@ -11,10 +11,10 @@
 			</div>
 			<div class="section-content">
 				<div class="address-info">
-					<span class="name-phone" th:text="${hoTen + ' ' + soDienThoai}"></span>
-
-					<span class="default-tag">MẶC ĐỊNH</span><br> <span
-						th:text="${diaChi}"></span>
+					<span class="name-phone" th:text="${hoTen}"></span> <span
+						class="phone-number" th:text="${soDienThoai}"></span><br> <span
+						class="full-address" th:text="${diaChi}"></span> <span
+						class="default-tag" th:if="${macDinh == true}">MẶC ĐỊNH</span>
 				</div>
 				<a href="#" class="change-address-btn" id="openAddressModal">Thay
 					Đổi</a>
@@ -50,11 +50,11 @@
 								</div>
 							</td>
 							<td style="text-align: center;"
-								th:text="${#numbers.formatDecimal(sp.chiTietGioHang.giaTienThucTe, 0, 'POINT', 0, 'COMMA')} + ' VND'">>₫980.000</td>
+								th:text="${#numbers.formatDecimal(sp.chiTietGioHang.giaTienThucTe, 0, 'POINT', 0, 'COMMA')} + ' đ'">>₫980.000</td>
 							<td style="text-align: center;"
 								th:text="${sp.chiTietGioHang.soLuong}"></td>
 							<td style="text-align: center;"
-								th:text="${#numbers.formatDecimal(sp.chiTietGioHang.giaTienThucTe * sp.chiTietGioHang.soLuong, 0, 'POINT', 0, 'COMMA')} + ' VND'"></td>
+								th:text="${#numbers.formatDecimal(sp.chiTietGioHang.giaTienThucTe * sp.chiTietGioHang.soLuong, 0, 'POINT', 0, 'COMMA')} + ' đ'"></td>
 						</tr>
 						<input type="hidden" name="maBienThe"
 							th:value="${sp.bienThe.maCTSP}" />
@@ -63,51 +63,85 @@
 						<input type="hidden" name="donGia" th:value="${sp.bienThe.gia}" />
 						<input type="hidden" name="giaThucTe"
 							th:value="${sp.chiTietGioHang.giaTienThucTe}" />
-						<input type="hidden" name="phiVanChuyen"
-							th:value="${phiVanChuyen}" />
-
+						
 					</th:block>
 				</tbody>
 			</table>
 		</div>
 
-		<div class="section shipping-method-section">
-			<div class="section-header">
-				Phương thức vận chuyển: <span style="color: #333; margin-left: 5px;">Nhanh</span>
-				<!-- <a href="#" class="change-shipping-btn">Thay Đổi</a> -->
-			</div>
-			<div class="section-content">
-				<div class="shipping-row">
-					<div class="shipping-type">Nhanh</div>
-					<div class="shipping-price"
-						th:text="${phiVanChuyen == 0} ? 'Miễn phí' : ${#numbers.formatDecimal(phiVanChuyen, 0, 'POINT', 0, 'COMMA')} + ' VND'">
+	<!-- ========== SHIPPING DISPLAY ========= -->
+<div class="section shipping-method-section">
+  <div class="section-header">
+    Phương thức vận chuyển:
+<span id="phuongThucHienTai" style="color:#333;margin-left:5px" th:text="${(phuongThucShipping == 'SIEU_TOC') ? 'Hỏa tốc' : (phuongThucShipping == 'THUONG') ? 'Thường' : 'Nhanh'}"></span>
+    <a href="javascript:void(0)" id="doiPhuongThucBtn" style="margin-left:10px;text-decoration:underline;cursor:pointer">Thay Đổi</a>
+  </div>
+
+  <div class="section-content">
+    <div class="shipping-row">
+<div class="shipping-type" id="displayShippingMethod" th:text="${(phuongThucShipping == 'SIEU_TOC') ? 'Hỏa tốc' : (phuongThucShipping == 'THUONG') ? 'Thường' : 'Nhanh'}"></div>
+      <div class="shipping-price" id="displayShippingPrice"
+           th:text="${phiVanChuyen == 0} ? 'Miễn phí' : ${#numbers.formatDecimal(phiVanChuyen,0,'POINT',0,'COMMA')} + ' đ'">
+      </div>
+    </div>
+
+    <div class="shipping-details">
+      <i class="fas fa-truck"></i> Đảm bảo nhận hàng
+      <span id="displayShippingDate" th:text="${ngayGiaoTu + ' - ' + ngayGiaoDen}"></span>
+    </div>
+
+    <div class="shipping-note">
+      <i class="fas fa-info-circle"></i>
+      Nhận Voucher trị giá ₫15.000 nếu đơn hàng được giao đến bạn sau&nbsp;
+      <span id="displayShippingDateOnly" th:text="${ngayGiaoDen}"></span>
+    </div>
+  </div>
+
+  <div class="confirm-agree">
+    <i class="far fa-check-circle"></i> Được đồng kiểm.
+  </div>
+</div>
+
+<!-- ========== POPUP: chọn phương thức ========== -->
+<div id="popupPhuongThuc" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:99999;">
+  <div style="background:#fff; padding:20px; border-radius:5px; width:360px; position:relative;">
+    <button type="button" id="closePopup" style="position:absolute; right:8px; top:6px; font-size:18px; background:none; border:none; cursor:pointer;">&times;</button>
+    <h3>Chọn phương thức vận chuyển</h3>
+
+    <!-- render radios từ server: dsPhuongThuc -->
+<div id="shippingMethodsList">
+  <th:block th:each="kq : ${dsPhuongThuc}">
+    <label style="display:block; padding:6px 0;">
+      <!-- value = mã (NHANH/THUONG/SIEU_TOC) -->
+      <input type="radio" name="phuongThuc"
+             th:value="${kq.phuongThuc}"
+             th:attr="data-fee=${kq.phiVanChuyen},data-tu=${kq.ngayGiaoDuKienTu},data-den=${kq.ngayGiaoDuKienDen},data-label=${kq.phuongThuc == 'SIEU_TOC' ? 'Hỏa tốc' : (kq.phuongThuc == 'THUONG' ? 'Thường' : 'Nhanh')}"
+             th:checked="${kq.phuongThuc == 'NHANH'}"/>
+      <!-- hiển thị label có dấu -->
+      <span class="method-label"
+            th:text="${kq.phuongThuc == 'SIEU_TOC' ? 'Hỏa tốc' : (kq.phuongThuc == 'THUONG' ? 'Thường' : 'Nhanh')}">
+        Nhanh
+      </span>
 
 
-					</div>
-				</div>
 
-				<div class="shipping-details">
-					<i class="fas fa-truck"></i> Đảm bảo nhận hàng <span
-						th:text="${ngayGiaoTu + ' - ' + ngayGiaoDen}" name=""> </span> <input
-						type="hidden" name="ngayGiaoDuKien"
-						th:value="${ngayGiaoTu + ' - ' + ngayGiaoDen}" />
-				</div>
-				<div class="shipping-note">
-					<i class="fas fa-info-circle"></i> Nhận Voucher trị giá ₫15.000 nếu
-					đơn hàng được giao đến bạn sau&nbsp;<span th:text="${ngayGiaoDen}"></span>
+    </label>
+  </th:block>
+</div>
 
 
-				</div>
-			</div>
-			<div class="confirm-agree">
-				<i class="far fa-check-circle"></i> Được đồng kiểm.
-			</div>
-		</div>
+    <div style="text-align:right; margin-top:12px;">
+      <button type="button" id="xacNhanPhuongThuc" style="padding:8px 12px; cursor:pointer;">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
+
 
 		<div class="total-summary-initial">
 			<span th:text="'Tổng số tiền (' + ${tongSoLuong} + ' sản phẩm):'"></span>
 			<span class="price"
-				th:text="${#numbers.formatDecimal(tongThanhToan, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+				th:text="${#numbers.formatDecimal(tongThanhToan, 0, 'POINT', 0, 'COMMA')} + ' đ'"></span>
 
 
 		</div>
@@ -115,10 +149,11 @@
 		<div class="section payment-options-section">
 			<div class="payment-options-header">Phương thức thanh toán</div>
 			<div class="payment-tabs">
-				<div class="payment-tab active" data-method="Thanh toán sau khi nhận hàng">Thanh toán
-					khi nhận hàng</div>
-				<div class="payment-tab" data-method="Chuyển khoản ngân hàng">Chuyển khoản ngân
-					hàng</div>
+				<div class="payment-tab active"
+					data-method="Thanh toán sau khi nhận hàng">Thanh toán khi
+					nhận hàng</div>
+				<div class="payment-tab" data-method="Chuyển khoản ngân hàng">Chuyển
+					khoản ngân hàng</div>
 			</div>
 
 			<div class="payment-content">
@@ -130,15 +165,19 @@
 		<div class="final-summary">
 			<div class="summary-line">
 				<span>Tổng tiền hàng</span> <span
-					th:text="${#numbers.formatDecimal(tongTien, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+					th:text="${#numbers.formatDecimal(tongTien, 0, 'POINT', 0, 'COMMA')} + ' đ'"></span>
 			</div>
 			<div class="summary-line">
-				<span>Tổng tiền phí vận chuyển</span> <span
-					th:text="${#numbers.formatDecimal(phiVanChuyen, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+			  <span>Tổng tiền phí vận chuyển</span>
+			  <span id="finalShippingFee"
+			        th:text="${phiVanChuyen == 0 ? 'Miễn phí' : (#numbers.formatDecimal(phiVanChuyen, 0, 'POINT', 0, 'COMMA') + ' đ')}">
+			    <!-- fallback text nếu JS chưa chạy -->
+			  </span>
 			</div>
+
 			<div class="summary-line total">
 				<span>Tổng thanh toán</span> <span
-					th:text="${#numbers.formatDecimal(tongThanhToan, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+					th:text="${#numbers.formatDecimal(tongThanhToan, 0, 'POINT', 0, 'COMMA')} + ' đ'"></span>
 			</div>
 		</div>
 
@@ -147,8 +186,19 @@
 				Nhấn "Đặt hàng" đồng nghĩa với việc bạn đã đặt hàng của <a href="#">Gundam
 					Shop</a>
 			</div>
-			
-			  <input type="hidden" name="phuongThucThanhToan" id="phuongThucThanhToan" value="COD">
+
+			<input type="hidden" name="phuongThucThanhToan"
+				id="phuongThucThanhToan" value="COD"> <input type="hidden"
+				name="hoTen" id="formHoTen" th:value="${hoTen}" /> <input
+				type="hidden" name="soDienThoai" id="formSoDienThoai"
+				th:value="${soDienThoai}" /> <input type="hidden" name="diaChi"
+				id="formDiaChi" th:value="${diaChi}" />
+<!-- đặt ngay trước nút submit trong form -->
+<input type="hidden" id="hiddenBaseTotal" name="tongTien" th:value="${tongTien}" />
+<input type="hidden" id="hiddenPhiVanChuyen" name="phiVanChuyen" th:value="${phiVanChuyen}" />
+<input type="hidden" id="hiddenNgayGiao" name="ngayGiaoDuKien" th:value="${ngayGiaoTu + ' - ' + ngayGiaoDen}" />
+<input type="hidden" id="hiddenPhuongThucShipping" name="phuongThucShipping" th:value="${phuongThucShipping != null ? phuongThucShipping : 'NHANH'}" />
+
 			<button type="submit" class="checkout-submit-btn">Đặt hàng</button>
 		</div>
 
@@ -163,17 +213,25 @@
 			<button class="close-btn" id="closeAddressModal">&times;</button>
 		</div>
 		<div class="modal-body">
-			<div class="modal-address-item selected" data-address-id="1">
-				<div class="radio-dot"></div>
-				<div class="modal-address-info">
+			<th:block th:each="ds : ${dsDiaChi}">
+				<div class="modal-address-item selected" data-address-id="1">
+
+					<input type="checkbox" class="single-check" name="diaChiMacDinh"
+       th:value="${ds.maDiaChi}" 
+       th:checked="${ds.macDinh == true}" 
+       th:attr="data-mac-dinh=${ds.macDinh}" />
 
 
-					<span th:text="${diaChi}"></span> <span class="default-tag">Mặc
-						định</span>
+					<div class="modal-address-info">
+						<span class="name-phone" th:text="${ds.hoTen}"
+							style="margin-left: -130px;"></span> <span class="phone-number"
+							th:text="${ds.getSoDienThoaiQuocTe}"></span><br> <span
+							class="full-address" th:text="${ds.getDiaChiDayDu}"></span> <span
+							class="default-tag" th:if="${ds.macDinh == true}">Mặc định</span>
+					</div>
+					<a href="#" class="update-btn">Cập nhật</a>
 				</div>
-				<a href="#" class="update-btn">Cập nhật</a>
-			</div>
-
+			</th:block>
 			<div class="add-new-address">
 				<i class="fas fa-plus"></i> Thêm Địa Chỉ Mới
 			</div>
@@ -227,12 +285,9 @@
                 if (selectedAddress) {
                     const addressId = selectedAddress.dataset.addressId;
                     console.log('Địa chỉ đã chọn:', addressId);
-                    // TODO: Cập nhật thông tin địa chỉ trên trang chính ở đây
-                    // Ví dụ:
-                    // document.querySelector('.address-info .name-phone').textContent = selectedAddress.querySelector('.name-phone').textContent;
-                    // ... và các thông tin địa chỉ khác
+                   
                 }
-                closeAddressModal(); // Đóng modal sau khi xác nhận
+                closeAddressModal(); 
             });
         }
 
@@ -249,13 +304,13 @@
         if (addressItems && addressItems.length > 0) {
             addressItems.forEach(item => {
                 item.addEventListener('click', function() {
-                    // Xóa trạng thái 'selected' khỏi tất cả các mục
+     
                     addressItems.forEach(i => i.classList.remove('selected'));
-                    // Thêm trạng thái 'selected' vào mục được nhấp
                     this.classList.add('selected');
                 });
             });
         }
+       
     </script>
 <script>
   const paymentTabs = document.querySelectorAll('.payment-tab');
@@ -263,14 +318,246 @@
 
   paymentTabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      // Bỏ class active ở tất cả tab
+
       paymentTabs.forEach(t => t.classList.remove('active'));
 
-      // Gán active cho tab được chọn
+   
       tab.classList.add('active');
 
-      // Gán giá trị phương thức thanh toán vào input ẩn
+   
       inputPhuongThuc.value = tab.getAttribute('data-method');
     });
   });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const checkboxes = document.querySelectorAll(".single-check");
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener("change", function () {
+            if (this.checked) {
+                checkboxes.forEach(other => {
+                    if (other !== this) {
+                        other.checked = false;
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
+<script>
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const popup = document.getElementById('popupPhuongThuc');
+  const doiBtn = document.getElementById('doiPhuongThucBtn');
+  const closePopupBtn = document.getElementById('closePopup');
+  const xacNhanBtn = document.getElementById('xacNhanPhuongThuc');
+
+  const displayShippingPrice = document.getElementById('displayShippingPrice');
+  const displayShippingDate = document.getElementById('displayShippingDate');
+  const displayShippingDateOnly = document.getElementById('displayShippingDateOnly');
+  const displayShippingMethod = document.getElementById('displayShippingMethod');
+  const phuongThucHienTai = document.getElementById('phuongThucHienTai');
+
+  const hiddenPhi = document.getElementById('hiddenPhiVanChuyen');
+  const hiddenNgay = document.getElementById('hiddenNgayGiao');
+  const hiddenBaseTotal = document.getElementById('hiddenBaseTotal');
+  const hiddenPhuongThucShipping = document.getElementById('hiddenPhuongThucShipping');
+
+  function safeNum(v) {
+    const n = Number(String(v).replace(/[^\d.-]/g,''));
+    return Number.isFinite(n) ? n : 0;
+  }
+  function getBaseTotal() {
+    if (hiddenBaseTotal && hiddenBaseTotal.value) return safeNum(hiddenBaseTotal.value);
+    const span = document.querySelector('.total-summary-initial .price');
+    if (span) return safeNum(span.textContent);
+    return 0;
+  }
+  function getDiaChiValue() {
+    const el = document.getElementById('formDiaChi');
+    return el ? el.value : '';
+  }
+
+  // map mã -> label có dấu
+  function codeToLabel(code) {
+    const c = String(code || '').toUpperCase();
+    if (c === 'SIEU_TOC' || c === 'SIEUTOC' || c === 'HOA_TOC' || c === 'HOATOC') return 'Hỏa tốc';
+    if (c === 'THUONG' || c === 'TIET_KIEM' || c === 'TIETKIEM') return 'Thường';
+    return 'Nhanh';
+  }
+
+  // cập nhật UI chung khi có data từ backend (data: {phiVanChuyen, ngayGiaoTu, ngayGiaoDen})
+  function applyShippingData(phuongThucCode, data) {
+    if (!data) return;
+    const fee = safeNum(data.phiVanChuyen);
+    const ngayTu = data.ngayGiaoTu || '';
+    const ngayDen = data.ngayGiaoDen || '';
+
+    const label = codeToLabel(phuongThucCode);
+
+    if (displayShippingPrice) displayShippingPrice.textContent = (fee === 0) ? 'Miễn phí' : fee.toLocaleString('vi-VN') + ' VND';
+    if (displayShippingDate) displayShippingDate.textContent = (ngayTu && ngayDen) ? (ngayTu + ' - ' + ngayDen) : (ngayTu || ngayDen);
+    if (displayShippingDateOnly) displayShippingDateOnly.textContent = ngayDen || '';
+    if (displayShippingMethod) displayShippingMethod.textContent = label;
+    if (phuongThucHienTai) phuongThucHienTai.textContent = label;
+
+    if (hiddenPhi) hiddenPhi.value = fee;
+    if (hiddenNgay) hiddenNgay.value = (ngayTu && ngayDen) ? (ngayTu + ' - ' + ngayDen) : (ngayTu || ngayDen);
+    if (hiddenPhuongThucShipping) hiddenPhuongThucShipping.value = phuongThucCode;
+
+    // final shipping fee element
+    const finalFeeEl = document.getElementById('finalShippingFee');
+    if (finalFeeEl) finalFeeEl.textContent = (fee === 0) ? 'Miễn phí' : fee.toLocaleString('vi-VN') + ' VND';
+
+    // update totals
+    const base = getBaseTotal();
+    const newTotal = base + fee;
+    const totalSpan = document.querySelector('.total-summary-initial .price');
+    if (totalSpan) totalSpan.textContent = newTotal.toLocaleString('vi-VN') + ' VND';
+    const finalTotalEl = document.querySelector('.final-summary .summary-line.total span:last-child');
+    if (finalTotalEl) finalTotalEl.textContent = newTotal.toLocaleString('vi-VN') + ' VND';
+  }
+
+  async function fetchPhi(phuongThuc) {
+    const diaChi = getDiaChiValue();
+    const base = getBaseTotal();
+    try {
+      const url = `/lay-phi-van-chuyen?phuongThuc=${encodeURIComponent(phuongThuc)}&diaChi=${encodeURIComponent(diaChi)}&tongTien=${encodeURIComponent(base)}`;
+      console.log('[DEBUG] gọi API phí:', url);
+      const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' }});
+      if (!res.ok) { console.error('Fetch phí lỗi', res.status); return null; }
+      const data = await res.json();
+      console.log('[DEBUG] API trả:', data);
+      return data;
+    } catch (err) {
+      console.error('Lỗi fetchPhi', err);
+      return null;
+    }
+  }
+
+//----- Script xác nhận địa chỉ -----
+if (confirmModalBtn) {
+   confirmModalBtn.addEventListener('click', async function() {
+       const selectedCheckbox = document.querySelector('.single-check:checked');
+       if (!selectedCheckbox) return;
+
+       const selectedItem = selectedCheckbox.closest('.modal-address-item');
+       const hoTen = selectedItem.querySelector('.name-phone').textContent.trim();
+       const soDienThoai = selectedItem.querySelector('.phone-number').textContent.trim();
+       const diaChiText = selectedItem.querySelector('.full-address').textContent.trim();
+       const isMacDinh = selectedCheckbox.dataset.macDinh === 'true';
+
+       // Cập nhật UI địa chỉ
+       const sectionInfo = document.querySelector('.section.address-section .address-info');
+       if(sectionInfo) {
+           sectionInfo.querySelector('.name-phone').textContent = hoTen;
+           sectionInfo.querySelector('.phone-number').textContent = soDienThoai;
+           sectionInfo.querySelector('.full-address').textContent = diaChiText;
+           const defaultTag = sectionInfo.querySelector('.default-tag');
+           defaultTag.style.display = isMacDinh ? 'inline' : 'none';
+       }
+
+       document.getElementById('formHoTen').value = hoTen;
+       document.getElementById('formSoDienThoai').value = soDienThoai;
+       document.getElementById('formDiaChi').value = diaChiText;
+
+       // ----- Gọi API phí vận chuyển -----
+       const hiddenPhuongThucShipping = document.getElementById('hiddenPhuongThucShipping');
+       const phuongThuc = hiddenPhuongThucShipping ? hiddenPhuongThucShipping.value : 'NHANH';
+       const baseTotal = Number(document.getElementById('hiddenBaseTotal').value || 0);
+
+       try {
+           const res = await fetch(`/lay-phi-van-chuyen?phuongThuc=${encodeURIComponent(phuongThuc)}&diaChi=${encodeURIComponent(diaChiText)}&tongTien=${encodeURIComponent(baseTotal)}`);
+           if (res.ok) {
+               const data = await res.json();
+               // Chuyển label hiển thị trước khi gọi applyShippingData
+               const label = codeToLabel(phuongThuc); 
+               applyShippingData(label, data); // label sẽ là 'Nhanh', 'Thường', 'Hỏa tốc'
+           } else {
+               console.error('Lỗi fetch phí vận chuyển', res.status);
+           }
+       } catch (err) {
+           console.error('Lỗi khi gọi API phí vận chuyển', err);
+       }
+
+
+       closeAddressModal();
+   });
+}
+  // khi bấm mở popup -> check radio tương ứng
+  if (doiBtn) doiBtn.addEventListener('click', function() {
+    if (!popup) return;
+    const cur = (hiddenPhuongThucShipping && hiddenPhuongThucShipping.value) ? hiddenPhuongThucShipping.value : 'NHANH';
+    const r = popup.querySelector(`input[name="phuongThuc"][value="${cur}"]`);
+    if (r) r.checked = true;
+    popup.style.display = 'flex';
+  });
+
+  if (closePopupBtn) closePopupBtn.addEventListener('click', () => { if (popup) popup.style.display = 'none'; });
+
+  // khi chọn radio trong popup: gọi API tức thì và cập nhật UI preview
+  if (popup) {
+    popup.addEventListener('change', function(e) {
+      const t = e.target;
+      if (t && t.name === 'phuongThuc') {
+        // prefer server result; but we can prefill label from data-label
+        const dataLabel = t.getAttribute('data-label') || t.dataset.label;
+        const code = t.value;
+        // fetch then apply
+        fetchPhi(code).then(data => {
+          if (data) applyShippingData(code, data);
+          else {
+            // fallback: use client data attributes if API fail
+            const fee = t.getAttribute('data-fee') || t.dataset.fee || 0;
+            const tu = t.getAttribute('data-tu') || t.dataset.tu || '';
+            const den = t.getAttribute('data-den') || t.dataset.den || '';
+            applyShippingData(code, { phiVanChuyen: fee, ngayGiaoTu: tu, ngayGiaoDen: den });
+          }
+        });
+      }
+    });
+  }
+
+  // confirm: chắc chắn gọi API 1 lần và apply rồi đóng popup
+  if (xacNhanBtn) xacNhanBtn.addEventListener('click', async function() {
+    if (!popup) return;
+    const sel = popup.querySelector('input[name="phuongThuc"]:checked') || popup.querySelector('input[name="phuongThuc"]');
+    if (!sel) { popup.style.display = 'none'; return; }
+    const code = sel.value;
+    const data = await fetchPhi(code);
+    if (data) applyShippingData(code, data);
+    else {
+      const fee = sel.getAttribute('data-fee') || sel.dataset.fee || 0;
+      const tu = sel.getAttribute('data-tu') || sel.dataset.tu || '';
+      const den = sel.getAttribute('data-den') || sel.dataset.den || '';
+      applyShippingData(code, { phiVanChuyen: fee, ngayGiaoTu: tu, ngayGiaoDen: den });
+    }
+    popup.style.display = 'none';
+  });
+
+  // close handlers
+  window.addEventListener('click', function(e) { if (e.target === popup) popup.style.display = 'none'; });
+  window.addEventListener('keydown', function(e) { if (e.key === 'Escape') { if (popup) popup.style.display = 'none'; } });
+
+  // --- khởi tạo UI ban đầu từ hidden values (nếu server đã truyền) ---
+  (function initFromServer() {
+    const initialCode = (hiddenPhuongThucShipping && hiddenPhuongThucShipping.value) ? hiddenPhuongThucShipping.value : 'NHANH';
+    const initialPhi = (hiddenPhi && hiddenPhi.value) ? hiddenPhi.value : (document.getElementById('finalShippingFee') ? document.getElementById('finalShippingFee').textContent : null);
+    const initialNgay = (hiddenNgay && hiddenNgay.value) ? hiddenNgay.value : null;
+    // áp label
+    const label = codeToLabel(initialCode);
+    if (displayShippingMethod) displayShippingMethod.textContent = label;
+    if (phuongThucHienTai) phuongThucHienTai.textContent = label;
+    // ensure finalShippingFee shows consistent text
+    const finalFeeEl = document.getElementById('finalShippingFee');
+    if (finalFeeEl && initialPhi != null) {
+      const feeNum = safeNum(initialPhi);
+      finalFeeEl.textContent = (feeNum === 0) ? 'Miễn phí' : feeNum.toLocaleString('vi-VN') + ' đ';
+    }
+  })();
+
+});
 </script>

@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/css/xacnhan.css" />
+
 <div id="content" class="order-confirm-container" style="display: none;">
 	<th:block th:each="dh, iterStat : ${donHang}">
 		<div class="order-header">
@@ -119,13 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-    function confirmOrder() {
-        if (confirm("Bạn có chắc chắn muốn xác nhận đơn hàng này?")) {
-            alert("✅ Đơn hàng đã được xác nhận thành công!");
-            // Gửi request xác nhận qua API ở đây
-            // fetch('/xac-nhan-don', {method: 'POST', body: JSON.stringify({maDonHang: 'DH123456'})})
-        }
-    }
+
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {

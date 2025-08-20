@@ -13,40 +13,44 @@
 		<h2>Danh mục nổi bật</h2>
 		<div class="categories-grid">
 			<div class="category-item">
-				<a th:href="@{/product(loai='Bandai HG')}"> <img src="/img/HGlogo.webp" alt="HG" /> <span>High
+				<a th:href="@{/product(loai='Bandai HG')}"> <img
+					src="/img/HGlogo.webp" alt="HG" /> <span>High Grade</span>
+				</a>
+			</div>
+			<div class="category-item">
+				<a th:href="@{/product(loai='Bandai RG')}"> <img
+					src="/img/BandaiRG_Logo_1200x600_crop_center.jpg" alt="RG" /> <span>Real
 						Grade</span>
 				</a>
 			</div>
 			<div class="category-item">
-				<a  th:href="@{/product(loai='Bandai RG')}"> <img src="/img/BandaiRG_Logo_1200x600_crop_center.jpg"
-					alt="RG" /> <span>Real Grade</span>
+				<a th:href="@{/product(loai='Bandai MG')}"> <img
+					src="/img/MG_logo.jpg" alt="MG" /> <span>Master Grade</span>
 				</a>
 			</div>
 			<div class="category-item">
-				<a th:href="@{/product(loai='Bandai MG')}"> <img src="/img/MG_logo.jpg" alt="MG" /> <span>Master
-						Grade</span>
+				<a th:href="@{/product(loai='Bandai PG')}"> <img
+					src="/img/tai-xuong-3.webp" alt="PG" /> <span>Perfect Grade</span>
 				</a>
 			</div>
 			<div class="category-item">
-				<a th:href="@{/product(loai='Bandai PG')}"> <img src="/img/tai-xuong-3.webp" alt="PG" /> <span>Perfect
-						Grade</span>
+				<a th:href="@{/product(loai='MOSHOW TOYS')}"> <img
+					src="/img/moshoww.webp" alt="MOSHOWTOYS" /> <span>MOSHOWTOYS</span>
 				</a>
 			</div>
 			<div class="category-item">
-				<a th:href="@{/product(loai='MOSHOW TOYS')}"> <img src="/img/moshoww.webp" alt="MOSHOWTOYS" /> <span>MOSHOWTOYS</span>
+				<a th:href="@{/product(loai='IN ERA+')}"> <img
+					src="/img/13828888.jpg" alt="IN ERA+" /> <span>IN ERA+</span>
 				</a>
 			</div>
 			<div class="category-item">
-				<a th:href="@{/product(loai='IN ERA+')}"> <img src="/img/13828888.jpg" alt="IN ERA+" /> <span>IN
-						ERA+</span>
+				<a th:href="@{/product(loai='SNAA')}"> <img
+					src="/img/13828915.jpg" alt="SNAA" /> <span>SNAA</span>
 				</a>
 			</div>
 			<div class="category-item">
-				<a th:href="@{/product(loai='SNAA')}"> <img src="/img/13828915.jpg" alt="SNAA" /> <span>SNAA</span>
-				</a>
-			</div>
-			<div class="category-item">
-				<a th:href="@{/product(loai='MOTOR NUCLEAR')}"> <img src="/img/logo-083414.webp" alt="MOTOR NUCLEAR" /> <span>MOTOR
+				<a th:href="@{/product(loai='MOTOR NUCLEAR')}"> <img
+					src="/img/logo-083414.webp" alt="MOTOR NUCLEAR" /> <span>MOTOR
 						NUCLEAR</span>
 				</a>
 			</div>
@@ -76,22 +80,29 @@
 	</div>
 	<div class="products-carousel">
 		<th:block th:each="sp, iterStat : ${danhsachSP}">
-			<div class="product-card" th:if="${iterStat.index < 20}">
+				<div class="product-card" th:if="${iterStat.index < 20}"
+				th:classappend="${sp.tongSoLuongTon <= 0} ? ' het-hang' : ''">
+
 				<div class="discount-badge"
 					th:if="${sp.phanTramGiam != null or sp.giaGiam != null}">
 					<span
-						th:text="${
-						  sp.phanTramGiam != null ? '-' + sp.phanTramGiam + '%' :
-						  (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam) + 'đ' : '')
-						}"></span>
+						th:text="${sp.phanTramGiam != null ? '-' + sp.phanTramGiam + '%' : (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam).replace(',', '.') + ' đ' : '') }"></span>
 				</div>
-				<a
-					th:href="@{/chi-tiet-san-pham/{id}(id=${sp.sanPham.maSP}, ${sp.sanPham.tenSP})}">
-					<img th:src="${sp.sanPham.anhSanPham[0].urlAnhSP}" alt="" />
-					<h4 th:text="${sp.sanPham.tenSP}"></h4>
-				</a>
+
+				<div class="product-image-container">
+					<a
+						th:href="@{/chi-tiet-san-pham/{id}(id=${sp.sanPham.maSP}, ${sp.sanPham.tenSP})}">
+						<img th:src="${sp.sanPham.anhSanPham[0].urlAnhSP}" alt="" />
+					</a>
+
+					<!-- Overlay chữ HẾT HÀNG -->
+					<div class="overlay-het-hang" th:if="${sp.tongSoLuongTon <= 0}">
+						HẾT HÀNG</div>
+				</div>
+
+				<h4 th:text="${sp.sanPham.tenSP}"></h4>
 				<p
-					th:text="${#numbers.formatDecimal(sp.giaSauGiam, 0, 'POINT', 0, 'COMMA')} + ' VND'"></p>
+					th:text="${#numbers.formatDecimal(sp.giaSauGiam, 0, 'POINT', 0, 'COMMA')} + ' đ'"></p>
 				<div class="product-stats">
 					<span class="rating"> <i class="fas fa-star"
 						style="color: #ffc107;"></i> <span
@@ -123,20 +134,30 @@
 	</div>
 	<div class="products-carousel">
 		<th:block th:each="sp, iterStat : ${topBanChay}">
-			<div class="product-card" th:if="${iterStat.index < 20}">
+				<div class="product-card" th:if="${iterStat.index < 20}"
+				th:classappend="${sp.tongSoLuongTon <= 0} ? ' het-hang' : ''">
+
 				<div class="discount-badge"
 					th:if="${sp.phanTramGiam != null or sp.giaGiam != null}">
 					<span
 						th:text="${
-					  sp.phanTramGiam != null ? '-' + sp.phanTramGiam + '%' :
-					  (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam) + 'VND' : '')
-					}"></span>
+            sp.phanTramGiam != null ? '-' + sp.phanTramGiam + '%' :
+            (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam).replace(',', '.') + ' đ' : '')
+        }"></span>
 				</div>
-				<a
-					th:href="@{/chi-tiet-san-pham/{id}(id=${sp.sanPham.maSP}, ${sp.sanPham.tenSP})}">
-					<img th:src="${sp.sanPham.anhSanPham[0].urlAnhSP}" alt="" />
-					<h4 th:text="${sp.sanPham.tenSP}"></h4>
-				</a>
+
+				<div class="product-image-container">
+					<a
+						th:href="@{/chi-tiet-san-pham/{id}(id=${sp.sanPham.maSP}, ${sp.sanPham.tenSP})}">
+						<img th:src="${sp.sanPham.anhSanPham[0].urlAnhSP}" alt="" />
+					</a>
+
+					<!-- Overlay chữ HẾT HÀNG -->
+					<div class="overlay-het-hang" th:if="${sp.tongSoLuongTon <= 0}">
+						HẾT HÀNG</div>
+				</div>
+
+				<h4 th:text="${sp.sanPham.tenSP}"></h4>
 				<p
 					th:text="${#numbers.formatDecimal(sp.giaSauGiam, 0, 'POINT', 0, 'COMMA')} + ' đ'"></p>
 				<div class="product-stats">
@@ -170,20 +191,30 @@
 	</div>
 	<div class="products-carousel">
 		<th:block th:each="sp, iterStat : ${spgiamgia}">
-			<div class="product-card" th:if="${iterStat.index < 20}">
+			<div class="product-card" th:if="${iterStat.index < 20}"
+				th:classappend="${sp.tongSoLuongTon <= 0} ? ' het-hang' : ''">
+
 				<div class="discount-badge"
 					th:if="${sp.phanTramGiam != null or sp.giaGiam != null}">
 					<span
 						th:text="${
-  sp.phanTramGiam != null ? '-' + sp.phanTramGiam + '%' :
-  (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam).replace(',', '.') + 'VND' : '')
-}"></span>
+            sp.phanTramGiam != null ? '-' + sp.phanTramGiam + '%' :
+            (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam).replace(',', '.') + ' đ' : '')
+        }"></span>
 				</div>
-				<a
-					th:href="@{/chi-tiet-san-pham/{id}(id=${sp.sanPham.maSP}, ${sp.sanPham.tenSP})}">
-					<img th:src="${sp.sanPham.anhSanPham[0].urlAnhSP}" alt="" />
-					<h4 th:text="${sp.sanPham.tenSP}"></h4>
-				</a>
+
+				<div class="product-image-container">
+					<a
+						th:href="@{/chi-tiet-san-pham/{id}(id=${sp.sanPham.maSP}, ${sp.sanPham.tenSP})}">
+						<img th:src="${sp.sanPham.anhSanPham[0].urlAnhSP}" alt="" />
+					</a>
+
+					<!-- Overlay chữ HẾT HÀNG -->
+					<div class="overlay-het-hang" th:if="${sp.tongSoLuongTon <= 0}">
+						HẾT HÀNG</div>
+				</div>
+
+				<h4 th:text="${sp.sanPham.tenSP}"></h4>
 				<p
 					th:text="${#numbers.formatDecimal(sp.giaSauGiam, 0, 'POINT', 0, 'COMMA')} + ' đ'"></p>
 				<div class="product-stats">

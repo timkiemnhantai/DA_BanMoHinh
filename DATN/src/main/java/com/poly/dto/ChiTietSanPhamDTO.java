@@ -6,6 +6,8 @@ import java.util.List;
 import com.poly.model.AnhChiTiet;
 import com.poly.model.AnhSanPham;
 import com.poly.model.BienTheSanPham;
+import com.poly.model.DanhGiaSP;
+import com.poly.model.MoTaSanPham;
 import com.poly.model.SanPham;
 
 import lombok.AllArgsConstructor;
@@ -26,5 +28,7 @@ public class ChiTietSanPhamDTO {
     private BigDecimal giaSauGiam ;
     private Long tongSoLuongBan;
     private Double diemTrungBinh; // trung bình đánh giá (nếu dùng)
+    private List<DanhGiaSP> danhSachDanhGia;
+    private MoTaSanPham moTaSanPham;
 }
 

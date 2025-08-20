@@ -29,19 +29,24 @@ public class GioHangService {
 
 
     @Transactional
-    public boolean themSanPhamVaoGio(TaiKhoan tk, Integer maCT, Integer soLuong) {
-        Optional<GioHang> optGioHang = gioHangRepository.findByTaiKhoan(tk);
-        GioHang gioHang = optGioHang.orElseGet(() -> {
-            GioHang gh = new GioHang();
-            gh.setTaiKhoan(tk);
-            gh.setNgayTao(LocalDateTime.now());
-            gh.setTrangThaiGH("Đang xử lý");
-            gh.setTongTien(BigDecimal.ZERO);
-            return gioHangRepository.save(gh);
-        });
+    public ChiTietGioHang themSanPhamVaoGio(TaiKhoan tk, Integer maCT, Integer soLuong) {
+        GioHang gioHang = gioHangRepository.findByTaiKhoan(tk)
+            .orElseGet(() -> {
+                GioHang gh = new GioHang();
+                gh.setTaiKhoan(tk);
+                gh.setNgayTao(LocalDateTime.now());
+                gh.setTrangThaiGH("Đang hoạt động");
+                return gioHangRepository.save(gh);
+            });
 
         BienTheSanPham bienThe = bienTheSanPhamRepository.findById(maCT)
             .orElseThrow(() -> new RuntimeException("Không tìm thấy biến thể sản phẩm."));
+
+        // ✅ Chỉ kiểm tra tồn kho tổng, không dính tới đặt giữ
+        int tonKho = bienThe.getSoLuongTonKho();
+        if (tonKho <= 0) {
+            throw new RuntimeException("Sản phẩm đã hết hàng");
+        }
 
         BigDecimal giaGoc = bienThe.getGia();
         BigDecimal giamGiaThucTe = BigDecimal.ZERO;
@@ -70,12 +75,15 @@ public class GioHangService {
         Optional<ChiTietGioHang> optCTGH = chitietgiohangRepository
             .findByGioHangAndChiTietSanPhamAndGiaTienThucTe(gioHang, bienThe, giaSauGiam);
 
+        ChiTietGioHang ctgh;
         if (optCTGH.isPresent()) {
-            ChiTietGioHang ctgh = optCTGH.get();
-            ctgh.setSoLuong(ctgh.getSoLuong() + soLuong);
+            ctgh = optCTGH.get();
+            int soLuongMoi = Math.min(ctgh.getSoLuong() + soLuong, tonKho);
+            ctgh.setSoLuong(soLuongMoi);
             chitietgiohangRepository.save(ctgh);
         } else {
-            ChiTietGioHang ctgh = new ChiTietGioHang();
+            soLuong = Math.min(soLuong, tonKho);
+            ctgh = new ChiTietGioHang();
             ctgh.setGioHang(gioHang);
             ctgh.setChiTietSanPham(bienThe);
             ctgh.setSoLuong(soLuong);
@@ -85,8 +93,11 @@ public class GioHangService {
             chitietgiohangRepository.save(ctgh);
         }
 
-        return true;
+        return ctgh; 
     }
+
+
+
 
 
     @Transactional
