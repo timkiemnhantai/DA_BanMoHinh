@@ -75,8 +75,8 @@
 			</div>
 
 			<div class="products-carousel">
-				<th:block th:each="sp, iterStat : ${danhsachSP}">
-					<div class="product-card" th:if="${iterStat.index > -1}">
+				<th:block th:each="sp : ${danhsachSP}">
+					<div class="product-card" th:if="${sp.tongSoLuongTon > 0}">
 						<div class="discount-badge"
 							th:if="${sp.phanTramGiam != null or sp.giaGiam != null}">
 							<span
@@ -101,6 +101,46 @@
 					</div>
 				</th:block>
 			</div>
+			<th:block th:with="dsHetHang=${danhsachSP.?[tongSoLuongTon <= 0]}">
+				<th:block th:if="${dsHetHang.size() > 0}">
+					<p style="margin: 40px 0 10px 5px; font-size: 20px; opacity: 0.5;">Hết
+						hàng</p>
+					<div class="products-carousel">
+						<th:block th:each="sp : ${dsHetHang}">
+							<div class="product-card">
+								<div class="discount-badge"
+									th:if="${sp.phanTramGiam != null or sp.giaGiam != null}">
+									<span
+										th:text="${
+                            sp.phanTramGiam != null ? '-' + sp.phanTramGiam + '%' :
+                            (sp.giaGiam != null ? '-' + T(java.lang.String).format('%,d', sp.giaGiam).replace(',', '.') + 'VND' : '')
+                        }"></span>
+								</div>
+
+								<div class="product-image-container">
+									<a
+										th:href="@{/chi-tiet-san-pham/{id}(id=${sp.sanPham.maSP}, ${sp.sanPham.tenSP})}">
+										<img th:src="${sp.sanPham.anhSanPham[0].urlAnhSP}" alt="" />
+									</a>
+
+									<div class="overlay-het-hang">HẾT HÀNG</div>
+								</div>
+
+								<h4 th:text="${sp.sanPham.tenSP}"></h4>
+								<p
+									th:text="${#numbers.formatDecimal(sp.giaSauGiam, 0, 'POINT', 0, 'COMMA')} + ' đ'"></p>
+								<div class="product-stats">
+									<span class="rating"> <i class="fas fa-star"
+										style="color: #ffc107;"></i> <span
+										th:text="${sp.diemTrungBinhDanhGia}">0.0</span>
+									</span> <span class="sold" th:text="'Đã bán: ' + ${sp.tongSoLuongBan}"></span>
+								</div>
+							</div>
+						</th:block>
+					</div>
+				</th:block>
+			</th:block>
+
 		</main>
 	</div>
 </div>

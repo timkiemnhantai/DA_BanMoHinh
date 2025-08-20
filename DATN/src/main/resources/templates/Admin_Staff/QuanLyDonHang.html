@@ -1,241 +1,410 @@
-
+<!-- Admin_Staff/QuanLyDonHang.html (thay thế toàn bộ nội dung body phần quản lý đơn hàng) -->
 <link rel="stylesheet" href="/css/style_QuanLyDonHang.css" />
-
+<meta name="_csrf" th:content="${_csrf.token}"/>
 
 <div class="container-admin">
-    <div class="form-label">
-      <h1 style="font-size: 20px; font-weight: bold; display: block; margin-bottom: 20px;">Quản lý đơn hàng</h1>
-      <div class="tools">
-        <div class="search">
-          <input type="text" placeholder="Tìm kiếm đơn hàng..." />
-          <select>
-            <option>Trạng thái</option>
-            <option>Đơn mới</option>
-            <option>Chờ xác nhận</option>
-            <option>Đang xử lý</option>
-            <option>Đang giao hàng</option>
-            <option>Hủy</option>
-          </select>
-          <div class="search-right">
-            <button><i class="fas fa-search"></i></button>
+  <div class="form-label">
+    <h1 style="font-size:20px; font-weight:bold; margin-bottom:20px;">Quản lý đơn hàng</h1>
+
+    <!-- Tools -->
+    <div class="tools" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:15px;">
+      <div class="search" style="display:flex; gap:5px; align-items:center;">
+        <input type="text" placeholder="Tìm kiếm đơn hàng..." />
+        <div class="search-right"><button><i class="fas fa-search"></i></button></div>
+      </div>
+
+      <div class="filter" style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button data-status="Tất cả" class="btn active">Tất cả</button>
+        <button data-status="Chờ xác nhận" class="btn">Chờ xác nhận <span class="badge" id="badge-1" th:text="${countChoXN}"></span></button>
+        <button data-status="Đã xác nhận" class="btn">Đã xác nhận <span class="badge" id="badge-2" th:text="${countDaXN}"></span></button>
+        <button data-status="Đang giao hàng" class="btn">Đang giao <span class="badge" id="badge-3" th:text="${countDangGiao}"></span></button>
+        <button data-status="Đã giao hàng" class="btn">Đã giao <span class="badge" id="badge-4" th:text="${countDaGiao}"></span></button>
+        <button data-status="Giao hàng thành công" class="btn">Hoàn thành <span class="badge" id="badge-6" th:text="${countHoanThanh}"></span></button>
+        <button data-status="Yêu cầu hủy" class="btn">Yêu cầu hủy <span class="badge" id="badge-8" th:text="${countYeuCauHuy}"></span></button>
+        <button data-status="Đã hủy" class="btn">Đã hủy <span class="badge" id="badge-5" th:text="${countDaHuy}"></span></button>
+        <button data-status="Hoàn trả" class="btn">Hoàn trả <span class="badge" id="badge-7" th:text="${countHoanTra}"></span></button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <table>
+      <thead>
+        <tr>
+          <th>ID Đơn hàng</th><th>Tên khách hàng</th><th>Địa chỉ</th><th>Số điện thoại</th>
+          <th>Phương thức vận chuyển</th><th>Ghi chú</th><th>Tổng tiền</th><th>Trạng thái</th><th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Server-rendered rows -->
+        <th:block th:each="dh : ${dsDonHang}">
+          <tr th:attr="data-id=${dh.donHang.maDH}, data-giamgia=${dh.donHang.giamGiaThucTe}">
+            <td th:text="'DH' + ${dh.donHang.maDH}"></td>
+            <td th:text="${dh.donHang.hoTen}"></td>
+            <td th:text="${dh.donHang.diaChiGiaoHang}"></td>
+            <td th:text="${dh.donHang.soDienThoai}"></td>
+            <td>
+              <span th:switch="${dh.donHang.phuongThucVanChuyen}">
+                <span th:case="'NHANH'">Nhanh</span>
+                <span th:case="'THUONG'">Thường</span>
+                <span th:case="'SIEU_TOC'">Hỏa tốc</span>
+                <span th:case="*">Không xác định</span>
+              </span>
+            </td>
+            <td th:text="${dh.donHang.ghiChu != null and dh.donHang.ghiChu != '' ? dh.donHang.ghiChu : 'Không có'}"></td>
+            <td th:text="${#numbers.formatDecimal(dh.donHang.thanhTien, 0, 'POINT', 0, 'COMMA')} + ' đ'"></td>
+            <td><span class="status-label" th:attr="data-status-id=${dh.donHang.trangThaiDH.maTTDH}" th:text="${dh.donHang.trangThaiDH.tenTTDH}"></span></td>
+            <td class="p-2 border"><button class="btn-open-detail"><i style="font-size:24px" class="fa">&#xf06e;</i></button></td>
+
+            <!-- Hidden JSON payload for products (raw JSON, use th:utext to avoid escaping) -->
+            <td style="display:none;padding:0;border:0;">
+              <script type="application/json" class="products-json" th:utext="${dh.productsDataJson}"></script>
+            </td>
+          </tr>
+        </th:block>
+      </tbody>
+    </table>
+
+    <!-- Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999] hidden">
+      <div class="bg-white rounded-xl p-8 w-full max-w-3xl shadow-2xl relative transition-all duration-300">
+        <h2 class="text-2xl font-bold mb-6 text-blue-700">Kiểm tra đơn hàng</h2>
+
+        <div class="mb-6 space-y-2">
+          <div class="flex justify-between items-center">
+            <p><strong>ID Đơn hàng:</strong> <span id="editMaDH" class="text-blue-600 font-semibold"></span></p>
+            <p><strong>Tên khách hàng:</strong> <span id="editTenKH" class="font-semibold"></span></p>
           </div>
+          <p><strong>Trạng thái hiện tại:</strong> <span id="editTrangThai" class="bg-yellow-200 text-yellow-800 px-3 py-1 rounded font-semibold"></span></p>
         </div>
-        <button class="add">Tạo đơn hàng</button>
-      </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>ID Đơn hàng</th>
-            <th>Mã đơn hàng</th>
-            <th>Trạng thái</th>
-            <th>Số lượng</th>
-            <th>Tên khách hàng</th>
-            <th>Dịch vụ giao hàng</th>
-            <th>Mã vận đơn</th>
-            <th>Thao tác</th>
-          </tr>
+        <div class="border-t pt-6">
+          <h3 class="font-semibold mb-4 text-lg text-gray-800">Sản phẩm đã đặt</h3>
+          <div id="editProductsContainer" class="space-y-4 max-h-[340px] overflow-y-auto pr-2"></div>
+        </div>
 
-        </thead>
-        <tbody>
-          <tr>
-            <td>59217</td>
-            <td>59217342</td>
-            <td><span class="status-label status-new">Đơn mới</span></td>
-            <td>1</td>
-            <td>Huỳnh Công Nam</td>
-            <td>Standard</td>
-            <td>940010010936113003113</td>
-            <td class="p-2 border"><button><i style="font-size:24px" class="fa">&#xf06e;</i></button></td>
-          </tr>
-          <tr>
-            <td>59213</td>
-            <td>59217343</td>
-            <td><span class="status-label status-pending">Chờ xác nhận</span></td>
-            <td>2</td>
-            <td>Alison Alaba</td>
-            <td>Priority</td>
-            <td>940010010936113003113</td>
-            <td class="p-2 border"><button><i style="font-size:24px" class="fa">&#xf06e;</i></button></td>
-          </tr>
-        </tbody>
-      </table>
+        <div class="mt-8 space-y-2 text-base">
+          <p><strong>Thành tiền:</strong> <span id="editThanhTien" class="font-bold text-blue-700"></span></p>
+          <p><strong>Ghi chú:</strong> <span id="editGhiChu" class="italic"></span></p>
+        </div>
 
-      <div class="navigation">
-        <div class="pagination-info">Hiển thị 1 đến 10 trong 97 kết quả</div>
-        <div class="pagination-buttons">
-          <button>Trước</button>
-          <button>Tiếp</button>
+        <div class="mt-8 flex justify-end gap-3">
+          <button id="closeModal" class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-600 font-semibold">Đóng</button>
+          <button id="confirmOrder" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">Xác nhận</button>
         </div>
       </div>
     </div>
-  </div>
 
-  <div id="createModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999] hidden">
-    <form id="createForm" class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
-      <h2 class="text-xl font-bold mb-4">Tạo đơn hàng mới</h2>
-      <input id="newId" placeholder="ID Đơn hàng" class="w-full p-2 border mb-2 rounded" required />
-      <input id="newCode" placeholder="Mã đơn hàng" class="w-full p-2 border mb-2 rounded" required />
-      <select id="newStatus" class="w-full p-2 border mb-2 rounded" required>
-        <option value="Đơn mới">Đơn mới</option>
-        <option value="Chờ xác nhận">Chờ xác nhận</option>
-      </select>
-      <input id="newQuantity" type="number" placeholder="Số lượng" class="w-full p-2 border mb-2 rounded" required />
-      <input id="newCustomer" placeholder="Tên khách hàng" class="w-full p-2 border mb-2 rounded" required />
-      <input id="newShipping" placeholder="Dịch vụ giao hàng" class="w-full p-2 border mb-2 rounded" required />
-      <input id="newTracking" placeholder="Mã vận đơn" class="w-full p-2 border mb-2 rounded" required />
-      <div class="mt-4 text-right">
-        <button id="createClose" type="button"
-          class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-600">Hủy</button>
-        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-800">Tạo</button>
+    <!-- Pagination -->
+    <div class="navigation">
+      <div class="pagination-info">Hiển thị 1 đến 10 trong 97 kết quả</div>
+      <div class="pagination-buttons"><button>Trước</button><button>Tiếp</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCRIPTS: toàn bộ logic JS (thay thế script cũ) ===== -->
+<script>
+/* =================== Helpers =================== */
+const idToName = {1:"Chờ xác nhận",2:"Đã xác nhận",3:"Đang giao hàng",4:"Đã giao hàng",5:"Đã hủy",6:"Giao hàng thành công",7:"Hoàn trả",8:"Yêu cầu hủy"};
+const nameToId = Object.entries(idToName).reduce((acc,[k,v])=>{ acc[v]=Number(k); return acc; },{});
+function formatCurrency(number){ return Number(number).toLocaleString('vi-VN') + ' đ'; }
+function applyStatusClass(el, statusIdOrName){
+  if(!el) return;
+  el.className='status-label';
+  let id = typeof statusIdOrName==='number' ? statusIdOrName : nameToId[String(statusIdOrName).trim()] || 0;
+  if(id===1) el.classList.add('status-pending');
+  else if(id===2) el.classList.add('status-confirmed');
+  else if(id===3) el.classList.add('status-shipping');
+  else if(id===4) el.classList.add('status-delivered');
+  else if(id===5) el.classList.add('status-cancelled');
+  else if(id===6) el.classList.add('status-success');
+  else if(id===7) el.classList.add('status-returned');
+  else if(id===8) el.classList.add('status-request-cancel');
+  if(id) el.setAttribute('data-status-id', id);
+}
+function escapeHtml(unsafe){ if(unsafe==null) return ''; return String(unsafe).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+
+/* read products JSON from either <script.products-json> OR data-products attribute (fallback) */
+function getProductsFromRow(row){
+  // 1) script.products-json
+  const scriptEl = row.querySelector('script.products-json');
+  if(scriptEl){
+    try { return JSON.parse(scriptEl.textContent || '[]'); }
+    catch(e){ console.error('Parse products-json failed', e); }
+  }
+  // 2) fallback to attribute
+  const raw = row.getAttribute('data-products') || row.dataset.products || '[]';
+  try { return JSON.parse(raw); }
+  catch(e){
+    // try decode html-escaped JSON
+    try {
+      const ta = document.createElement('textarea');
+      ta.innerHTML = raw;
+      return JSON.parse(ta.value || '[]');
+    } catch(err){
+      console.error('Fallback parse data-products failed', raw, err);
+      return [];
+    }
+  }
+}
+
+/* render products into modal container */
+function renderProductsInto(container, products){
+  container.innerHTML = '';
+  const fmt = (n) => { if(n==null) return '0'; const num=Number(n); if(Number.isNaN(num)) return String(n); return num.toLocaleString('vi-VN'); };
+  products.forEach(p=>{
+    let imgSrc = p.anhSP || p.img || '/img/default.png';
+    if(!/^https?:\/\//i.test(imgSrc) && !imgSrc.startsWith('/')) imgSrc = '/' + imgSrc;
+    const div = document.createElement('div');
+    div.className = 'flex gap-5 border rounded-xl p-4 items-center bg-gray-50 shadow-sm';
+    div.innerHTML = `
+      <div class="w-20 h-20 bg-gray-100 flex items-center justify-center rounded-lg overflow-hidden">
+        <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(p.tenSP||'')}" class="w-full h-full object-cover">
       </div>
-    </form>
-  </div>
+      <div class="flex-1">
+        <p class="mb-1"><strong>Mã SP:</strong> <span class="text-blue-600 font-semibold">${escapeHtml(p.maSP||'')}</span></p>
+        <p class="text-sm text-gray-500">${escapeHtml(p.phienBan||'')}</p>
+        <p class="text-gray-700 font-medium">${escapeHtml(p.tenSP||'')}</p>
+      </div>
+      <div class="text-right min-w-[120px]">
+        <p class="font-bold text-blue-700">${fmt(p.donGia)} ₫</p>
+        <p class="text-sm text-gray-500">Số lượng: ${escapeHtml(p.soLuong ?? p.soLuongSP ?? '')}</p>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const searchInput = document.querySelector(".search input");
-      const statusSelect = document.querySelector(".search select");
-      const searchBtn = document.querySelector(".search-right button");
-      const orderRows = Array.from(document.querySelectorAll("tbody tr"));
-      const viewModal = document.getElementById("editModal");
-      const closeModalBtn = document.getElementById("closeModal");
+/* =================== Modal openers/close =================== */
+function attachOpeners() {
+  document.querySelectorAll('.btn-open-detail').forEach(btn=>{
+    if(btn._bound) return; btn._bound = true;
+    btn.addEventListener('click', ()=>{
+      const row = btn.closest('tr'); if(!row) return;
+      const modal = document.getElementById('editModal'); if(!modal) return;
+      const spanOrderId = document.getElementById('editMaDH');
+      const spanCustomerName = document.getElementById('editTenKH');
+      const spanStatus = document.getElementById('editTrangThai');
+      const confirmBtn = document.getElementById('confirmOrder');
+      const editGhiChu = document.getElementById('editGhiChu');
+      const editThanhTien = document.getElementById('editThanhTien');
+      const editGiamGiaThucTe = document.getElementById('editGiamGiaThucTe');
+      const productsContainer = document.getElementById('editProductsContainer');
 
-      const spanOrderId = document.getElementById("editOrderId");
-      const spanCustomerName = document.getElementById("editCustomerName");
-      const spanStatus = document.getElementById("editStatus");
+      spanOrderId.textContent = 'DH' + (row.getAttribute('data-id') || '');
+      spanCustomerName.textContent = row.children[1]?.textContent || '';
+      const statusLabel = row.querySelector('.status-label');
+      spanStatus.textContent = statusLabel ? statusLabel.textContent.trim() : '';
+      applyStatusClass(spanStatus, statusLabel ? Number(statusLabel.dataset.statusId) : 0);
 
-      const createBtn = document.querySelector(".add");
-      const paginationInfo = document.querySelector(".pagination-info");
-      const paginationButtons = document.querySelectorAll(".pagination-buttons button");
-
-      const itemsPerPage = 5;
-      let currentPage = 1;
-
-      function renderPage(page) {
-        const start = (page - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-
-        orderRows.forEach((row, index) => {
-          row.style.display = (index >= start && index < end) ? "" : "none";
-        });
-
-        paginationInfo.textContent = `Hiển thị ${start + 1} đến ${Math.min(end, orderRows.length)} trong ${orderRows.length} kết quả`;
+      if(confirmBtn){
+        confirmBtn.disabled = false;
+        if(spanStatus.textContent === "Chờ xác nhận") confirmBtn.textContent = "Xác nhận đơn hàng";
+        else if(spanStatus.textContent === "Đã xác nhận") confirmBtn.textContent = "Bắt đầu giao hàng";
+        else if(spanStatus.textContent === "Đang giao hàng") { confirmBtn.textContent = "Đang giao..."; confirmBtn.disabled = true; }
+        else confirmBtn.textContent = "Xác nhận";
       }
 
-      paginationButtons[0].addEventListener("click", () => {
-        if (currentPage > 1) {
-          currentPage--;
-          renderPage(currentPage);
-        }
-      });
+      if(editGhiChu) editGhiChu.textContent = row.children[5]?.textContent || 'Không có';
+      if(editThanhTien) editThanhTien.textContent = row.children[6]?.textContent || '0 đ';
+      if(editGiamGiaThucTe) editGiamGiaThucTe.textContent = row.getAttribute('data-giamgia') || '0 đ';
 
-      paginationButtons[1].addEventListener("click", () => {
-        if (currentPage < Math.ceil(orderRows.length / itemsPerPage)) {
-          currentPage++;
-          renderPage(currentPage);
-        }
-      });
+      const products = getProductsFromRow(row) || [];
+      renderProductsInto(productsContainer, products);
 
-      renderPage(currentPage);
-
-      function filterOrders() {
-        const searchValue = searchInput.value.toLowerCase();
-        const statusValue = statusSelect.value;
-
-        orderRows.forEach((row) => {
-          const customerName = row.children[4].textContent.toLowerCase();
-          const statusText = row.children[2].textContent.trim();
-
-          const matchesSearch = customerName.includes(searchValue);
-          const matchesStatus = statusValue === "Trạng thái" || statusText === statusValue;
-
-          row.style.display = (matchesSearch && matchesStatus) ? "" : "none";
-        });
-      }
-
-      searchBtn.addEventListener("click", filterOrders);
-      searchInput.addEventListener("input", filterOrders);
-      statusSelect.addEventListener("change", filterOrders);
-
-      document.querySelectorAll("td .fa").forEach((icon) => {
-        icon.addEventListener("click", function () {
-          const row = this.closest("tr");
-          const orderId = row.children[0].textContent;
-          const customerName = row.children[4].textContent;
-          const status = row.children[2].textContent.trim();
-
-          spanOrderId.textContent = orderId;
-          spanCustomerName.textContent = customerName;
-          spanStatus.textContent = status;
-
-          viewModal.classList.remove("hidden");
-        });
-      });
-
-      closeModalBtn.addEventListener("click", () => {
-        viewModal.classList.add("hidden");
-      });
-
-      const createModal = document.getElementById("createModal");
-      const createForm = document.getElementById("createForm");
-      const createClose = document.getElementById("createClose");
-
-      createBtn.addEventListener("click", () => {
-        createModal.classList.remove("hidden");
-      });
-
-      createClose.addEventListener("click", () => {
-        createModal.classList.add("hidden");
-      });
-
-      createForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        const id = document.getElementById("newId").value;
-        const code = document.getElementById("newCode").value;
-        const status = document.getElementById("newStatus").value;
-        const quantity = document.getElementById("newQuantity").value;
-        const customer = document.getElementById("newCustomer").value;
-        const shipping = document.getElementById("newShipping").value;
-        const tracking = document.getElementById("newTracking").value;
-
-        const newRow = document.createElement("tr");
-        newRow.innerHTML = `
-        <td>${id}</td>
-        <td>${code}</td>
-        <td><span class="status-label ${status === 'Đơn mới' ? 'status-new' : 'status-pending'}">${status}</span></td>
-        <td>${quantity}</td>
-        <td>${customer}</td>
-        <td>${shipping}</td>
-        <td>${tracking}</td>
-        <td class="p-2 border"><i style="font-size:24px" class="fa">&#xf06e;</i></td>
-      `;
-
-        newRow.querySelector(".fa").addEventListener("click", function () {
-          spanOrderId.textContent = id;
-          spanCustomerName.textContent = customer;
-          spanStatus.textContent = status;
-          viewModal.classList.remove("hidden");
-        });
-
-        document.querySelector("tbody").appendChild(newRow);
-        orderRows.push(newRow);
-
-        createModal.classList.add("hidden");
-        renderPage(currentPage);
-      });
+      modal.classList.remove('hidden'); modal.classList.add('flex');
     });
-  </script>
+  });
+}
 
-  <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999] hidden">
-    <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
-      <h2 class="text-xl font-bold mb-4">Chỉnh sửa đơn hàng</h2>
-      <p><strong>ID Đơn hàng:</strong> <span id="editOrderId"></span></p>
-      <p><strong>Tên khách hàng:</strong> <span id="editCustomerName"></span></p>
-      <p><strong>Trạng thái hiện tại:</strong> <span id="editStatus"></span></p>
-      <div class="mt-4 text-right">
-        <button id="closeModal" class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-600">Đóng</button>
-      </div>
-    </div>
-  </div>
+function attachCloseModal(){
+  const modal = document.getElementById('editModal');
+  const btnClose = document.getElementById('closeModal');
+  if(modal && btnClose) btnClose.addEventListener('click', ()=>{ modal.classList.add('hidden'); modal.classList.remove('flex'); });
+  modal?.addEventListener('click', (e)=>{ if(e.target === modal){ modal.classList.add('hidden'); modal.classList.remove('flex'); } });
+}
+
+/* =================== Fetch latest orders (API) =================== */
+let latestOrderId = 0;
+function fetchLatestOrders(){
+  fetch(`/don-hang/latest?afterId=${latestOrderId}`)
+    .then(res => res.json())
+    .then(data => {
+      if(!data || data.length===0) return;
+      const tbody = document.querySelector('tbody');
+      data.forEach(dh=>{
+        if(document.querySelector(`tbody tr[data-id="${dh.maDH}"]`)) return;
+        const tr = document.createElement('tr');
+        tr.dataset.id = dh.maDH;
+        tr.dataset.giamgia = dh.giamGiaThucTe || '0 đ';
+        // put products into data-products (fallback). Server-rendered rows use <script.products-json>
+        tr.setAttribute('data-products', JSON.stringify(dh.sanPham || []));
+
+        const phuongThuc = dh.phuongThucVanChuyen==='NHANH'?'Nhanh': dh.phuongThucVanChuyen==='THUONG'?'Thường': dh.phuongThucVanChuyen==='SIEU_TOC'?'Hỏa tốc':'Không xác định';
+
+        tr.innerHTML = `
+          <td>DH${dh.maDH}</td>
+          <td>${escapeHtml(dh.hoTen || '')}</td>
+          <td>${escapeHtml(dh.diaChiGiaoHang || '')}</td>
+          <td>${escapeHtml(dh.soDienThoai || '')}</td>
+          <td>${escapeHtml(phuongThuc)}</td>
+          <td>${escapeHtml(dh.ghiChu || 'Không có')}</td>
+          <td>${formatCurrency(dh.thanhTien)}</td>
+          <td><span class="status-label" data-status-id="${dh.trangThaiId}">${escapeHtml(dh.tenTrangThai || '')}</span></td>
+          <td class="p-2 border"><button class="btn-open-detail"><i class="fa" style="font-size:24px">&#xf06e;</i></button></td>
+        `;
+        tbody.prepend(tr);
+        applyStatusClass(tr.querySelector('.status-label'), dh.trangThaiId || dh.tenTrangThai);
+        if(dh.maDH > latestOrderId) latestOrderId = dh.maDH;
+      });
+      // re-attach openers for newly added rows
+      attachOpeners();
+      // update badges counts
+      updateBadges();
+    })
+    .catch(err => console.error('fetchLatestOrders error', err));
+}
+
+/* =================== Confirm order (POST) =================== */
+function attachConfirmOrder(){
+  const confirmBtn = document.getElementById('confirmOrder');
+  if(!confirmBtn) return;
+  confirmBtn.addEventListener('click', ()=>{
+    const orderIdText = document.getElementById('editMaDH').textContent;
+    if(!orderIdText) return;
+    const orderId = parseInt(orderIdText.replace('DH','').trim());
+    if(!orderId) return;
+    fetch(`/don-hang/${orderId}/update-status`,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/x-www-form-urlencoded',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+      },
+      body: new URLSearchParams({ yeuCauHuy: false })
+    })
+    .then(res=>res.json())
+    .then(data=>{
+      const spanStatus = document.getElementById('editTrangThai');
+      if(spanStatus){ spanStatus.textContent = data.newStatus; applyStatusClass(spanStatus, Number(data.newStatusId)); }
+      const row = document.querySelector(`tbody tr[data-id="${orderId}"]`);
+      if(row){
+        const label = row.querySelector('.status-label');
+        if(label){ label.textContent = data.newStatus; applyStatusClass(label, Number(data.newStatusId)); }
+      }
+      // update confirmBtn text
+      if(confirmBtn){
+        if(data.newStatus === "Chờ xác nhận") confirmBtn.textContent = "Xác nhận đơn hàng";
+        else if(data.newStatus === "Đã xác nhận") confirmBtn.textContent = "Bắt đầu giao hàng";
+        else if(data.newStatus === "Đang giao hàng") { confirmBtn.textContent = "Đang giao..."; confirmBtn.disabled = true; }
+        else confirmBtn.textContent = "Xác nhận";
+      }
+      updateBadges();
+    })
+    .catch(console.error);
+  });
+}
+
+/* update badge counts by scanning table */
+function updateBadges(){
+  const badgeMap = {
+    "Chờ xác nhận":"badge-1",
+    "Đã xác nhận":"badge-2",
+    "Đang giao hàng":"badge-3",
+    "Đã giao hàng":"badge-4",
+    "Giao hàng thành công":"badge-6",
+    "Yêu cầu hủy":"badge-8",
+    "Đã hủy":"badge-5",
+    "Hoàn trả":"badge-7"
+  };
+  
+  Object.entries(badgeMap).forEach(([status,id])=>{
+    const count = Array.from(document.querySelectorAll('tbody tr .status-label'))
+                  .filter(l=>l.textContent.trim()===status).length;
+    const badgeEl = document.getElementById(id);
+    if(badgeEl){
+      if(count > 0){
+        badgeEl.textContent = count;
+        badgeEl.style.display = "inline-block"; // hiện
+      } else {
+        badgeEl.textContent = ""; 
+        badgeEl.style.display = "none"; // ẩn
+      }
+    }
+  });
+}
+
+/* =================== Filter / Pagination / Search =================== */
+document.addEventListener('DOMContentLoaded', ()=>{
+  // apply status class on server-rendered labels
+  document.querySelectorAll('.status-label').forEach(el=>{
+    const sid = el.getAttribute('data-status-id'); applyStatusClass(el, sid?Number(sid):el.textContent);
+  });
+
+  attachOpeners();
+  attachCloseModal();
+  attachConfirmOrder();
+  fetchLatestOrders();
+  setInterval(fetchLatestOrders, 5000);
+
+  // UI controls
+  const searchInput = document.querySelector(".search input");
+  const searchBtn = document.querySelector(".search-right button");
+  const filterButtons = document.querySelectorAll(".filter .btn");
+  const paginationInfo = document.querySelector(".pagination-info");
+  const paginationButtons = document.querySelectorAll(".pagination-buttons button");
+
+  let orderRows = Array.from(document.querySelectorAll("tbody tr"));
+  const itemsPerPage = 8;
+  let currentPage = 1;
+  let filteredRows = orderRows.slice();
+  let currentStatus = "Tất cả";
+
+  function renderPage(page){
+    orderRows = Array.from(document.querySelectorAll("tbody tr"));
+    const start=(page-1)*itemsPerPage; const end=start+itemsPerPage;
+    filteredRows.forEach((row,idx)=>{ row.style.display=(idx>=start&&idx<end)?'':'none'; });
+    if(paginationInfo) paginationInfo.textContent=`Hiển thị ${filteredRows.length===0?0:start+1} đến ${Math.min(end,filteredRows.length)} trong ${filteredRows.length} kết quả`;
+  }
+
+  function filterOrders(){
+    const searchValue=(searchInput?.value||'').toLowerCase();
+    orderRows = Array.from(document.querySelectorAll('tbody tr'));
+    filteredRows = orderRows.filter(row=>{
+      // prefer reading from status-label rather than relying on td index
+      const orderId = (row.querySelector('td')?.textContent||'').toLowerCase();
+      const customerName = (row.children[1]?.textContent||'').toLowerCase();
+      const address = (row.children[2]?.textContent||'').toLowerCase();
+      const note = (row.children[5]?.textContent||'').toLowerCase();
+      const statusText = (row.querySelector('.status-label')?.textContent||'').trim();
+
+      const matchesSearch = orderId.includes(searchValue) || customerName.includes(searchValue) || address.includes(searchValue) || note.includes(searchValue);
+      const matchesStatus = currentStatus === "Tất cả" || statusText.includes(currentStatus);
+      return matchesSearch && matchesStatus;
+    });
+    orderRows.forEach(r=>r.style.display='none');
+    currentPage=1;
+    renderPage(currentPage);
+  }
+
+  // events
+  searchBtn?.addEventListener('click', filterOrders);
+  searchInput?.addEventListener('input', filterOrders);
+  filterButtons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      filterButtons.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      currentStatus = btn.getAttribute('data-status') || 'Tất cả';
+      filterOrders();
+    });
+  });
+  if(paginationButtons.length>=2){
+    paginationButtons[0].addEventListener('click', ()=>{ if(currentPage>1){ currentPage--; renderPage(currentPage); } });
+    paginationButtons[1].addEventListener('click', ()=>{ if(currentPage<Math.max(1,Math.ceil(filteredRows.length/itemsPerPage))){ currentPage++; renderPage(currentPage); } });
+  }
+
+  // initial render
+  orderRows = Array.from(document.querySelectorAll("tbody tr"));
+  filteredRows = orderRows.slice();
+  renderPage(currentPage);
+});
+</script>

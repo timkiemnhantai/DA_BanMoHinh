@@ -20,11 +20,13 @@ import com.poly.model.AnhSanPham;
 import com.poly.model.BienTheSanPham;
 import com.poly.model.ChiTietDonHang;
 import com.poly.model.DanhGiaSP;
+import com.poly.model.MoTaSanPham;
 import com.poly.model.SanPham;
 import com.poly.repository.AnhChiTietRepository;
 import com.poly.repository.AnhSanPhamRepository;
 import com.poly.repository.BienTheSanPhamRepository;
 import com.poly.repository.DanhGiaSPRepository;
+import com.poly.repository.MoTaSanPhamRepository;
 import com.poly.repository.SanPhamRepository;
 import com.poly.util.BoDau;
 import com.poly.util.GiamGiaUtil;
@@ -49,6 +51,8 @@ public class SanPhamService {
 
 	@Autowired
 	private GiamGiaUtil giamGiaUtil;
+	@Autowired
+	private MoTaSanPhamRepository moTaSanPhamRepository;
 
 	// Lấy toàn bộ sản phẩm
 	public List<SanPham> getAll() {
@@ -121,7 +125,8 @@ public class SanPhamService {
 	        BigDecimal minGiaSauGiam = null;
 	        long tongSLBan = 0;
 	        boolean hasValidBienThe = false;
-
+	        long tongSLTon = 0;
+	        
 	        for (BienTheSanPham bt : bienThes) {
 	            GiaGiamDTO giam = giamGiaUtil.tinhGiaSauGiam(bt);
 
@@ -132,6 +137,10 @@ public class SanPhamService {
 
 	            hasValidBienThe = true;
 
+	            if (bt.getSoLuongTonKho() != null) {
+	                tongSLTon += bt.getSoLuongTonKho();
+	            }
+	            
 	            if (giam.getPhanTramGiam() != null) {
 	                maxPhanTramGiam = (maxPhanTramGiam == null) ? giam.getPhanTramGiam()
 	                        : Math.max(maxPhanTramGiam, giam.getPhanTramGiam());
@@ -172,9 +181,11 @@ public class SanPhamService {
 	        double diemTB = 0;
 	        if (danhGias != null && !danhGias.isEmpty()) {
 	            diemTB = danhGias.stream().mapToInt(DanhGiaSP::getSoSao).average().orElse(0.0);
+	            diemTB = Math.round(diemTB * 10) / 10.0; // làm tròn 1 chữ số thập phân
 	        }
 
-	        ketQua.add(new SanPhamDTO(sp, maxPhanTramGiam, maxGiaGiam, minGiaSauGiam, tongSLBan, diemTB));
+
+	        ketQua.add(new SanPhamDTO(sp, maxPhanTramGiam, maxGiaGiam, minGiaSauGiam, tongSLBan, tongSLTon, diemTB));
 	    }
 
 	    // ✅ Nếu đang lọc bán chạy nhưng không truyền sapXep = "banchay", ta vẫn sắp theo bán chạy
@@ -227,51 +238,57 @@ public class SanPhamService {
 	public List<AnhSanPham> getAnhSanPhamByMaSP(Integer maSP) {
 		return anhSanPhamRepository.findBySanPham_MaSP(maSP);
 	}
-
-	// ✅ Hàm mới: Trả về DTO tổng hợp cho chi tiết sản phẩm
 	@Transactional(readOnly = true)
 	public ChiTietSanPhamDTO layChiTietSanPhamDTO(Integer maSP) {
-		Optional<SanPham> optSanPham = sanphamRepository.findById(maSP);
-		if (optSanPham.isEmpty())
-			return null;
+	    Optional<SanPham> optSanPham = sanphamRepository.findById(maSP);
+	    if (optSanPham.isEmpty()) return null;
 
-		SanPham sanPham = optSanPham.get();
-		List<BienTheSanPham> danhSachBienThe = bienthesanphamRepository.findBySanPham_MaSP(maSP);
+	    SanPham sanPham = optSanPham.get();
+	    List<BienTheSanPham> danhSachBienThe = bienthesanphamRepository.findBySanPham_MaSP(maSP);
 
-		List<BienTheSanPhamDTO> listDTO = new ArrayList<>();
+	    List<BienTheSanPhamDTO> listDTO = new ArrayList<>();
+	    for (BienTheSanPham bienThe : danhSachBienThe) {
+	        BienTheSanPhamDTO bienTheDTO = new BienTheSanPhamDTO();
+	        bienTheDTO.setBienThe(bienThe);
+	        bienTheDTO.setDsAnhChiTiet(
+	            anhchitietRepository.findByChiTietSanPham_MaCTSP(bienThe.getMaCTSP())
+	        );
 
-		for (BienTheSanPham bienThe : danhSachBienThe) {
-			BienTheSanPhamDTO bienTheDTO = new BienTheSanPhamDTO();
-			bienTheDTO.setBienThe(bienThe);
-			bienTheDTO.setDsAnhChiTiet(anhchitietRepository.findByChiTietSanPham_MaCTSP(bienThe.getMaCTSP()));
+	        // Giá sau giảm
+	        GiaGiamDTO giaGiamDTO = giamGiaUtil.tinhGiaSauGiam(bienThe);
+	        bienTheDTO.setPhanTramGiam(giaGiamDTO.getPhanTramGiam());
+	        bienTheDTO.setGiaGiam(giaGiamDTO.getGiaGiam());
+	        bienTheDTO.setGiaSauGiam(giaGiamDTO.getGiaSauGiam());
 
-			// Sử dụng util để tính giá sau giảm
-			GiaGiamDTO giaGiamDTO = giamGiaUtil.tinhGiaSauGiam(bienThe);
-			bienTheDTO.setPhanTramGiam(giaGiamDTO.getPhanTramGiam());
-			bienTheDTO.setGiaGiam(giaGiamDTO.getGiaGiam());
-			bienTheDTO.setGiaSauGiam(giaGiamDTO.getGiaSauGiam());
+	        listDTO.add(bienTheDTO);
+	    }
 
-			listDTO.add(bienTheDTO);
-		}
+	    // ✅ Lấy đánh giá + media trong 1 query
+	    List<DanhGiaSP> danhGiaList = danhgiaRepository.findDanhGiaWithMediaBySanPham(maSP);
 
-		// Tính điểm trung bình và số lượng bán
-		List<DanhGiaSP> danhGiaList = danhgiaRepository.findBySanPham_MaSP(maSP);
-		double diemTrungBinh = danhGiaList.isEmpty() ? 0
-				: danhGiaList.stream().mapToInt(DanhGiaSP::getSoSao).average().orElse(0.0);
+	    double diemTrungBinh = danhGiaList.isEmpty()
+	        ? 0
+	        : danhGiaList.stream().mapToInt(DanhGiaSP::getSoSao).average().orElse(0.0);
 
-		long tongSoLuongBan = danhSachBienThe.stream().flatMap(bt -> bt.getChiTietDonHangs().stream())
-				.filter(ct -> ct.getDonHang() != null && ct.getDonHang().getTrangThaiDH() != null
-						&& ct.getDonHang().getTrangThaiDH().getMaTTDH() == 4)
-				.mapToLong(ct -> ct.getSoLuongSP() == null ? 0 : ct.getSoLuongSP()).sum();
-
-		// Trả DTO
-		ChiTietSanPhamDTO dto = new ChiTietSanPhamDTO();
-		dto.setSanPham(sanPham);
-		dto.setDanhSachBienThe(listDTO);
-		dto.setDsAnhSanPham(sanPham.getAnhSanPham());
-		dto.setDiemTrungBinh(diemTrungBinh);
-		dto.setTongSoLuongBan(tongSoLuongBan);
-		return dto;
+	    long tongSoLuongBan = danhSachBienThe.stream()
+	        .flatMap(bt -> bt.getChiTietDonHangs().stream())
+	        .filter(ct -> ct.getDonHang() != null &&
+	                      ct.getDonHang().getTrangThaiDH() != null &&
+	                      ct.getDonHang().getTrangThaiDH().getMaTTDH() == 4)
+	        .mapToLong(ct -> ct.getSoLuongSP() == null ? 0 : ct.getSoLuongSP())
+	        .sum();
+	    // ✅ Lấy dữ liệu mô tả sản phẩm
+	    MoTaSanPham moTaSanPham = moTaSanPhamRepository.findBySanPham_MaSP(maSP);
+	    // ✅ Trả về DTO đầy đủ
+	    ChiTietSanPhamDTO dto = new ChiTietSanPhamDTO();
+	    dto.setSanPham(sanPham);
+	    dto.setDanhSachBienThe(listDTO);
+	    dto.setDsAnhSanPham(sanPham.getAnhSanPham());
+	    dto.setDiemTrungBinh(diemTrungBinh);
+	    dto.setTongSoLuongBan(tongSoLuongBan);
+	    dto.setDanhSachDanhGia(danhGiaList); 
+	    dto.setMoTaSanPham(moTaSanPham);
+	    return dto;
 	}
 
 }

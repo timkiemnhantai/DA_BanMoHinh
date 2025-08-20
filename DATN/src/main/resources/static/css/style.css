@@ -30,7 +30,7 @@ body {
 	min-height: 60px;
 	background: white;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-	z-index: 999;
+	z-index: 9999;
 	transition: transform 0.3s ease;
 }
 
@@ -247,11 +247,39 @@ body {
 .nav-account .account-right .anh {
   margin: 10px;
   width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0; /* màu nền nếu ảnh không lấp đầy */
 }
+
 .nav-account .account-right .anh img {
-  flex-shrink: 0;
-  max-width: 50px;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* thu nhỏ vừa khung */
+  object-position: center; /* canh giữa */
+  border-radius: 50%;
+
+}
+.nav-account .account-right .anh1 {
+  margin: 10px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-account .account-right .anh1 img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* thu nhỏ vừa khung */
+  object-position: center; /* canh giữa */
   border-radius: 50%;
 }
 
@@ -494,7 +522,7 @@ body {
 
 /* ========== NAVIGATION BAR ========== */
     #navbar-curd {
-      position: fixed;
+    position: fixed;
       top: 0;
       left: 0;
       right: 0;
@@ -529,7 +557,7 @@ body {
       color: #000;
     }
 
-    #navbar-curd .nav-right {
+   #navbar-curd .nav-right {
       display: flex;
       align-items: center;
     }

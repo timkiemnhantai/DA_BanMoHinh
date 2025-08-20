@@ -345,7 +345,7 @@
     background-color: rgba(0, 0, 0, 0.5); /* Nền tối mờ */
     justify-content: center; /* Căn giữa modal theo chiều ngang */
     align-items: center; /* Căn giữa modal theo chiều dọc */
-    z-index: 1001; /* Cao hơn các phần tử khác để hiển thị lên trên */
+    z-index: 99999; /* Cao hơn các phần tử khác để hiển thị lên trên */
 }
 
 .modal-content {

@@ -1,22 +1,14 @@
 package com.poly.model;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,38 +19,44 @@ import lombok.ToString;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"bienTheSanPham", "anhSanPham"})
+@ToString(exclude = {"bienTheSanPham", "anhSanPham", "danhGiaList"})
 public class SanPham {
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "MaSP")
-	private Integer maSP;
 
-	@Column(name = "TenSP")
-	private String tenSP;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "MaSP")
+    private Integer maSP;
+
+    @Column(name = "TenSP")
+    private String tenSP;
 
     @Column(name = "TenKhongDau")
     private String tenKhongDau;
-	
-	@Column(name = "MoTaChung")
-	private String moTaChung;
 
-	@Column(name = "ThuongHieu")
-	private String thuongHieu;
+    @Column(name = "MoTaChung")
+    private String moTaChung;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "MaLoaiSanPham")
-	private LoaiSanPham loaiSanPham;
-	
+    @Column(name = "ThuongHieu")
+    private String thuongHieu;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "MaLoaiSanPham")
+    @JsonBackReference // tránh vòng lặp với LoaiSanPham
+    private LoaiSanPham loaiSanPham;
+
     @OneToMany(mappedBy = "sanPham", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference // serialize BienTheSanPham một chiều
     private List<BienTheSanPham> bienTheSanPham;
+
     @OneToMany(mappedBy = "sanPham", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference // serialize AnhSanPham một chiều
     private List<AnhSanPham> anhSanPham;
-    
+
     @CreationTimestamp
     @Column(name = "NgayTao", updatable = false)
     private LocalDateTime ngayTao;
-    
+
     @OneToMany(mappedBy = "sanPham", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference // serialize danhGiaList một chiều
     private List<DanhGiaSP> danhGiaList;
 }
