@@ -1,7 +1,7 @@
-﻿CREATE DATABASE DATN1;
+﻿CREATE DATABASE DATN;
 GO
 
-USE DATN1;
+USE DATN;
 GO
 
 -- 1. VaiTro
@@ -16,11 +16,11 @@ CREATE TABLE TaiKhoan (
     TenDangNhap NVARCHAR(50) UNIQUE NOT NULL,
     MatKhau VARCHAR(100) NOT NULL,
     HoTen NVARCHAR(100),
-    GioiTinh BIT,
-    NgaySinh DATE,
-    SoDT VARCHAR(20),
-    Email VARCHAR(100),
-    Avatar VARCHAR(255),
+    GioiTinh BIT NULL,
+    NgaySinh DATE NULL,
+    SoDT VARCHAR(20) NULL,
+    Email VARCHAR(100) NOT NULL,
+    Avatar VARCHAR(255) NULL,
     MaVaiTro INT,
     FOREIGN KEY (MaVaiTro) REFERENCES VaiTro(MaVaiTro)
 );
@@ -39,12 +39,12 @@ GO
 CREATE TABLE DiaChi (
     MaDiaChi INT PRIMARY KEY IDENTITY(1,1),
     MaTK INT NOT NULL, -- khóa ngoại đến người dùng
-    HoTen NVARCHAR(100), -- tên người nhận (có thể khác với chủ tài khoản)
-    SoDienThoai NVARCHAR(20), -- số điện thoại người nhận
-    Tinh NVARCHAR(100),
-    Quan NVARCHAR(100),
-    Phuong NVARCHAR(100),
-    DiaChiChiTiet NVARCHAR(255),
+    HoTen NVARCHAR(100) NOT NULL, -- tên người nhận (có thể khác với chủ tài khoản)
+    SoDienThoai NVARCHAR(20) NOT NULL, -- số điện thoại người nhận
+    Tinh NVARCHAR(100) NOT NULL,
+    Quan NVARCHAR(100) NOT NULL,
+    Phuong NVARCHAR(100) NOT NULL,
+    DiaChiChiTiet NVARCHAR(255) NOT NULL,
     MacDinh BIT DEFAULT 0,
     CONSTRAINT FK_DiaChi_TaiKhoan FOREIGN KEY (MaTK)
         REFERENCES TaiKhoan(MaTK)
@@ -114,7 +114,6 @@ CREATE TABLE BienTheSanPham (
     MaCTSP INT PRIMARY KEY IDENTITY(1,1),
     MaSP INT,
     Gia DECIMAL(18,2),
-    MoTaChiTiet NVARCHAR(MAX),
     SoLuongTonKho INT,
 	SoLuongDatGiu INT DEFAULT 0,
     PhienBan NVARCHAR(50),
@@ -123,6 +122,7 @@ CREATE TABLE BienTheSanPham (
     FOREIGN KEY (MaTrangThaiKH) REFERENCES TrangThaiKH(MaTrangThaiKH)
 );
 GO 
+
 CREATE TABLE BienThe_GiamGiaSP (
     MaCTSP INT NOT NULL,
     MaGiamGia INT NOT NULL,
@@ -189,12 +189,14 @@ CREATE TABLE DonHang (
     PhiVanChuyen DECIMAL(18,2),
     ThanhTien DECIMAL(18,2),
     GhiChu NVARCHAR(MAX),
+	MaTTDHTruoc INT NULL,
     FOREIGN KEY (MaTK) REFERENCES TaiKhoan(MaTK),
     FOREIGN KEY (MaTTDH) REFERENCES TrangThaiDH(MaTTDH),
 --    FOREIGN KEY (MaGiamGia) REFERENCES GiamGiaSP(MaGiamGia),
 	FOREIGN KEY (MaVoucher) REFERENCES Voucher(MaVoucher)
 
 );
+
 
 
 
@@ -272,11 +274,16 @@ CREATE TABLE ChiTietDonHang (
     DonGia DECIMAL(18,2),
     GiamGiaThucTe DECIMAL(18,2),
     ThanhTien DECIMAL(18,2),
-    GhiChu NVARCHAR(MAX),
+	DaBaoLoi BIT DEFAULT 0,
     FOREIGN KEY (MaDH) REFERENCES DonHang(MaDH),
     FOREIGN KEY (MaCTSP) REFERENCES BienTheSanPham(MaCTSP)
 );
 GO 
+ALTER TABLE ChiTietDonHang
+DROP COLUMN GhiChu;
+
+
+
 -- 17. YeuThich
 CREATE TABLE YeuThich (
     MaSP INT,
@@ -292,6 +299,7 @@ CREATE TABLE Banner (
     MaBanner INT PRIMARY KEY IDENTITY(1,1),
     TieuDeBanner NVARCHAR(100),
     AnhBanner VARCHAR(255),
+	ViTri NVARCHAR(100),
     Link VARCHAR(255),
     LoaiBanner NVARCHAR(100),
     NgayTao DATE,
@@ -325,6 +333,29 @@ CREATE TABLE TaiKhoan_Voucher (
     FOREIGN KEY (MaVoucher) REFERENCES Voucher(MaVoucher)
 );
 
+GO
+-- Bảng BáoLoi
+CREATE TABLE BaoLoi (
+    MaBaoLoi INT PRIMARY KEY IDENTITY(1,1),
+    MaDH INT NOT NULL,                -- Liên kết đơn hàng
+    MaCTDH INT NULL,                  -- Liên kết chi tiết đơn hàng (NULL nếu báo lỗi cả đơn)
+    MaTK INT NOT NULL,                -- Ai báo lỗi (khách hàng hoặc nhân viên)
+    GhiChu NVARCHAR(MAX),             -- Ghi chú lỗi
+    TrangThai INT DEFAULT 0,          -- 0: Chưa xử lý, 1: Đang xử lý, 2: Đã xử lý
+    NgayBao DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (MaDH) REFERENCES DonHang(MaDH),
+    FOREIGN KEY (MaCTDH) REFERENCES ChiTietDonHang(MaCTDH),
+    FOREIGN KEY (MaTK) REFERENCES TaiKhoan(MaTK)
+);
+GO
+-- Bảng media kèm theo báo lỗi
+CREATE TABLE BaoLoiMedia (
+    MaMedia INT PRIMARY KEY IDENTITY(1,1),
+    MaBaoLoi INT NOT NULL,
+    Url NVARCHAR(MAX) NOT NULL,
+    Loai NVARCHAR(10) CHECK (Loai IN ('image', 'video')), -- ảnh hoặc video
+    FOREIGN KEY (MaBaoLoi) REFERENCES BaoLoi(MaBaoLoi) ON DELETE CASCADE
+);
 GO
 
 CREATE FUNCTION dbo.udf_ChuyenKhongDau(@str NVARCHAR(255))
@@ -424,8 +455,8 @@ GO
 INSERT INTO TaiKhoan (
     TenDangNhap, MatKhau, HoTen, GioiTinh, NgaySinh, SoDT, Email,  Avatar, MaVaiTro
 ) VALUES 
-('admin', '123456', N'Quản trị viên', 1, '1990-01-01', '0900000001', 'admin@example.com', 'admin.jpg', 1);
-
+('admin', '123456', N'Quản trị viên', 1, '1990-01-01', '0900000001', 'admin@example.com', 'admin.jpg', 1),
+('nv01',  'nv@123456', N'Nguyễn Văn B',1, '1993-05-20', '0901234567', 'nv01@example.com', 'nv01.jpg', 2);
 
 GO
 -- 3. LoaiSanPham (có IDENTITY)
@@ -1173,7 +1204,9 @@ INSERT INTO TrangThaiDH (TenTTDH) VALUES
 (N'Đã hủy'),
 (N'Giao hàng thành công'),
 (N'Hoàn trả'),
-(N'Yêu cầu hủy');
+(N'Yêu cầu hủy'),
+(N'Lỗi/Không giao được'),
+(N'Báo lỗi');
 GO 
 INSERT INTO GiamGiaSP (TenGG, PhanTramGiam, GiaGiam, ThoiGianBatDau, ThoiGianKetThuc, TrangThai)
 VALUES

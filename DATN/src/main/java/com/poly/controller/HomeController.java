@@ -4,7 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -64,6 +65,7 @@ import com.poly.repository.TaiKhoanRepository;
 import com.poly.repository.ThanhToanRepository;
 import com.poly.repository.TrangThaiDHRepository;
 import com.poly.security.CustomUserDetails;
+import com.poly.service.BaoLoiService;
 import com.poly.service.BienTheSanPhamService;
 import com.poly.service.ChiTietGioHangService;
 import com.poly.service.DiaChiService;
@@ -86,6 +88,7 @@ import jakarta.transaction.Transactional;
 
 @Controller
 public class HomeController {
+	private static final String PHUONG_THUC_SHIPPING = "phuongThucShipping";
 	private static final String PHI_VAN_CHUYEN2 = "phiVanChuyen";
 	private static final String PHUONG_THUC_THANH_TOAN = "phuongThucThanhToan";
 	private static final String ID2 = "id";
@@ -139,6 +142,8 @@ public class HomeController {
     private TrangThaiDHRepository trangThaiRepository;
     @Autowired
     private ThanhToanService thanhToanService;
+    @Autowired
+    private BaoLoiService baoLoiService;
 	private final Pattern pattern = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d])[\\S]{8,}$");
     
 	@GetMapping({"/home", "/"})
@@ -594,6 +599,7 @@ public class HomeController {
         model.addAttribute("content", "User/XemDonHang.html");
         return "User/index";
     }
+    
     @PostMapping("/DonHang/huy")
     public String huyDonHang(@RequestParam("maDH") Integer maDH,
                              @RequestParam("lyDoHuy") String lyDoHuy,
@@ -602,38 +608,42 @@ public class HomeController {
         DonHang donHang = donHangRepository.findById(maDH)
             .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
 
-        // Hoàn trả đặt giữ cho từng biến thể
-        List<ChiTietDonHang> chiTietList = chitietdonhangRepository.findByDonHang(donHang);
-        for (ChiTietDonHang ct : chiTietList) {
-            BienTheSanPham bienThe = ct.getBienTheSanPham();
+        int maTT = donHang.getTrangThaiDH().getMaTTDH();
 
-            // Lấy số lượng tồn kho hiện tại
-            int soLuongTonKho = bienThe.getSoLuongTonKho() != null ? bienThe.getSoLuongTonKho() : 0;
+        if(maTT == 1) {
+            // Đơn chờ xác nhận → hủy trực tiếp, cộng lại tồn kho
+            List<ChiTietDonHang> chiTietList = chitietdonhangRepository.findByDonHang(donHang);
+            for (ChiTietDonHang ct : chiTietList) {
+                BienTheSanPham bienThe = ct.getBienTheSanPham();
 
-            // Lấy số lượng đặt giữ hiện tại
-            int soLuongDatGiu = bienThe.getSoLuongDatGiu() != null ? bienThe.getSoLuongDatGiu() : 0;
+                int soLuongTonKho = bienThe.getSoLuongTonKho() != null ? bienThe.getSoLuongTonKho() : 0;
+                int soLuongDatGiu = bienThe.getSoLuongDatGiu() != null ? bienThe.getSoLuongDatGiu() : 0;
 
-            // Cộng lại tồn kho = tồn kho hiện tại + số lượng đặt giữ (đang hủy)
-            bienThe.setSoLuongTonKho(soLuongTonKho + ct.getSoLuongSP());
+                bienThe.setSoLuongTonKho(soLuongTonKho + ct.getSoLuongSP());
+                bienThe.setSoLuongDatGiu(Math.max(soLuongDatGiu - ct.getSoLuongSP(), 0));
 
-            // Trừ số lượng đặt giữ đi tương ứng (vì khách hủy đặt giữ này)
-            int soLuongDatGiuMoi = soLuongDatGiu - ct.getSoLuongSP();
-            bienThe.setSoLuongDatGiu(soLuongDatGiuMoi > 0 ? soLuongDatGiuMoi : 0);
+                bienTheSanPhamService.capNhatTrangThaiKho(bienThe);
+            }
 
-            bienTheSanPhamRepository.save(bienThe);
-            bienTheSanPhamService.capNhatTrangThaiKho(bienThe);
+            donHang.setTrangThaiDH(trangThaiRepository.findById(5).orElseThrow()); // Đã hủy
+
+        } else if(maTT == 2 || maTT == 3) {
+            donHang.setTrangThaiTruoc(donHang.getTrangThaiDH());
+            // Đơn đã xác nhận hoặc đang giao → yêu cầu hủy
+            donHang.setTrangThaiDH(trangThaiRepository.findById(8).orElseThrow()); // Yêu cầu hủy
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Không thể hủy đơn hàng ở trạng thái này!");
+            return "redirect:/DonHang";
         }
 
-
-        // Cập nhật trạng thái hủy và ghi chú lý do hủy
-        donHang.setTrangThaiDH(trangThaiRepository.findById(5).orElseThrow());
         donHang.setGhiChu(lyDoHuy);
-
         donHangRepository.save(donHang);
 
-        redirectAttributes.addFlashAttribute("success", "Hủy đơn hàng thành công!");
+        redirectAttributes.addFlashAttribute("success", 
+            maTT == 1 ? "Hủy đơn hàng thành công!" : "Đã gửi yêu cầu hủy đơn hàng!");
         return "redirect:/DonHang";
     }
+
 
 
 
@@ -866,7 +876,7 @@ public class HomeController {
 	        @RequestParam("hoTen") String hoTenForm,
 	        @RequestParam("soDienThoai") String soDienThoaiForm,
 	        @RequestParam("diaChi") String diaChiForm,
-	        @RequestParam("phuongThucShipping") String phuongThucShipping,
+	        @RequestParam(PHUONG_THUC_SHIPPING) String phuongThucShipping,
 	        @RequestParam(PHI_VAN_CHUYEN2) BigDecimal phiVanChuyen,
 	        @RequestParam String ngayGiaoDuKien,
 	        Model model,
@@ -1001,6 +1011,7 @@ public class HomeController {
 	    DonHangDTO donHangDTO = donHangService.layDonHangVaChiTietTheoMaDH(maDH);
 	    model.addAttribute("donHang", donHangDTO);
 		model.addAttribute("content","User/XacnhanDH.html");
+	    model.addAttribute("token", token);
 		return "User/index";
 	}
 	
@@ -1026,7 +1037,49 @@ public class HomeController {
 	        return "redirect:/danh-gia?token=" + reviewToken + "&maDH=" + maDH;
 	    }
 	}
+	
+	@PostMapping("/bao-loi")
+	public String baoLoi(
+	        @RequestParam("maDH") Integer maDH,
+	        @RequestParam(value = "maCTDH", required = false) Integer maCTDH,
+	        @RequestParam(value = "ghiChu", required = false) String ghiChu,
+	        @RequestParam(value = "files", required = false) List<MultipartFile> files,
+	        @RequestParam(value = "token", required = false) String token,
+	        RedirectAttributes redirectAttributes) {
 
+	    String safeToken = token != null ? token : "";
+
+	    try {
+	        // Gọi service lưu báo lỗi
+	        baoLoiService.baoLoi(maDH, maCTDH, ghiChu, files);
+
+	        redirectAttributes.addFlashAttribute("success",
+	                "🚩 Báo lỗi thành công! Chúng tôi sẽ xử lý sớm nhất.");
+
+	        if (maCTDH == null) {
+	            // Báo lỗi toàn đơn → về trang chủ
+	            return "redirect:/";
+	        }
+
+	        // Báo lỗi 1 sản phẩm → quay lại trang xác nhận đơn hàng với token trước maDH
+	        return "redirect:/Xac-nhan-nhan-hang?token=" + URLEncoder.encode(safeToken, StandardCharsets.UTF_8)
+	                + "&maDH=" + maDH;
+
+	    } catch (Exception e) {
+	        redirectAttributes.addFlashAttribute("error",
+	                "❌ Báo lỗi thất bại: " + e.getMessage());
+
+	        // Quay lại trang xác nhận đơn hàng với token trước maDH
+	        return "redirect:/Xac-nhan-nhan-hang?token=" + URLEncoder.encode(safeToken, StandardCharsets.UTF_8)
+	                + "&maDH=" + maDH;
+	    }
+	}
+
+
+
+
+
+	
 	@GetMapping("/danh-gia")
 	public String danhGia(@RequestParam String token,
 		    @RequestParam Integer maDH, Model model) {

@@ -41,6 +41,7 @@ public class ChiTietDonHang {
     @Column(name = "ThanhTien")
     private BigDecimal thanhTien;
 
-    @Column(name = "GhiChu")
-    private String ghiChu;
+    @Column(name = "DaBaoLoi")
+    private Boolean daBaoLoi = false;
+
 }

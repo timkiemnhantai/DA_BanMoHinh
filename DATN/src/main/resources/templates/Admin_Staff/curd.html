@@ -33,8 +33,7 @@
 				class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-10">
 				<a href="TrangCaNhan.html"
 					class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Thông
-					tin cá nhân</a> 
-				<a th:href="@{/logout}"
+					tin cá nhân</a> <a th:href="@{/logout}"
 					class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Đăng
 					xuất</a>
 			</div>
@@ -79,13 +78,29 @@
 			sec:authorize="hasAuthority('Admin')"> <img
 			src="/img/credit-card.png" alt="" />
 		</a>
+		
+		<a th:href="@{/QuanLyGiamGia}" title="Quản lý giảm giá"
+			sec:authorize="hasAnyAuthority('Admin', 'Nhân viên')"> <img
+			src="/img/coupon.png" alt="" />
+		</a>
 	</div>
 
 
 	<div th:replace="~{${content}}"></div>
+
+	<div id="confirm-modal" class="modal-overlay hidden">
+		<div class="modal-content"
+			style="background: white; padding: 24px; border-radius: 10px; max-width: 400px; text-align: center;">
+			<p id="confirm-message"></p>
+			<div class="modal-actions">
+				<button id="confirm-yes" class="btn btn-danger">Xác nhận</button>
+				<button id="confirm-no" class="btn btn-secondary">Hủy</button>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
-  <script>
+<script>
     const toggleBtn = document.getElementById('accountToggle');
     const menu = document.getElementById('accountMenu');
 
@@ -98,4 +113,22 @@
         menu.classList.add('hidden');
       }
     });
+    
+    function showConfirm(message, onConfirm) {
+  	  const modal = document.getElementById("confirm-modal");
+  	  const messageEl = document.getElementById("confirm-message");
+  	  const yesBtn = document.getElementById("confirm-yes");
+  	  const noBtn = document.getElementById("confirm-no");
+
+  	  messageEl.textContent = message;
+  	  modal.classList.remove("hidden");
+
+  	  const close = () => modal.classList.add("hidden");
+
+  	  yesBtn.onclick = () => {
+  	    close();
+  	    onConfirm();
+  	  };
+  	  noBtn.onclick = close;
+  	}
   </script>

@@ -33,6 +33,12 @@ public class DonHang {
     @JsonBackReference // tránh vòng lặp với TrangThaiDH
     private TrangThaiDH trangThaiDH;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "MaVoucher")
+    @JsonBackReference
+    private Voucher voucher;
+
+    
     @Column(name = "HoTen", nullable = false)
     private String hoTen;
 
@@ -54,6 +60,10 @@ public class DonHang {
     @Column(name = "NgayGiaoThucTe")
     private LocalDateTime ngayGiaoThucTe;
 
+    @Column(name = "NgayXacNhanNhanHang")
+    private LocalDateTime ngayXacNhanNhanHang;
+
+    
     @Column(name = "TongTienCTT")
     private BigDecimal tongTienCTT;
 
@@ -68,7 +78,13 @@ public class DonHang {
 
     @Column(name = "GhiChu")
     private String ghiChu;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "MaTTDHTruoc")
+    @JsonBackReference
+    private TrangThaiDH trangThaiTruoc;
 
+    
     @OneToMany(mappedBy = "donHang", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference // serialize chiTietDonHangs an toàn
     private List<ChiTietDonHang> chiTietDonHangs;

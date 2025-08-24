@@ -17,12 +17,12 @@ public class TokenController {
     @GetMapping("/verify-token")
     public ResponseEntity<Void> verifyToken(
             @RequestParam String token,
-            @RequestParam int maDH) {  // chỉ nhận token và maDH
-        boolean valid = tokenService.validateToken(token, maDH); // gọi validate với maDH
-
+            @RequestParam int maDH) {
+        boolean valid = tokenService.validateToken(token, maDH);
         if (valid) {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
+
 }

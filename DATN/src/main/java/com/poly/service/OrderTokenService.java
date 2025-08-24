@@ -20,14 +20,24 @@ public class OrderTokenService {
         return token;
     }
 
-    // Kiểm tra token hợp lệ, nếu hợp lệ thì xóa (chỉ dùng 1 lần)
+    // Kiểm tra token hợp lệ (còn hạn) -> KHÔNG xoá, cho phép dùng nhiều lần đến khi hết hạn
     public boolean validateToken(String token, int maThongBao) {
         String key = token + ":" + maThongBao;
         Long expireAt = tokenStore.get(key);
-        if (expireAt != null && expireAt > System.currentTimeMillis()) {
-            tokenStore.remove(key); // Xóa để token không tái sử dụng
-            return true;
+
+        if (expireAt != null) {
+            if (expireAt > System.currentTimeMillis()) {
+                return true; // còn hạn, hợp lệ
+            } else {
+                tokenStore.remove(key); // hết hạn thì xoá khỏi store
+            }
         }
         return false;
+    }
+
+    // (tuỳ chọn) dọn dẹp token hết hạn bằng tay
+    public void cleanupExpiredTokens() {
+        long now = System.currentTimeMillis();
+        tokenStore.entrySet().removeIf(entry -> entry.getValue() < now);
     }
 }

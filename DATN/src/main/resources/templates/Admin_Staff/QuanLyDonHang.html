@@ -1,4 +1,4 @@
-<!-- Admin_Staff/QuanLyDonHang.html (thay thế toàn bộ nội dung body phần quản lý đơn hàng) -->
+<!-- Admin_Staff/QuanLyDonHang.html (toàn bộ phần body quản lý đơn hàng - phiên bản đã sửa & hoàn thiện) -->
 <link rel="stylesheet" href="/css/style_QuanLyDonHang.css" />
 <meta name="_csrf" th:content="${_csrf.token}"/>
 
@@ -10,19 +10,20 @@
     <div class="tools" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:15px;">
       <div class="search" style="display:flex; gap:5px; align-items:center;">
         <input type="text" placeholder="Tìm kiếm đơn hàng..." />
-        <div class="search-right"><button><i class="fas fa-search"></i></button></div>
+        <div class="search-right"><button type="button"><i class="fas fa-search"></i></button></div>
       </div>
 
       <div class="filter" style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button data-status="Tất cả" class="btn active">Tất cả</button>
-        <button data-status="Chờ xác nhận" class="btn">Chờ xác nhận <span class="badge" id="badge-1" th:text="${countChoXN}"></span></button>
-        <button data-status="Đã xác nhận" class="btn">Đã xác nhận <span class="badge" id="badge-2" th:text="${countDaXN}"></span></button>
-        <button data-status="Đang giao hàng" class="btn">Đang giao <span class="badge" id="badge-3" th:text="${countDangGiao}"></span></button>
-        <button data-status="Đã giao hàng" class="btn">Đã giao <span class="badge" id="badge-4" th:text="${countDaGiao}"></span></button>
-        <button data-status="Giao hàng thành công" class="btn">Hoàn thành <span class="badge" id="badge-6" th:text="${countHoanThanh}"></span></button>
-        <button data-status="Yêu cầu hủy" class="btn">Yêu cầu hủy <span class="badge" id="badge-8" th:text="${countYeuCauHuy}"></span></button>
-        <button data-status="Đã hủy" class="btn">Đã hủy <span class="badge" id="badge-5" th:text="${countDaHuy}"></span></button>
-        <button data-status="Hoàn trả" class="btn">Hoàn trả <span class="badge" id="badge-7" th:text="${countHoanTra}"></span></button>
+        <button data-status="Tất cả" class="btn active" type="button">Tất cả</button>
+        <button data-status="Chờ xác nhận" class="btn" type="button">Chờ xác nhận <span class="badge" id="badge-1" th:text="${countChoXN}"></span></button>
+        <button data-status="Đã xác nhận" class="btn" type="button">Đã xác nhận <span class="badge" id="badge-2" th:text="${countDaXN}"></span></button>
+        <button data-status="Đang giao hàng" class="btn" type="button">Đang giao <span class="badge" id="badge-3" th:text="${countDangGiao}"></span></button>
+        <button data-status="Đã giao hàng" class="btn" type="button">Đã giao <span class="badge" id="badge-4" th:text="${countDaGiao}"></span></button>
+        <button data-status="Giao hàng thành công" class="btn" type="button">Hoàn thành <span class="badge" id="badge-6" th:text="${countHoanThanh}"></span></button>
+        <button data-status="Yêu cầu hủy" class="btn" type="button">Yêu cầu hủy <span class="badge" id="badge-8" th:text="${countYeuCauHuy}"></span></button>
+        <button data-status="Đã hủy" class="btn" type="button">Đã hủy <span class="badge" id="badge-5" th:text="${countDaHuy}"></span></button>
+        <button data-status="Báo lỗi" class="btn" type="button">Báo lỗi <span class="badge" id="badge-10" th:text="${countBaoLoi}"></span></button>
+        <button data-status="Hoàn trả" class="btn" type="button">Hoàn trả <span class="badge" id="badge-7" th:text="${countHoanTra}"></span></button>
       </div>
     </div>
 
@@ -53,7 +54,7 @@
             <td th:text="${dh.donHang.ghiChu != null and dh.donHang.ghiChu != '' ? dh.donHang.ghiChu : 'Không có'}"></td>
             <td th:text="${#numbers.formatDecimal(dh.donHang.thanhTien, 0, 'POINT', 0, 'COMMA')} + ' đ'"></td>
             <td><span class="status-label" th:attr="data-status-id=${dh.donHang.trangThaiDH.maTTDH}" th:text="${dh.donHang.trangThaiDH.tenTTDH}"></span></td>
-            <td class="p-2 border"><button class="btn-open-detail"><i style="font-size:24px" class="fa">&#xf06e;</i></button></td>
+            <td class="p-2 border"><button class="btn-open-detail" type="button"><i style="font-size:24px" class="fa">&#xf06e;</i></button></td>
 
             <!-- Hidden JSON payload for products (raw JSON, use th:utext to avoid escaping) -->
             <td style="display:none;padding:0;border:0;">
@@ -88,8 +89,10 @@
         </div>
 
         <div class="mt-8 flex justify-end gap-3">
-          <button id="closeModal" class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-600 font-semibold">Đóng</button>
-          <button id="confirmOrder" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">Xác nhận</button>
+          <button id="closeModal" class="px-5 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-600 font-semibold" type="button">Đóng</button>
+          <button id="rejectCancel" class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold hidden" type="button">Từ chối hủy</button>
+          <button id="reportFail" class="px-5 py-2 bg-yellow-500 text-black rounded-lg hover:bg-yellow-600 font-semibold hidden" type="button">Báo lỗi (không giao được)</button>
+          <button id="confirmOrder" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold" type="button">Xác nhận</button>
         </div>
       </div>
     </div>
@@ -97,15 +100,62 @@
     <!-- Pagination -->
     <div class="navigation">
       <div class="pagination-info">Hiển thị 1 đến 10 trong 97 kết quả</div>
-      <div class="pagination-buttons"><button>Trước</button><button>Tiếp</button></div>
+      <div class="pagination-buttons"><button type="button">Trước</button><button type="button">Tiếp</button></div>
     </div>
   </div>
 </div>
 
-<!-- ===== SCRIPTS: toàn bộ logic JS (thay thế script cũ) ===== -->
+<div id="modalBaoLoi" class="modal1" style="display:none;">
+  <div class="modal-content1" role="dialog" aria-modal="true" aria-labelledby="modalBaoLoiTitle">
+    <button type="button" class="close-bao-loi" style="float:right;border:none;background:none;font-size:20px;cursor:pointer;">&times;</button>
+    <h3 id="modalBaoLoiTitle" style="font-size:20px;margin-bottom:8px;">Báo lỗi - Không giao được</h3>
+
+    <form id="formBaoLoi" onsubmit="return submitBaoLoiForm(event);">
+      <input type="hidden" id="maDHBaoLoi" name="maDH" value="">
+
+      <label for="lyDoBaoLoi" style="display:block;margin-top:8px;font-weight:600;">Lý do (bắt buộc)</label>
+      <textarea id="lyDoBaoLoi" name="lyDoLoi" rows="5" style="width:100%;box-sizing:border-box;padding:8px;" placeholder="Ví dụ: Hết hàng, sai địa chỉ, hỏng hàng..."></textarea>
+
+      <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;">
+        <button type="button" id="cancelBaoLoi" class="btn btn-secondary">Hủy</button>
+        <button type="submit" id="submitBaoLoi" class="btn btn-danger">Gửi báo lỗi</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal hiển thị báo lỗi KH gửi về -->
+<div id="modalCustomerReports" style="display:none;">
+  <div role="dialog" aria-modal="true" aria-labelledby="modalCustomerReportsTitle"
+       style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9999;">
+    <div style="width:95%;max-width:900px;background:#fff;border-radius:12px;padding:18px;box-shadow:0 8px 30px rgba(0,0,0,.3);">
+      <button id="closeCustomerReports" style="float:right;border:none;background:none;font-size:22px;cursor:pointer;">&times;</button>
+      <h3 id="modalCustomerReportsTitle" style="margin:0 0 8px;font-size:20px;">Báo lỗi (khách hàng)</h3>
+      <div id="customerReportsContainer" style="max-height:520px;overflow:auto;padding-top:6px;"></div>
+
+      <div style="margin-top:14px;text-align:right;">
+              <button id="rejectCustomerReport" 
+                style="padding:8px 12px;border-radius:8px;border:1px solid #ccc;background:#ffe5e5;color:#d9534f;cursor:pointer;margin-right:6px;">
+          Từ chối
+        </button>
+        <!-- Nút Xác nhận -->
+        <button id="approveCustomerReport" 
+                style="padding:8px 12px;border-radius:8px;border:1px solid #ccc;background:#e6f7e6;color:#5cb85c;cursor:pointer;margin-right:6px;">
+          Xác nhận
+        </button>
+        <button id="closeCustomerReportsFooter" style="padding:8px 12px;border-radius:8px;border:1px solid #ccc;background:#f7f7f7;cursor:pointer;">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Optional styles for customer reports -->
+
+
+<!-- ===== SCRIPTS: toàn bộ logic JS (đã sửa) ===== -->
 <script>
-/* =================== Helpers =================== */
-const idToName = {1:"Chờ xác nhận",2:"Đã xác nhận",3:"Đang giao hàng",4:"Đã giao hàng",5:"Đã hủy",6:"Giao hàng thành công",7:"Hoàn trả",8:"Yêu cầu hủy"};
+/* =================== Helpers / Constants =================== */
+const idToName = {1:"Chờ xác nhận",2:"Đã xác nhận",3:"Đang giao hàng",4:"Đã giao hàng",5:"Đã hủy",6:"Giao hàng thành công",7:"Hoàn trả",8:"Yêu cầu hủy",9:"Lỗi/Không giao được",10:"Báo lỗi"};
 const nameToId = Object.entries(idToName).reduce((acc,[k,v])=>{ acc[v]=Number(k); return acc; },{});
 function formatCurrency(number){ return Number(number).toLocaleString('vi-VN') + ' đ'; }
 function applyStatusClass(el, statusIdOrName){
@@ -120,23 +170,74 @@ function applyStatusClass(el, statusIdOrName){
   else if(id===6) el.classList.add('status-success');
   else if(id===7) el.classList.add('status-returned');
   else if(id===8) el.classList.add('status-request-cancel');
+  else if(id===9) el.classList.add('status-warning');
+  else if(id===10) el.classList.add('status-request-cancel');
   if(id) el.setAttribute('data-status-id', id);
 }
 function escapeHtml(unsafe){ if(unsafe==null) return ''; return String(unsafe).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+function getCsrfToken(){ const m = document.querySelector('meta[name="_csrf"]'); return m ? (m.content || m.getAttribute('content')) : ''; }
 
-/* read products JSON from either <script.products-json> OR data-products attribute (fallback) */
+/* =================== Product normalization + compare helpers =================== */
+function normalizeProductsArray(arr){
+  return (arr || []).map(it => ({
+    maSP: it && (it.maSP !== undefined ? String(it.maSP) : (it.bienTheId !== undefined ? String(it.bienTheId) : '')),
+    tenSP: it?.tenSP || it?.tenSanPham || '',
+    phienBan: it?.phienBan || it?.phienBanSP || '',
+    anhSP: it?.anhSP || it?.hinhAnh || it?.urlAnh || it?.anh || '/img/default.png',
+    donGia: it?.donGia || it?.gia || 0,
+    soLuong: it?.soLuong || it?.soLuongSP || it?.soluong || 0,
+    thanhTien: it?.thanhTien || it?.thanh_tien || 0,
+    daBaoLoi: (it?.daBaoLoi !== undefined ? !!it.daBaoLoi : (it?.DaBaoLoi !== undefined ? !!it.DaBaoLoi : false))
+  }));
+}
+
+function productsChanged(oldArr, newArr){
+  oldArr = oldArr || [];
+  newArr = newArr || [];
+  if(oldArr.length !== newArr.length) return true;
+  const keyOf = (p) => (p && p.maSP !== undefined && p.maSP !== '') ? String(p.maSP) : JSON.stringify(p);
+  const mapOld = {};
+  oldArr.forEach(p => { mapOld[keyOf(p)] = p; });
+  for(const np of newArr){
+    const key = keyOf(np);
+    const op = mapOld[key];
+    if(!op) return true;
+    if(!!op.daBaoLoi !== !!np.daBaoLoi) return true;
+    if(Number(op.soLuong || 0) !== Number(np.soLuong || 0)) return true;
+    if(Number(op.donGia || 0) !== Number(np.donGia || 0)) return true;
+  }
+  return false;
+}
+
+function updateRowProducts(row, normalizedProducts){
+  if(!row) return;
+  row.setAttribute('data-products', JSON.stringify(normalizedProducts));
+  const anyErr = normalizedProducts.some(p => !!p.daBaoLoi);
+  const idCell = row.querySelector('td');
+  if(idCell){
+    const existing = idCell.querySelector('.issue-marker');
+    if(existing) existing.remove();
+    if(anyErr){
+      const span = document.createElement('span');
+      span.className = 'issue-marker';
+      span.style.marginLeft = '8px';
+      span.title = 'Có sản phẩm báo lỗi';
+      span.textContent = '⚠';
+      idCell.appendChild(span);
+    }
+  }
+}
+
+/* =================== Parse products JSON helper (existing rows) =================== */
 function getProductsFromRow(row){
-  // 1) script.products-json
   const scriptEl = row.querySelector('script.products-json');
   if(scriptEl){
     try { return JSON.parse(scriptEl.textContent || '[]'); }
     catch(e){ console.error('Parse products-json failed', e); }
   }
-  // 2) fallback to attribute
   const raw = row.getAttribute('data-products') || row.dataset.products || '[]';
   try { return JSON.parse(raw); }
   catch(e){
-    // try decode html-escaped JSON
     try {
       const ta = document.createElement('textarea');
       ta.innerHTML = raw;
@@ -148,15 +249,42 @@ function getProductsFromRow(row){
   }
 }
 
-/* render products into modal container */
-function renderProductsInto(container, products){
+/* =================== Render products vào modal (kèm mở modalCustomerReports khi click vào status) =================== */
+function renderProductsInto(container, products, orderStatusId, orderId) {
   container.innerHTML = '';
-  const fmt = (n) => { if(n==null) return '0'; const num=Number(n); if(Number.isNaN(num)) return String(n); return num.toLocaleString('vi-VN'); };
-  products.forEach(p=>{
+  const fallbackId = (document.getElementById('editMaDH')?.textContent || '').replace(/^DH/i,'').trim();
+  const linkOrderId = orderId || fallbackId || '';
+
+  if (orderStatusId === undefined || orderStatusId === null) {
+    const spanStatus = document.getElementById('editTrangThai');
+    orderStatusId = spanStatus ? Number(spanStatus.getAttribute('data-status-id') || spanStatus.dataset.statusId || 0) : 0;
+  } else {
+    orderStatusId = Number(orderStatusId || 0);
+  }
+  const fmt = (n) => { if(n==null) return '0'; const num = Number(n); if(Number.isNaN(num)) return String(n); return num.toLocaleString('vi-VN'); };
+  function parseBoolean(val){
+    if (val === true) return true;
+    if (val === false) return false;
+    if (val === 1 || val === '1') return true;
+    if (val === 0 || val === '0') return false;
+    if (typeof val === 'string'){
+      const v = val.trim().toLowerCase();
+      if (v === 'true' || v === 'yes' || v === 'y' || v === 'on') return true;
+      if (v === 'false' || v === 'no' || v === 'n' || v === 'off') return false;
+    }
+    const num = Number(val);
+    if (!Number.isNaN(num)) return num !== 0;
+    return false;
+  }
+
+  const shouldCheckPerProduct = (orderStatusId === 10) || products.some(p => parseBoolean(p.daBaoLoi));
+
+  products.forEach((p) => {
     let imgSrc = p.anhSP || p.img || '/img/default.png';
     if(!/^https?:\/\//i.test(imgSrc) && !imgSrc.startsWith('/')) imgSrc = '/' + imgSrc;
     const div = document.createElement('div');
     div.className = 'flex gap-5 border rounded-xl p-4 items-center bg-gray-50 shadow-sm';
+
     div.innerHTML = `
       <div class="w-20 h-20 bg-gray-100 flex items-center justify-center rounded-lg overflow-hidden">
         <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(p.tenSP||'')}" class="w-full h-full object-cover">
@@ -166,16 +294,42 @@ function renderProductsInto(container, products){
         <p class="text-sm text-gray-500">${escapeHtml(p.phienBan||'')}</p>
         <p class="text-gray-700 font-medium">${escapeHtml(p.tenSP||'')}</p>
       </div>
-      <div class="text-right min-w-[120px]">
+      <div class="text-right min-w-[120px] prod-right-col">
         <p class="font-bold text-blue-700">${fmt(p.donGia)} ₫</p>
         <p class="text-sm text-gray-500">Số lượng: ${escapeHtml(p.soLuong ?? p.soLuongSP ?? '')}</p>
       </div>
     `;
+
+    const rightCol = div.querySelector('.prod-right-col');
+
+    if (shouldCheckPerProduct) {
+      const statusP = document.createElement('p');
+      statusP.className = 'text-sm font-semibold';
+      const isBaoLoi = parseBoolean(p.daBaoLoi);
+      if (isBaoLoi) {
+        statusP.textContent = '⚠ Báo lỗi';
+        statusP.classList.add('text-red-600');
+      } else {
+        statusP.textContent = 'Hoàn thành';
+        statusP.classList.add('text-green-600');
+      }
+
+      // mở modalCustomerReports khi click
+      statusP.style.cursor = 'pointer';
+      statusP.title = 'Xem báo lỗi / báo của khách (mở)';
+      statusP.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        openCustomerReportsModal(linkOrderId);
+      });
+
+      rightCol.appendChild(statusP);
+    }
+
     container.appendChild(div);
   });
 }
 
-/* =================== Modal openers/close =================== */
+/* =================== Modal openers/close (modified to show/hide reject/report) =================== */
 function attachOpeners() {
   document.querySelectorAll('.btn-open-detail').forEach(btn=>{
     if(btn._bound) return; btn._bound = true;
@@ -188,7 +342,6 @@ function attachOpeners() {
       const confirmBtn = document.getElementById('confirmOrder');
       const editGhiChu = document.getElementById('editGhiChu');
       const editThanhTien = document.getElementById('editThanhTien');
-      const editGiamGiaThucTe = document.getElementById('editGiamGiaThucTe');
       const productsContainer = document.getElementById('editProductsContainer');
 
       spanOrderId.textContent = 'DH' + (row.getAttribute('data-id') || '');
@@ -196,6 +349,21 @@ function attachOpeners() {
       const statusLabel = row.querySelector('.status-label');
       spanStatus.textContent = statusLabel ? statusLabel.textContent.trim() : '';
       applyStatusClass(spanStatus, statusLabel ? Number(statusLabel.dataset.statusId) : 0);
+
+      // show/hide nút Từ chối hủy theo trạng thái
+      const rejectBtn = document.getElementById('rejectCancel');
+      if(rejectBtn){
+        const isRequestCancel = statusLabel && Number(statusLabel.dataset.statusId) === 8;
+        if(isRequestCancel) rejectBtn.classList.remove('hidden');
+        else rejectBtn.classList.add('hidden');
+      }
+      // show/hide nút Báo lỗi theo trạng thái (hiện khi Chờ xác nhận = 1)
+      const reportBtn = document.getElementById('reportFail');
+      if (reportBtn) {
+        const isWaitingConfirm = statusLabel && Number(statusLabel.dataset.statusId) === 1;
+        if (isWaitingConfirm) reportBtn.classList.remove('hidden');
+        else reportBtn.classList.add('hidden');
+      }
 
       if(confirmBtn){
         confirmBtn.disabled = false;
@@ -207,10 +375,38 @@ function attachOpeners() {
 
       if(editGhiChu) editGhiChu.textContent = row.children[5]?.textContent || 'Không có';
       if(editThanhTien) editThanhTien.textContent = row.children[6]?.textContent || '0 đ';
-      if(editGiamGiaThucTe) editGiamGiaThucTe.textContent = row.getAttribute('data-giamgia') || '0 đ';
 
-      const products = getProductsFromRow(row) || [];
-      renderProductsInto(productsContainer, products);
+      // use cache if exists
+      const rawProducts = getProductsFromRow(row) || [];
+      const statusId = statusLabel ? Number(statusLabel.dataset.statusId || statusLabel.getAttribute('data-status-id') || 0) : 0;
+
+      if (rawProducts.length > 0) {
+        const normalized = normalizeProductsArray(rawProducts);
+        const orderId = row.getAttribute('data-id') || row.dataset.id || '';
+        renderProductsInto(productsContainer, normalized, statusId, orderId);
+
+      } else {
+        const orderId = parseInt((row.getAttribute('data-id') || '').toString());
+        if (!isNaN(orderId)) {
+          productsContainer.innerHTML = '<div class="p-4 text-center">Đang tải...</div>';
+          fetch(`/don-hang/${orderId}/chi-tiet`)
+            .then(res => { if (!res.ok) throw new Error('Không lấy được chi tiết'); return res.json(); })
+            .then(items => {
+              const normalized = normalizeProductsArray(items);
+              // <-- truyền orderId để statusP biết order khi click -->
+              const orderIdStr = row.getAttribute('data-id') || row.dataset.id || '';
+              renderProductsInto(productsContainer, normalized, statusId, orderIdStr);
+              // cache on row for next open
+              row.setAttribute('data-products', JSON.stringify(normalized));
+            })
+            .catch(err => {
+              console.error('Lỗi lấy chi tiết đơn', err);
+              productsContainer.innerHTML = '<div class="p-4 text-center text-red-600">Không tải được chi tiết</div>';
+            });
+        } else {
+          renderProductsInto(productsContainer, [], statusId);
+        }
+      }
 
       modal.classList.remove('hidden'); modal.classList.add('flex');
     });
@@ -224,42 +420,111 @@ function attachCloseModal(){
   modal?.addEventListener('click', (e)=>{ if(e.target === modal){ modal.classList.add('hidden'); modal.classList.remove('flex'); } });
 }
 
-/* =================== Fetch latest orders (API) =================== */
+/* =================== Fetch latest orders (API) - cập nhật daBaoLoi nếu thay đổi =================== */
 let latestOrderId = 0;
+const orderStatusMap = {};
+
 function fetchLatestOrders(){
-  fetch(`/don-hang/latest?afterId=${latestOrderId}`)
-    .then(res => res.json())
-    .then(data => {
+  fetch('/don-hang/latest?afterId=0')
+    .then(res => {
+      if(!res.ok) throw new Error('Không lấy được danh sách mới');
+      return res.json();
+    })
+    .then(async data => {
       if(!data || data.length===0) return;
       const tbody = document.querySelector('tbody');
-      data.forEach(dh=>{
-        if(document.querySelector(`tbody tr[data-id="${dh.maDH}"]`)) return;
-        const tr = document.createElement('tr');
-        tr.dataset.id = dh.maDH;
-        tr.dataset.giamgia = dh.giamGiaThucTe || '0 đ';
-        // put products into data-products (fallback). Server-rendered rows use <script.products-json>
-        tr.setAttribute('data-products', JSON.stringify(dh.sanPham || []));
+      const modal = document.getElementById('editModal');
 
-        const phuongThuc = dh.phuongThucVanChuyen==='NHANH'?'Nhanh': dh.phuongThucVanChuyen==='THUONG'?'Thường': dh.phuongThucVanChuyen==='SIEU_TOC'?'Hỏa tốc':'Không xác định';
+      for(const dh of data){
+        const rawFromLatest = dh.sanPham || dh.products || [];
+        const hasDaBaoLoiFlag = rawFromLatest.some(p => p && (
+          Object.prototype.hasOwnProperty.call(p,'daBaoLoi') ||
+          Object.prototype.hasOwnProperty.call(p,'DaBaoLoi') ||
+          Object.prototype.hasOwnProperty.call(p,'da_bao_loi')
+        ));
 
-        tr.innerHTML = `
-          <td>DH${dh.maDH}</td>
-          <td>${escapeHtml(dh.hoTen || '')}</td>
-          <td>${escapeHtml(dh.diaChiGiaoHang || '')}</td>
-          <td>${escapeHtml(dh.soDienThoai || '')}</td>
-          <td>${escapeHtml(phuongThuc)}</td>
-          <td>${escapeHtml(dh.ghiChu || 'Không có')}</td>
-          <td>${formatCurrency(dh.thanhTien)}</td>
-          <td><span class="status-label" data-status-id="${dh.trangThaiId}">${escapeHtml(dh.tenTrangThai || '')}</span></td>
-          <td class="p-2 border"><button class="btn-open-detail"><i class="fa" style="font-size:24px">&#xf06e;</i></button></td>
-        `;
-        tbody.prepend(tr);
-        applyStatusClass(tr.querySelector('.status-label'), dh.trangThaiId || dh.tenTrangThai);
-        if(dh.maDH > latestOrderId) latestOrderId = dh.maDH;
-      });
-      // re-attach openers for newly added rows
-      attachOpeners();
-      // update badges counts
+        let newProducts = normalizeProductsArray(rawFromLatest);
+
+        if(!hasDaBaoLoiFlag && (newProducts.length > 0 || Number(dh.trangThaiId) === 9 || Number(dh.trangThaiId) === 10)){
+          try {
+            const detailRes = await fetch(`/don-hang/${dh.maDH}/chi-tiet`);
+            if(detailRes.ok){
+              const detailItems = await detailRes.json().catch(()=>null);
+              if(Array.isArray(detailItems)){
+                newProducts = normalizeProductsArray(detailItems);
+              }
+            } else {
+              console.warn('Không lấy được chi tiết cho DH' + dh.maDH, detailRes.status);
+            }
+          } catch(err){
+            console.error('Lỗi fetch chi-tiet cho DH' + dh.maDH, err);
+          }
+        }
+
+        const row = document.querySelector(`tbody tr[data-id="${dh.maDH}"]`);
+
+        if(row){
+          const label = row.querySelector('.status-label');
+          const oldStatus = Number(label?.dataset.statusId || 0);
+          if(oldStatus !== (dh.trangThaiId || 0)){
+            if(label){
+              label.textContent = dh.tenTrangThai || label.textContent;
+              applyStatusClass(label, dh.trangThaiId || 0);
+            }
+          }
+
+          const cellGhiChu = row.children[5];
+          const newGhiChu = (dh.ghiChu !== undefined && dh.ghiChu !== null) ? String(dh.ghiChu).trim() : '';
+          const oldGhiChu = cellGhiChu ? String(cellGhiChu.textContent || '').trim() : '';
+          if(cellGhiChu && (newGhiChu !== '' ? newGhiChu !== oldGhiChu : oldGhiChu !== 'Không có')){
+            cellGhiChu.textContent = newGhiChu || 'Không có';
+          }
+
+          let oldProducts = [];
+          try { oldProducts = normalizeProductsArray(getProductsFromRow(row)); } catch(e){ oldProducts = []; }
+
+          if(newProducts.length > 0 && productsChanged(oldProducts, newProducts)){
+            updateRowProducts(row, newProducts);
+
+            if(modal && modal.classList.contains('flex')){
+              const currentModalIdText = document.getElementById('editMaDH')?.textContent || '';
+              const modalOrderId = parseInt(currentModalIdText.replace('DH','').trim() || '0');
+              if(modalOrderId === dh.maDH){
+                const productsContainer = document.getElementById('editProductsContainer');
+                const spanStatus = document.getElementById('editTrangThai');
+                const statusId = spanStatus ? Number(spanStatus.getAttribute('data-status-id') || spanStatus.dataset.statusId || 0) : (dh.trangThaiId || 0);
+                renderProductsInto(productsContainer, newProducts, statusId, modalOrderId);
+              }
+            }
+          }
+
+          if (dh.thanhTien !== undefined && row.children[6]) {
+            row.children[6].textContent = formatCurrency(dh.thanhTien);
+          }
+        } else {
+          const tr = document.createElement('tr');
+          tr.dataset.id = dh.maDH;
+          tr.dataset.giamgia = dh.giamGiaThucTe || '0 đ';
+          tr.setAttribute('data-products', JSON.stringify(newProducts));
+          const phuongThuc = dh.phuongThucVanChuyen==='NHANH'?'Nhanh': dh.phuongThucVanChuyen==='THUONG'?'Thường': dh.phuongThucVanChuyen==='SIEU_TOC'?'Hỏa tốc':'Không xác định';
+          tr.innerHTML = `
+            <td>DH${dh.maDH}</td>
+            <td>${escapeHtml(dh.hoTen || '')}</td>
+            <td>${escapeHtml(dh.diaChiGiaoHang || '')}</td>
+            <td>${escapeHtml(dh.soDienThoai || '')}</td>
+            <td>${escapeHtml(phuongThuc)}</td>
+            <td>${escapeHtml(dh.ghiChu || 'Không có')}</td>
+            <td>${formatCurrency(dh.thanhTien)}</td>
+            <td><span class="status-label" data-status-id="${dh.trangThaiId}">${escapeHtml(dh.tenTrangThai || '')}</span></td>
+            <td class="p-2 border"><button class="btn-open-detail" type="button"><i class="fa" style="font-size:24px">&#xf06e;</i></button></td>
+          `;
+          tbody.prepend(tr);
+          applyStatusClass(tr.querySelector('.status-label'), dh.trangThaiId);
+          attachOpeners();
+          updateRowProducts(tr, newProducts);
+        }
+      }
+
       updateBadges();
     })
     .catch(err => console.error('fetchLatestOrders error', err));
@@ -269,29 +534,24 @@ function fetchLatestOrders(){
 function attachConfirmOrder(){
   const confirmBtn = document.getElementById('confirmOrder');
   if(!confirmBtn) return;
+  if(confirmBtn._bound) return; confirmBtn._bound = true;
   confirmBtn.addEventListener('click', ()=>{
     const orderIdText = document.getElementById('editMaDH').textContent;
     if(!orderIdText) return;
     const orderId = parseInt(orderIdText.replace('DH','').trim());
     if(!orderId) return;
+
     fetch(`/don-hang/${orderId}/update-status`,{
       method:'POST',
       headers:{
         'Content-Type':'application/x-www-form-urlencoded',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+        'X-CSRF-TOKEN': getCsrfToken()
       },
-      body: new URLSearchParams({ yeuCauHuy: false })
+      body: new URLSearchParams({ yeuCauHuy: 'false' }).toString()
     })
     .then(res=>res.json())
     .then(data=>{
-      const spanStatus = document.getElementById('editTrangThai');
-      if(spanStatus){ spanStatus.textContent = data.newStatus; applyStatusClass(spanStatus, Number(data.newStatusId)); }
-      const row = document.querySelector(`tbody tr[data-id="${orderId}"]`);
-      if(row){
-        const label = row.querySelector('.status-label');
-        if(label){ label.textContent = data.newStatus; applyStatusClass(label, Number(data.newStatusId)); }
-      }
-      // update confirmBtn text
+      applyServerResponseToUI(orderId, data);
       if(confirmBtn){
         if(data.newStatus === "Chờ xác nhận") confirmBtn.textContent = "Xác nhận đơn hàng";
         else if(data.newStatus === "Đã xác nhận") confirmBtn.textContent = "Bắt đầu giao hàng";
@@ -300,11 +560,369 @@ function attachConfirmOrder(){
       }
       updateBadges();
     })
-    .catch(console.error);
+    .catch(err=>{
+      console.error('Lỗi khi update trạng thái', err);
+    });
   });
 }
 
-/* update badge counts by scanning table */
+/* =================== Apply server response helper for reject/confirm/report (UI update) =================== */
+function applyServerResponseToUI(orderId, data){
+  const spanStatus = document.getElementById('editTrangThai');
+  if (spanStatus) {
+    spanStatus.textContent = data.newStatus || spanStatus.textContent;
+    applyStatusClass(spanStatus, Number(data.newStatusId) || Number(spanStatus.dataset.statusId || 0));
+  }
+  const editGhiChu = document.getElementById('editGhiChu');
+  if (editGhiChu && data.ghiChu !== undefined) editGhiChu.textContent = data.ghiChu || 'Không có';
+  const editThanhTien = document.getElementById('editThanhTien');
+  if (editThanhTien && data.thanhTien !== undefined) editThanhTien.textContent = formatCurrency(data.thanhTien);
+  const row = document.querySelector(`tbody tr[data-id="${orderId}"]`);
+  if (row) {
+    const label = row.querySelector('.status-label');
+    if (label) {
+      label.textContent = data.newStatus || label.textContent;
+      applyStatusClass(label, Number(data.newStatusId) || Number(label.dataset.statusId || 0));
+    }
+    if (data.ghiChu !== undefined) {
+      const cellGhiChu = row.children[5];
+      if (cellGhiChu) cellGhiChu.textContent = data.ghiChu || 'Không có';
+    }
+    if (data.thanhTien !== undefined) row.children[6].textContent = formatCurrency(data.thanhTien);
+  }
+  const rejectBtn = document.getElementById('rejectCancel');
+  if (rejectBtn) {
+    if (Number(data.newStatusId) === 8) rejectBtn.classList.remove('hidden');
+    else rejectBtn.classList.add('hidden');
+  }
+  const reportBtn = document.getElementById('reportFail');
+  if (reportBtn) {
+    if (Number(data.newStatusId) === 1) reportBtn.classList.remove('hidden');
+    else reportBtn.classList.add('hidden');
+  }
+  updateBadges();
+}
+
+/* =================== Attach handler cho nút "Từ chối hủy" =================== */
+function attachRejectCancel() {
+  const rejectBtn = document.getElementById('rejectCancel');
+  if (!rejectBtn) return;
+  if (rejectBtn._bound) return;
+  rejectBtn._bound = true;
+
+  rejectBtn.addEventListener('click', () => {
+    const orderIdText = document.getElementById('editMaDH')?.textContent || '';
+    if (!orderIdText) return;
+    const orderId = parseInt(orderIdText.replace('DH', '').trim());
+    if (!orderId) return;
+
+    // ✅ Dùng showConfirm thay cho window.confirm
+    showConfirm("Bạn chắc chắn muốn TỪ CHỐI yêu cầu hủy đơn này?", () => {
+      rejectBtn.disabled = true;
+
+      fetch(`/don-hang/${orderId}/update-status`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-CSRF-TOKEN': getCsrfToken()
+        },
+        body: new URLSearchParams({ tuChoiHuy: 'true' }).toString()
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('Lỗi server');
+        return res.json().catch(() => ({}));
+      })
+      .then(data => {
+        if (!data || !data.newStatus) {
+          console.warn('Server không trả JSON đầy đủ. Hãy kiểm tra backend hoặc bật reload.');
+        } else {
+          applyServerResponseToUI(orderId, data);
+        }
+      })
+      .catch(err => {
+        console.error('Lỗi khi từ chối yêu cầu hủy', err);
+        alert('Có lỗi xảy ra khi gửi yêu cầu. Kiểm tra console.');
+      })
+      .finally(() => {
+        rejectBtn.disabled = false;
+      });
+    });
+  });
+}
+
+
+/* =================== Báo lỗi (không giao được) - modal form handlers (gửi /bao-loi) =================== */
+const modalBaoLoi = document.getElementById('modalBaoLoi');
+const maDHBaoLoiInput = document.getElementById('maDHBaoLoi');
+const lyDoBaoLoiInput = document.getElementById('lyDoBaoLoi');
+const closeBaoLoiBtn = document.querySelector('.close-bao-loi');
+const cancelBaoLoiBtn = document.getElementById('cancelBaoLoi');
+const submitBaoLoiBtn = document.getElementById('submitBaoLoi');
+
+function openBaoLoiModalForCurrentOrder(orderId){
+  if(!modalBaoLoi) return;
+  maDHBaoLoiInput.value = orderId;
+  lyDoBaoLoiInput.value = '';
+  modalBaoLoi.style.display = 'block';
+  lyDoBaoLoiInput.focus();
+}
+function closeBaoLoiModal(){ if(!modalBaoLoi) return; modalBaoLoi.style.display = 'none'; }
+
+window.addEventListener('click', function(e){ if(e.target === modalBaoLoi) closeBaoLoiModal(); });
+closeBaoLoiBtn?.addEventListener('click', closeBaoLoiModal);
+cancelBaoLoiBtn?.addEventListener('click', closeBaoLoiModal);
+
+async function submitBaoLoiForm(e){
+  e.preventDefault();
+  const maDHRaw = (maDHBaoLoiInput.value || '').toString();
+  const maDH = maDHRaw.replace(/^DH/i,'').trim();
+  const lyDo = (lyDoBaoLoiInput.value || '').trim();
+  if(!lyDo){ alert('Vui lòng nhập lý do báo lỗi (bắt buộc).'); lyDoBaoLoiInput.focus(); return false; }
+  submitBaoLoiBtn.disabled = true;
+
+  try{
+    const body = new URLSearchParams({
+      baoLoi: 'true',
+      lyDoLoi: lyDo
+    }).toString();
+
+    const res = await fetch(`/don-hang/${maDH}/update-status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRF-TOKEN': getCsrfToken()
+      },
+      body: body
+    });
+
+    if(!res.ok){
+      console.error('update-status trả lỗi', res.status, await res.text().catch(()=>'(no body)'));
+      alert('Có lỗi khi gửi báo lỗi. Kiểm tra console / network.');
+      return false;
+    }
+
+    const data = await res.json().catch(()=>null);
+    if(data){
+      applyServerResponseToUI(Number(maDH), data);
+
+      const itemsRes = await fetch(`/don-hang/${maDH}/chi-tiet`);
+      if(itemsRes.ok){
+        const items = await itemsRes.json().catch(()=>null);
+        if(items){
+          const normalized = normalizeProductsArray(items);
+          const productsContainer = document.getElementById('editProductsContainer');
+          if (productsContainer) renderProductsInto(productsContainer, normalized, Number(data.newStatusId) || 10, maDH);
+          const row = document.querySelector(`tbody tr[data-id="${maDH}"]`);
+          if(row){
+            const cellGhiChu = row.children[5];
+            if(cellGhiChu) cellGhiChu.textContent = lyDo || 'Không có';
+            updateRowProducts(row, normalized);
+          }
+        }
+      }
+
+      updateBadges();
+    } else {
+      console.warn('update-status không trả JSON như mong đợi.');
+    }
+
+    closeBaoLoiModal();
+  } catch(err){
+    console.error('Lỗi khi gửi báo lỗi', err);
+    alert('Có lỗi khi gửi báo lỗi. Kiểm tra console.');
+  } finally {
+    submitBaoLoiBtn.disabled = false;
+  }
+  return false;
+}
+
+function attachReportFailForm() {
+  const reportBtn = document.getElementById('reportFail');
+  if(!reportBtn) return;
+  if(reportBtn._bound) return; reportBtn._bound = true;
+  reportBtn.addEventListener('click', ()=>{
+    const orderIdText = document.getElementById('editMaDH')?.textContent || '';
+    if(!orderIdText) return;
+    const orderId = orderIdText.replace('DH','').trim();
+    openBaoLoiModalForCurrentOrder(orderId);
+  });
+}
+
+/* =================== Row-level report buttons (optional) =================== */
+function attachRowReportButtons(){
+  document.querySelectorAll('.btn-bao-loi').forEach(btn=>{
+    if(btn._bound) return; btn._bound = true;
+    btn.addEventListener('click', function(){
+      const ma = this.getAttribute('data-madh') || this.dataset.madh;
+      if(!ma) return;
+      openBaoLoiModalForCurrentOrder(ma);
+    });
+  });
+}
+
+/* =================== Customer reports (KH gửi về) - modal handlers & renderer =================== */
+document.getElementById('closeCustomerReports')?.addEventListener('click', ()=>{ document.getElementById('modalCustomerReports').style.display='none'; });
+document.getElementById('closeCustomerReportsFooter')?.addEventListener('click', ()=>{ document.getElementById('modalCustomerReports').style.display='none'; });
+window.addEventListener('click', function(e){ if(e.target === document.getElementById('modalCustomerReports')){ document.getElementById('modalCustomerReports').style.display='none'; } });
+
+async function openCustomerReportsModal(orderId){
+  if(!orderId) return;
+  const modal = document.getElementById('modalCustomerReports');
+  const container = document.getElementById('customerReportsContainer');
+  if(!modal || !container) return;
+  container.innerHTML = '<div style="padding:18px;text-align:center;color:#666;">Đang tải báo lỗi...</div>';
+  modal.style.display = 'block';
+
+  const id = String(orderId).replace(/^DH/i,'').trim();
+  const candidates = [
+    `/bao-loi?maDH=${encodeURIComponent(id)}`,
+    `/don-hang/${encodeURIComponent(id)}/bao-loi`,
+    `/don-hang/${encodeURIComponent(id)}/bao-loi-list`
+  ];
+
+  let data = null;
+  for(const url of candidates){
+    try{
+      const res = await fetch(url);
+      if(!res.ok) continue;
+      const json = await res.json().catch(()=>null);
+      if(Array.isArray(json)){ data = json; break; }
+      if(json && Array.isArray(json.items)){ data = json.items; break; }
+    }catch(e){
+      console.warn('fetch bao-loi candidate failed', url, e);
+    }
+  }
+
+  if(!data){
+    container.innerHTML = '<div style="padding:18px;text-align:center;color:#c33;">Không tìm thấy báo lỗi cho đơn này hoặc endpoint khác. Kiểm tra backend.</div>';
+    return;
+  }
+
+  renderCustomerReports(container, data, id);
+}
+
+function renderCustomerReports(container, items, orderId){
+  container.innerHTML = '';
+  if(!Array.isArray(items) || items.length===0){
+    container.innerHTML = '<div style="padding:16px;color:#666;">Chưa có báo lỗi từ khách cho đơn này.</div>';
+    return;
+  }
+
+  items.forEach(item=>{
+    const card = document.createElement('div');
+    card.className = 'report-card';
+    card.style.display = 'flex'; card.style.gap = '12px'; card.style.alignItems='flex-start';
+
+    const left = document.createElement('div');
+    left.style.minWidth = '120px';
+    left.style.maxWidth = '140px';
+    left.style.display = 'flex';
+    left.style.flexDirection = 'column';
+    left.style.gap = '6px';
+
+    const mediaWrap = document.createElement('div');
+    mediaWrap.style.display = 'flex';
+    mediaWrap.style.gap = '6px';
+    mediaWrap.style.flexWrap = 'wrap';
+
+    const mediaList = item.media || item.BaoLoiMedia || item.mediaList || [];
+    if(mediaList.length === 0){
+      const ph = document.createElement('div');
+      ph.className = 'media-thumb';
+      ph.style.width='110px'; ph.style.height='70px'; ph.style.display='flex'; ph.style.alignItems='center'; ph.style.justifyContent='center';
+      ph.style.border='1px solid #ddd'; ph.style.borderRadius='6px'; ph.style.color='#777'; ph.textContent='(không có media)';
+      mediaWrap.appendChild(ph);
+    } else {
+      mediaList.forEach(m=>{
+        const src = (m.Url || m.url || m.urlMedia || '').toString();
+        const thumb = document.createElement('div');
+        thumb.className = 'media-thumb';
+        thumb.style.width='110px'; thumb.style.height='70px'; thumb.style.overflow='hidden'; thumb.style.border='1px solid #ddd'; thumb.style.borderRadius='6px'; thumb.style.cursor='pointer';
+        if((m.Loai||m.loai||'').toLowerCase() === 'video' || /\.mp4$/i.test(src)){
+          const v = document.createElement('video');
+          v.src = src; v.muted = true; v.playsInline = true; v.style.width='100%'; v.style.height='100%'; v.style.objectFit='cover';
+          thumb.appendChild(v);
+        } else {
+          const img = document.createElement('img');
+          img.src = src || '/img/default.png';
+          img.alt = 'media'; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
+          thumb.appendChild(img);
+        }
+        thumb.addEventListener('click', ()=> window.open(src, '_blank'));
+        mediaWrap.appendChild(thumb);
+      });
+    }
+
+    left.appendChild(mediaWrap);
+
+    const right = document.createElement('div');
+    right.style.flex = '1';
+    const meta = document.createElement('div');
+    meta.className = 'report-meta';
+    meta.innerHTML = `<strong>MaBaoLoi:</strong> ${escapeHtml(item.MaBaoLoi||item.maBaoLoi||'')}
+                      &nbsp; <strong>MaCTDH:</strong> ${escapeHtml(item.MaCTDH||item.maCTdh||'')}
+                      &nbsp; <strong>Người báo:</strong> ${escapeHtml(item.MaTK||item.reporter||'')}
+                      &nbsp; <strong>Ngày:</strong> ${escapeHtml(item.NgayBao||item.ngayBao||'')}`;
+
+    const note = document.createElement('div');
+    note.style.whiteSpace='pre-wrap';
+    note.style.color='#222';
+    note.textContent = item.GhiChu || item.ghiChu || item.note || '(không có ghi chú)';
+
+    const actions = document.createElement('div');
+    actions.className = 'report-actions';
+
+    const select = document.createElement('select');
+    select.className = 'report-status-select';
+    select.innerHTML = `<option value="0">0 - Chưa xử lý</option>
+                        <option value="1">1 - Đang xử lý</option>
+                        <option value="2">2 - Đã xử lý</option>`;
+    select.value = String(item.TrangThai ?? item.trangThai ?? 0);
+
+    const updateBtn = document.createElement('button');
+    updateBtn.className = 'btn-update-status';
+    updateBtn.textContent = 'Cập nhật trạng thái';
+    updateBtn.style.padding='6px 10px';
+
+    updateBtn.addEventListener('click', async ()=>{
+      updateBtn.disabled = true;
+      const newStatus = select.value;
+      const id = item.MaBaoLoi || item.maBaoLoi || item.id;
+      if(!id){ alert('Không xác định MaBaoLoi'); updateBtn.disabled=false; return; }
+      try{
+        const res = await fetch(`/bao-loi/${encodeURIComponent(id)}/update-status`, {
+          method:'POST',
+          headers:{ 'Content-Type':'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': getCsrfToken() },
+          body: new URLSearchParams({ trangThai: newStatus }).toString()
+        });
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        item.TrangThai = Number(newStatus);
+        updateBtn.textContent = 'Đã cập nhật';
+        setTimeout(()=> updateBtn.textContent = 'Cập nhật trạng thái', 1300);
+        const row = document.querySelector(`tbody tr[data-id="${orderId}"]`);
+        if(row){
+          updateRowProducts(row, normalizeProductsArray(getProductsFromRow(row)));
+        }
+      }catch(err){
+        console.error('Lỗi cập nhật báo lỗi', err);
+        alert('Lỗi khi cập nhật trạng thái. Xem console/network.');
+      } finally { updateBtn.disabled=false; }
+    });
+
+    actions.appendChild(select);
+    actions.appendChild(updateBtn);
+
+    right.appendChild(meta);
+    right.appendChild(note);
+    right.appendChild(actions);
+
+    card.appendChild(left);
+    card.appendChild(right);
+    container.appendChild(card);
+  });
+}
+
+/* =================== Badges / Filter / Pagination =================== */
 function updateBadges(){
   const badgeMap = {
     "Chờ xác nhận":"badge-1",
@@ -314,28 +932,22 @@ function updateBadges(){
     "Giao hàng thành công":"badge-6",
     "Yêu cầu hủy":"badge-8",
     "Đã hủy":"badge-5",
-    "Hoàn trả":"badge-7"
+    "Hoàn trả":"badge-7",
+    "Báo lỗi":"badge-10"
   };
-  
   Object.entries(badgeMap).forEach(([status,id])=>{
     const count = Array.from(document.querySelectorAll('tbody tr .status-label'))
                   .filter(l=>l.textContent.trim()===status).length;
     const badgeEl = document.getElementById(id);
     if(badgeEl){
-      if(count > 0){
-        badgeEl.textContent = count;
-        badgeEl.style.display = "inline-block"; // hiện
-      } else {
-        badgeEl.textContent = ""; 
-        badgeEl.style.display = "none"; // ẩn
-      }
+      if(count > 0){ badgeEl.textContent = count; badgeEl.style.display = "inline-block"; }
+      else { badgeEl.textContent = ""; badgeEl.style.display = "none"; }
     }
   });
 }
 
-/* =================== Filter / Pagination / Search =================== */
+/* =================== Init on DOM ready =================== */
 document.addEventListener('DOMContentLoaded', ()=>{
-  // apply status class on server-rendered labels
   document.querySelectorAll('.status-label').forEach(el=>{
     const sid = el.getAttribute('data-status-id'); applyStatusClass(el, sid?Number(sid):el.textContent);
   });
@@ -343,10 +955,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
   attachOpeners();
   attachCloseModal();
   attachConfirmOrder();
+  attachRejectCancel();
+  attachReportFailForm();
+  attachRowReportButtons();
   fetchLatestOrders();
   setInterval(fetchLatestOrders, 5000);
 
-  // UI controls
   const searchInput = document.querySelector(".search input");
   const searchBtn = document.querySelector(".search-right button");
   const filterButtons = document.querySelectorAll(".filter .btn");
@@ -363,20 +977,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
     orderRows = Array.from(document.querySelectorAll("tbody tr"));
     const start=(page-1)*itemsPerPage; const end=start+itemsPerPage;
     filteredRows.forEach((row,idx)=>{ row.style.display=(idx>=start&&idx<end)?'':'none'; });
-    if(paginationInfo) paginationInfo.textContent=`Hiển thị ${filteredRows.length===0?0:start+1} đến ${Math.min(end,filteredRows.length)} trong ${filteredRows.length} kết quả`;
+    if(paginationInfo) paginationInfo.textContent = `Hiển thị ${filteredRows.length===0?0:start+1} đến ${Math.min(end,filteredRows.length)} trong ${filteredRows.length} kết quả`;
   }
 
   function filterOrders(){
     const searchValue=(searchInput?.value||'').toLowerCase();
     orderRows = Array.from(document.querySelectorAll('tbody tr'));
     filteredRows = orderRows.filter(row=>{
-      // prefer reading from status-label rather than relying on td index
       const orderId = (row.querySelector('td')?.textContent||'').toLowerCase();
       const customerName = (row.children[1]?.textContent||'').toLowerCase();
       const address = (row.children[2]?.textContent||'').toLowerCase();
       const note = (row.children[5]?.textContent||'').toLowerCase();
       const statusText = (row.querySelector('.status-label')?.textContent||'').trim();
-
       const matchesSearch = orderId.includes(searchValue) || customerName.includes(searchValue) || address.includes(searchValue) || note.includes(searchValue);
       const matchesStatus = currentStatus === "Tất cả" || statusText.includes(currentStatus);
       return matchesSearch && matchesStatus;
@@ -386,25 +998,198 @@ document.addEventListener('DOMContentLoaded', ()=>{
     renderPage(currentPage);
   }
 
-  // events
   searchBtn?.addEventListener('click', filterOrders);
   searchInput?.addEventListener('input', filterOrders);
-  filterButtons.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      filterButtons.forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      currentStatus = btn.getAttribute('data-status') || 'Tất cả';
-      filterOrders();
-    });
-  });
+  filterButtons.forEach(btn=>{ btn.addEventListener('click', ()=>{ filterButtons.forEach(b=>b.classList.remove('active')); btn.classList.add('active'); currentStatus = btn.getAttribute('data-status') || 'Tất cả'; filterOrders(); }); });
   if(paginationButtons.length>=2){
     paginationButtons[0].addEventListener('click', ()=>{ if(currentPage>1){ currentPage--; renderPage(currentPage); } });
     paginationButtons[1].addEventListener('click', ()=>{ if(currentPage<Math.max(1,Math.ceil(filteredRows.length/itemsPerPage))){ currentPage++; renderPage(currentPage); } });
   }
 
-  // initial render
   orderRows = Array.from(document.querySelectorAll("tbody tr"));
   filteredRows = orderRows.slice();
   renderPage(currentPage);
 });
+async function openCustomerReportsModal(orderId) {
+	  if(!orderId) { alert('Không có mã đơn hàng'); return; }
+	  const container = document.getElementById('customerReportsContainer');
+	  const modalWrap = document.getElementById('modalCustomerReports');
+	  if(!container || !modalWrap) return;
+	  container.innerHTML = '<div style="padding:12px;text-align:center;">Đang tải báo lỗi...</div>';
+	  container.dataset.orderId = String(orderId);
+	  modalWrap.style.display = 'block';
+
+	  try {
+	    const res = await fetch(`/don-hang/${encodeURIComponent(orderId)}/bao-loi`, { method: 'GET' });
+	    if(!res.ok) throw new Error('Lỗi fetch: ' + res.status);
+	    const data = await res.json();
+	    if(!Array.isArray(data) || data.length === 0){
+	      container.innerHTML = '<div style="padding:12px;text-align:center;color:#666;">Không tìm thấy báo lỗi cho đơn này.</div>';
+	      return;
+	    }
+
+	    // status map: 0 -> Chờ xử lý, 1 -> Đã xác nhận, 2 -> Đã hủy
+	    const statusMap = { '0': 'Chờ xử lý', '1': 'Đã xác nhận', '2': 'Đã hủy' };
+
+	    const html = data.map(b => {
+	      const medias = (b.media || []).map(m => {
+	        if((m.loai||'').toString().toLowerCase().startsWith('video') || /\.mp4$/i.test(m.url||'')) {
+	          return `<div style="margin-right:8px;"><a target="_blank" href="${escapeHtml(m.url)}">▶ Video</a></div>`;
+	        }
+	        return `<div style="display:inline-block;margin:4px"><a target="_blank" href="${escapeHtml(m.url)}"><img src="${escapeHtml(m.url)}" alt="img" style="height:80px;border-radius:6px;object-fit:cover"></a></div>`;
+	      }).join('');
+
+	      const statusVal = (b.trangThai == null) ? '' : String(b.trangThai);
+	      const statusText = (statusVal === '' ? '—' : (statusMap[statusVal] || escapeHtml(statusVal)));
+
+	      return `
+	        <div class="report-card" data-ma-baoloi="${escapeHtml(String(b.maBaoLoi ?? b.MaBaoLoi ?? ''))}" data-ghi-chu="${escapeHtml(String(b.ghiChu ?? b.GhiChu ?? ''))}" style="border-bottom:1px solid #eee;padding:10px 6px;display:flex;gap:12px;align-items:flex-start;">
+	          <div style="flex:1;">
+	            <div style="font-weight:600;margin-bottom:6px">Báo lỗi #${escapeHtml(String(b.maBaoLoi ?? b.MaBaoLoi ?? ''))} ${b.ngayBao ? '<span style="color:#888;font-weight:400;margin-left:8px;font-size:13px">'+escapeHtml(b.ngayBao)+'</span>':''}</div>
+	            <div style="white-space:pre-wrap;color:#333;margin-bottom:8px">${escapeHtml(b.ghiChu || b.GhiChu || '—')}</div>
+	            <div style="display:flex;flex-wrap:wrap;align-items:center">${medias || '<span style="color:#888">Không có media</span>'}</div>
+	          </div>
+	          <div style="min-width:140px;text-align:right;color:#666;font-size:13px">
+	            Trạng thái: <strong class="report-status-strong" data-status="${escapeHtml(statusVal)}">${statusText}</strong><br/>
+	            Người báo (Matk): <strong>${b.maTK ? escapeHtml(String(b.maTK)) : '—'}</strong>
+	          </div>
+	        </div>
+	      `;
+	    }).join('');
+
+	    container.innerHTML = html;
+
+	    // auto-select first card
+	    const first = container.querySelector('.report-card');
+	    if(first) first.classList.add('report-active');
+
+	  } catch(err) {
+	    console.error(err);
+	    container.innerHTML = `<div style="padding:12px;color:#b00">Lỗi khi tải báo lỗi. Kiểm tra console.</div>`;
+	  }
+	}
+
+	// helper: get maBaoLoi from card element
+	function extractMaBaoLoiFromCard(card){
+	  if(!card) return null;
+	  return card.dataset?.maBaoloi || card.dataset?.maBaoLoi || null;
+	}
+
+	// post update for BaoLoi
+	async function postCapNhatTrangThai(maBaoLoi, trangThai){
+	  if(!maBaoLoi) throw new Error('Không xác định maBaoLoi');
+	  const url = `/bao-loi/${encodeURIComponent(maBaoLoi)}/cap-nhat-trang-thai`;
+	  const res = await fetch(url, {
+	    method: 'POST',
+	    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': getCsrfToken() },
+	    body: new URLSearchParams({ trangThai: String(trangThai) }).toString()
+	  });
+	  if(!res.ok){
+	    const t = await res.text().catch(()=>'(no body)');
+	    throw new Error('HTTP '+res.status+' - '+t);
+	  }
+	  return res.json().catch(()=>({ status: 'ok' }));
+	}
+
+	// when approve => also mark order as baoLoi (keeps previous behavior)
+	async function postMarkOrderAsBaoLoi(orderId, lyDoLoi){
+	  if(!orderId) return null;
+	  const res = await fetch(`/don-hang/${encodeURIComponent(orderId)}/update-status`, {
+	    method:'POST',
+	    headers:{ 'Content-Type':'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': getCsrfToken() },
+	    body: new URLSearchParams({ baoLoi: 'true', lyDoLoi: lyDoLoi || '' }).toString()
+	  });
+	  if(!res.ok){ const t = await res.text().catch(()=>'(no body)'); console.warn('update-status lỗi', res.status, t); return null; }
+	  return res.json().catch(()=>null);
+	}
+
+	/* ===== click-to-select card (event delegation) ===== */
+	document.getElementById('customerReportsContainer')?.addEventListener('click', function(ev){
+	  const container = this;
+	  let el = ev.target;
+	  while(el && el !== container){
+	    if(el.classList && el.classList.contains('report-card')) break;
+	    el = el.parentElement;
+	  }
+	  if(!el || el === container) return;
+	  Array.from(container.children).forEach(ch => ch.classList && ch.classList.remove('report-active'));
+	  el.classList.add('report-active');
+	});
+
+	/* ===== main action handler: update bao-loi and reflect change in modal + table ===== */
+	async function handleCustomerReportAction(trangThai) {
+  const modal = document.getElementById('modalCustomerReports');
+  const container = document.getElementById('customerReportsContainer');
+  if (!container || !modal) { alert('Modal chưa sẵn sàng'); return; }
+
+  const active = container.querySelector('.report-active') || container.querySelector('.report-card');
+  const maBaoLoi = extractMaBaoLoiFromCard(active);
+  if (!maBaoLoi) { alert('Hãy chọn 1 báo lỗi (click vào card)'); return; }
+
+  const confirmMsg = (trangThai === 1)
+    ? `Xác nhận báo lỗi #${maBaoLoi}?`
+    : `Từ chối báo lỗi #${maBaoLoi}?`;
+
+  // ✅ Dùng showConfirm thay cho confirm
+  showConfirm(confirmMsg, async () => {
+    try {
+      document.getElementById('approveCustomerReport')?.setAttribute('disabled', 'true');
+      document.getElementById('rejectCustomerReport')?.setAttribute('disabled', 'true');
+
+      // cập nhật bảng BaoLoi
+      await postCapNhatTrangThai(maBaoLoi, trangThai);
+
+      // cập nhật ngay UI modal
+      try {
+        const statusMap = { '0': 'Chờ xử lý', '1': 'Đã xác nhận', '2': 'Đã hủy' };
+        const targetCards = Array.from(container.querySelectorAll('.report-card'))
+          .filter(c => String(c.dataset.maBaoloi || c.dataset.maBaoLoi) === String(maBaoLoi));
+        targetCards.forEach(c => {
+          const strong = c.querySelector('.report-status-strong');
+          if (strong) {
+            strong.textContent = statusMap[String(trangThai)] || String(trangThai);
+            strong.dataset.status = String(trangThai);
+          }
+        });
+      } catch (e) { console.warn('Không cập nhật được trạng thái trong modal', e); }
+
+      // refresh products / marker trên hàng (best-effort), KHÔNG thay đổi trạng thái đơn
+      const orderId = container.dataset.orderId || container.getAttribute('data-order-id') || null;
+      if (orderId) {
+        try {
+          const itemsRes = await fetch(`/don-hang/${orderId}/chi-tiet`);
+          if (itemsRes.ok) {
+            const items = await itemsRes.json().catch(() => null);
+            if (items) {
+              const normalized = normalizeProductsArray(items);
+              const row = document.querySelector(`tbody tr[data-id="${orderId}"]`);
+              if (row) updateRowProducts(row, normalized);
+            }
+          }
+        } catch (e) { console.warn('Không lấy chi-tiet để cập nhật row', e); }
+      }
+
+      if (typeof updateBadges === 'function') updateBadges();
+    } catch (err) {
+      console.error('Lỗi khi xử lý báo lỗi', err);
+      alert('Có lỗi khi cập nhật trạng thái. Kiểm tra console/network.');
+    } finally {
+      document.getElementById('approveCustomerReport')?.removeAttribute('disabled');
+      document.getElementById('rejectCustomerReport')?.removeAttribute('disabled');
+    }
+  });
+}
+
+
+	/* wire buttons */
+	document.getElementById('approveCustomerReport')?.addEventListener('click', ()=> handleCustomerReportAction(1));
+	document.getElementById('rejectCustomerReport')?.addEventListener('click', ()=> handleCustomerReportAction(2));
+
+	// close handlers (keep)
+	document.getElementById('closeCustomerReports')?.addEventListener('click', ()=>{ document.getElementById('modalCustomerReports').style.display='none'; });
+	document.getElementById('closeCustomerReportsFooter')?.addEventListener('click', ()=>{ document.getElementById('modalCustomerReports').style.display='none'; });
+	window.addEventListener('click', function(e){ if(e.target === document.getElementById('modalCustomerReports')) document.getElementById('modalCustomerReports').style.display='none'; });
+
+	// expose for other scripts
+	window.openCustomerReportsModal = openCustomerReportsModal;
 </script>
