@@ -27,6 +27,8 @@ public class StartupTasks {
 
         // Tạo thư mục reviews để lưu ảnh/video đánh giá
         createFolderIfNotExists("uploads/review");
+        
+        createFolderIfNotExists("uploads/baoloi");
     }
 
     private void createFolderIfNotExists(String folderPath) {

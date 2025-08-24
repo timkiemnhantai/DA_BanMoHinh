@@ -29,9 +29,6 @@ public class BienTheSanPham {
     @Column(name = "Gia")
     private BigDecimal gia;
 
-    @Column(name = "MoTaChiTiet")
-    private String moTaChiTiet;
-
     @Column(name = "SoLuongTonKho")
     private Integer soLuongTonKho;
 

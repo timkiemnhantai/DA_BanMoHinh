@@ -36,9 +36,23 @@
 						</p>
 					</div>
 				</div>
-				<button class="btn btn-outline-danger btn-sm"
-					onclick="reportIssue('DH123456', 'Gundam RX-78-2 Master Grade')">🚩
-					Báo lỗi</button>
+    <!-- nút báo lỗi: lưu data-maDH và data-maCTDH (khoá chính chi tiết đơn) -->
+<th:block th:if="${doneMaCTDH != ct.maCTDH}">
+    <button type="button"
+            class="btn btn-outline-danger btn-sm btn-report-product"
+            th:attr="data-madh=${dh.donHang.maDH}, data-mactdh=${ct.maCTDH}">
+      🚩 Báo lỗi
+    </button>
+</th:block>
+
+<th:block th:if="${doneMaCTDH == ct.maCTDH}">
+    <button type="button"
+            class="btn btn-success btn-sm"
+            disabled>
+      ✅ Hoàn thành
+    </button>
+</th:block>
+
 			</div>
 
 		</th:block>
@@ -59,30 +73,158 @@
 		<!-- Nút hành động -->
 		<div class="order-actions">
 			<button class="btn" style="background-color: #dc3545; color: #fff;"
-				onclick="goBack()">❌ Hủy</button>
-			<button class="btn btn-danger" onclick="reportOrderIssue('DH123456')">⚠️
-				Báo lỗi đơn hàng</button>
+				onclick="goBack1()">❌ Hủy</button>
+<button type="button"
+        class="btn btn-danger btn-report-order"
+        th:attr="data-madh=${dh.donHang.maDH}">
+  ⚠️ Báo lỗi đơn hàng
+</button>
 			<form th:action="@{/xac-nhan-nhan-hang}" method="post"
 				th:id="'form-xac-nhan-' + ${dh.donHang.maDH}" style="margin: 0;">
 				<input type="hidden" th:name="${_csrf.parameterName}"
 					th:value="${_csrf.token}" /> <input type="hidden" name="maDH"
 					th:value="${dh.donHang.maDH}" />
-				<button class="btn-xac-nhan-nhan-hang" type="button"
+				<button class="btn-xac-nhan-nhan-hang" 
 					style="background-color: #28a745; color: #fff;"
 					th:data-id="'form-xac-nhan-' + ${dh.donHang.maDH}">✅ Xác
 					nhận đơn hàng</button>
 			</form>
 		</div>
 	</th:block>
+<!-- backdrop -->
+<div id="reportModalOverlay" class="modal-overlay2" aria-hidden="true">
+  <div class="modal-box2" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+    <h4 id="reportTitle">Báo lỗi</h4>
+
+    <!-- form submit bình thường tới /bao-loi -->
+    <form id="reportForm" th:action="@{/bao-loi}" method="post" enctype="multipart/form-data" novalidate>
+      <!-- CSRF -->
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+      <input type="hidden" name="token" th:value="${token}" />
+
+      <!-- hidden fields -->
+      <input type="hidden" name="maDH" id="reportMaDH" />
+      <input type="hidden" name="maCTDH" id="reportMaCTDH" />
+
+      <div class="form-group2">
+        <label for="ghiChu">Ghi chú (mô tả lỗi)</label>
+        <textarea name="ghiChu" id="ghiChu" class="form-control2" rows="4" placeholder="Mô tả chi tiết lỗi, tình trạng sản phẩm..."></textarea>
+      </div>
+
+      <div class="form-group2">
+        <label for="files">Ảnh / Video chứng minh</label>
+        <input type="file" name="files" id="files" class="form-control2" multiple accept="image/*,video/*" />
+        <small style="color:#666">Hỗ trợ nhiều file. Ảnh/Video sẽ giúp xử lý nhanh hơn.</small>
+      </div>
+
+      <div class="modal-actions2">
+        <button type="button" class="btn2 btn-secondary2" onclick="closeReportModal()">Đóng</button>
+        <button type="submit" class="btn2 btn-danger2">Gửi báo lỗi</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 </div>
 
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("content");
+    if (!container) return;
+
+    const overlay = document.getElementById('reportModalOverlay');
+    const modalBox = overlay ? overlay.querySelector('.modal-box') : null;
+    const reportForm = document.getElementById('reportForm');
+    const inputMaDH = document.getElementById('reportMaDH');
+    const inputMaCTDH = document.getElementById('reportMaCTDH');
+    const inputGhiChu = document.getElementById('ghiChu');
+    const inputFiles = document.getElementById('files');
+    const titleEl = document.getElementById('reportTitle');
+
+    // Click delegation cho tất cả nút trong container
+    container.addEventListener('click', (e) => {
+		
+        const btnConfirm = e.target.closest(".btn-xac-nhan-nhan-hang");
+        if (btnConfirm) {
+            e.preventDefault();
+            const formId = btnConfirm.getAttribute("data-id");
+            if (!formId) return;
+            showConfirm("Bạn có chắc chắn muốn xác nhận đơn hàng này?", () => {
+                const form = document.getElementById(formId);
+                if (form) form.submit();
+            });
+            return;
+        }
+
+        // Nút báo lỗi sản phẩm / đơn hàng
+        const btnReport = e.target.closest(".btn-report-product, .btn-report-order");
+        if (btnReport) {
+            e.preventDefault();
+
+            const maDH = btnReport.dataset.madh || '';
+            const maCTDH = btnReport.dataset.mactdh || '';
+
+            // Reset modal
+            inputMaDH.value = maDH;
+            inputMaCTDH.value = maCTDH || '';
+            inputGhiChu.value = '';
+            if (inputFiles) inputFiles.value = null;
+            titleEl.textContent = maCTDH ? 'Báo lỗi sản phẩm' : 'Báo lỗi đơn hàng';
+
+            // Show overlay
+            if (overlay) {
+                overlay.classList.add('open');
+                overlay.setAttribute('aria-hidden','false');
+                setTimeout(()=> inputGhiChu.focus(), 120);
+            }
+            return;
+        }
+
+    });
+
+    // Đóng modal khi click ngoài modal-box
+    if (overlay) {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeReportModal();
+        });
+    }
+
+    // Không bubble click trong modal-box
+    if (modalBox) {
+        modalBox.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+
+    // ESC đóng modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) {
+            closeReportModal();
+        }
+    });
+
+    // Function đóng modal
+    function closeReportModal() {
+        if (!overlay) return;
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+    }
+    window.closeReportModal = closeReportModal;
+
+    // Form báo lỗi submit giữ mặc định
+    if (reportForm) {
+        reportForm.addEventListener('submit', (e) => {
+            // Nếu muốn confirm trước khi gửi: uncomment
+            // if (!confirm('Bạn chắc chắn gửi báo lỗi?')) { e.preventDefault(); return; }
+            // Browser sẽ submit bình thường multipart/form-data
+        });
+    }
+
+    // Token verify hiển thị nội dung
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
-    // const maThongBao = params.get('maThongBao'); // Bỏ vì không dùng nữa
-    const maDH = params.get('maDH'); // Lấy maDH để dùng nếu cần
+    const maDH = params.get('maDH');
 
     function goBackOrHome() {
         if (document.referrer) {
@@ -92,7 +234,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Chỉ kiểm tra token và maDH thôi, không cần maThongBao nữa
     if (!token || !maDH) {
         goBackOrHome();
         return;
@@ -103,8 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("verify-token status:", res.status);
         if (res.ok) {
             console.log("Token hợp lệ, hiển thị nội dung");
-            document.getElementById('content').style.display = 'block';
-            // loadOrderDetails(maDH); // gọi hàm load chi tiết đơn hàng nếu có
+            container.style.display = 'block';
         } else {
             let errText = await res.text();
             console.warn("Token không hợp lệ hoặc lỗi server:", errText);
@@ -117,23 +257,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
-
-
-
-
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const btnsXoa = document.querySelectorAll(".btn-xac-nhan-nhan-hang");
-
-    btnsXoa.forEach(btn => {
-        btn.addEventListener("click", () => {
-            const formId = btn.getAttribute("data-id");
-
-            showConfirm("Bạn có chắc chắn muốn xác nhận đơn hàng này?", () => {
-                document.getElementById(formId).submit();
-            });
-        });
-    });
-});
+function goBack1() {
+    window.location.href = '/'; // Luôn về trang chủ
+}
 </script>

@@ -1,0 +1,647 @@
+<link rel="stylesheet" href="/css/style_QuanLyGiamGia.css" />
+<div th:fragment="content">
+
+
+	<div class="g-root">
+		<p style="font-size: 20px; font-weight: bold; color: black">Quản
+			lý giảm giá</p>
+		<div class="g-card">
+			<div class="g-toolbar">
+				<div class="g-search">
+					<label for="g-q" class="g-small g-muted">Tìm kiếm</label> <input
+						id="g-q" placeholder="Tìm theo MãGiamGia hoặc Tên" />
+					<button class="g-btn-secondary g-btn" id="g-clearSearch">Xóa</button>
+				</div>
+				<div class="g-actions">
+					<button class="g-btn" id="g-btnAdd">+ Thêm</button>
+				</div>
+			</div>
+
+			<div class="g-table-wrap g-card" style="padding: 0">
+				<table class="g-table" aria-label="Danh sách giảm giá">
+					<thead>
+						<tr>
+							<th style="width: 90px">MaGiamGia</th>
+							<th>TenGG</th>
+							<th style="width: 120px">PhanTramGiam</th>
+							<th style="width: 120px">GiaGiam</th>
+							<th style="width: 170px">ThoiGianBatDau</th>
+							<th style="width: 170px">ThoiGianKetThuc</th>
+							<th style="width: 100px">TrangThai</th>
+							<th style="width: 120px">Thao tác</th>
+						</tr>
+					</thead>
+					<tbody id="g-tbody"></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!-- modal -->
+	<div class="g-modal-backdrop" id="g-modalBackdrop">
+		<div class="g-modal" role="dialog" aria-modal="true"
+			aria-labelledby="g-modalTitle">
+
+			<div class="g-form-row">
+				<div class="g-form-field">
+					<label for="g-fStart">Mã giảm giá</label> <input id="g-fMa"
+						placeholder="Mã (tự tăng nếu để trống)" />
+				</div>
+				<div class="g-form-field">
+					<label for="g-fStart">Tên giảm giá</label> <input id="g-fTen"
+						placeholder="Tên giảm giá" />
+				</div>
+			</div>
+			<div class="g-form-row">
+				<div class="g-form-field">
+					<label for="g-fStart">Phần trăm giảm</label> <input id="g-fPhanTram"
+						placeholder="Phần trăm giảm (vd: 10)" />
+				</div>
+				<div class="g-form-field">
+					<label for="g-fStart">Giá giảm</label> <input id="g-fGiaGiam"
+						placeholder="Giá giảm (vd: 50000)" />
+				</div>
+			</div>
+			<div class="g-form-row">
+				<div class="g-form-field">
+					<label for="g-fStart">Ngày bắt đầu</label> <input id="g-fStart"
+						type="datetime-local" />
+				</div>
+
+				<div class="g-form-field">
+					<label for="g-fEnd">Ngày kết thúc</label> <input id="g-fEnd"
+						type="datetime-local" />
+				</div>
+			</div>
+			<div class="g-form-row">
+				<select id="g-fTrangThai">
+					<option value="0">Chưa bắt đầu</option>
+					<option value="1">Đang diễn ra</option>
+					<option value="2">Đã kết thúc</option>
+				</select>
+			</div>
+
+			<div class="g-modal-footer"
+				style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px;">
+				<!-- left: mở modal chọn biến thể -->
+				<div>
+					<button class="g-btn-secondary g-btn" id="g-openVariantsBtn"
+						type="button">Chọn biến thể</button>
+				</div>
+
+				<!-- right: Hủy / Lưu -->
+				<div style="display: flex; gap: 8px">
+					<button class="g-btn-secondary g-btn" id="g-btnCancel"
+						type="button">Hủy</button>
+					<button class="g-btn" id="g-btnSave" type="button">Lưu</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- VARIANTS MODAL -->
+	<div class="g-modal-backdrop" id="g-variantsBackdrop"
+		style="z-index: 100000;">
+		<div class="g-modal" role="dialog" aria-modal="true"
+			aria-labelledby="g-variantsTitle" style="max-width: 900px;">
+			<h3 id="g-variantsTitle">
+				Chọn biến thể để gắn vào mã giảm giá <span id="g-variantsDiscountId"
+					style="font-weight: 700"></span>
+			</h3>
+
+			<div class="g-variants-search">
+				<input id="g-variantsSearch" class="search-input"
+					placeholder="Tìmtheo mã,tên sản phẩm, biến thể..." />
+				<!-- nút chọn tất cả / bỏ chọn -->
+				<button id="g-selectAllBtn" class="btn-small" type="button">Chọn
+					tất cả</button>
+				<button id="g-deselectAllBtn" class="btn-small" type="button">Bỏ
+					chọn</button>
+				<!-- vẫn giữ checkbox selectAllVariants để đồng bộ trạng thái, nhưng ẩn nếu bạn muốn -->
+
+			</div>
+
+			<div
+				style="max-height: 420px; overflow: auto; border: 1px solid #eef2f6; border-radius: 8px; padding: 8px;">
+				<table style="width: 100%; border-collapse: collapse;">
+					<thead>
+						<tr style="background: #fafafa; position: sticky; top: 0;">
+							<th style="width: 60px; padding: 8px; text-align: left">Chọn</th>
+							<th style="width: 120px; padding: 8px; text-align: left">MaCTSP</th>
+							<th style="width: 220px; padding: 8px; text-align: left">Tên
+								SP</th>
+							<th style="padding: 8px; text-align: left">Tên biến thể</th>
+							<th style="width: 120px; padding: 8px; text-align: left">Giá</th>
+						</tr>
+					</thead>
+					<tbody id="g-variants-tbody"></tbody>
+				</table>
+			</div>
+
+			<div class="g-modal-footer" style="margin-top: 12px;">
+				<button class="g-btn-secondary g-btn" id="g-variantsCancel">Hủy</button>
+				<button class="g-btn" id="g-attachSelectedBtn">Gắn biến thể
+					đã chọn</button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const API_BASE = '/api/giamgia';
+  const API_VARIANTS = '/api/variants';
+
+  function getCsrf() {
+    const t = document.querySelector('meta[name="_csrf"]');
+    const h = document.querySelector('meta[name="_csrf_header"]');
+    return { token: t ? t.getAttribute('content') : null, header: h ? h.getAttribute('content') : null };
+  }
+
+  function showToast(msg, type = 'info') {
+    const id = '__g_toast_container';
+    let container = document.getElementById(id);
+    if (!container) {
+      container = document.createElement('div');
+      container.id = id;
+      container.style.position = 'fixed';
+      container.style.bottom = '20px';
+      container.style.right = '20px';
+      container.style.zIndex = 99999;
+      document.body.appendChild(container);
+    }
+    const el = document.createElement('div');
+    el.textContent = msg;
+    el.style.background = type === 'error' ? '#dc3545' : '#333';
+    el.style.color = '#fff';
+    el.style.padding = '10px 14px';
+    el.style.borderRadius = '8px';
+    el.style.marginTop = '8px';
+    el.style.boxShadow = '0 6px 18px rgba(0,0,0,0.12)';
+    container.appendChild(el);
+    setTimeout(()=> {
+      el.style.transition = 'opacity 300ms, transform 300ms';
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(10px)';
+      setTimeout(()=> el.remove(), 350);
+    }, 2800);
+  }
+
+  function startLoading(btn) { if (!btn) return; btn.dataset.oldText = btn.innerHTML; btn.disabled = true; btn.innerHTML = '⏳...'; }
+  function stopLoading(btn) { if (!btn) return; btn.disabled = false; if (btn.dataset.oldText) btn.innerHTML = btn.dataset.oldText; }
+
+  // DOM
+  const tbody = document.getElementById('g-tbody');
+  const q = document.getElementById('g-q');
+  const clearSearch = document.getElementById('g-clearSearch');
+  const btnAdd = document.getElementById('g-btnAdd');
+  const modalBackdrop = document.getElementById('g-modalBackdrop');
+  const btnCancel = document.getElementById('g-btnCancel');
+  const btnSave = document.getElementById('g-btnSave');
+
+  const fMa = document.getElementById('g-fMa');
+  const fTen = document.getElementById('g-fTen');
+  const fPhanTram = document.getElementById('g-fPhanTram');
+  const fGiaGiam = document.getElementById('g-fGiaGiam');
+  const fStart = document.getElementById('g-fStart');
+  const fEnd = document.getElementById('g-fEnd');
+  const fTrangThai = document.getElementById('g-fTrangThai');
+
+  // variants modal elements
+  const variantsBackdrop = document.getElementById('g-variantsBackdrop');
+  const variantsTbody = document.getElementById('g-variants-tbody');
+  const variantsCancel = document.getElementById('g-variantsCancel');
+  const attachSelectedBtn = document.getElementById('g-attachSelectedBtn');
+  const variantsSearch = document.getElementById('g-variantsSearch');
+  const selectAllVariants = document.getElementById('g-selectAllVariants');
+  const variantsDiscountIdSpan = document.getElementById('g-variantsDiscountId');
+
+  // added buttons
+  const openVariantsBtn = document.getElementById('g-openVariantsBtn');
+  const selectAllBtn = document.getElementById('g-selectAllBtn');
+  const deselectAllBtn = document.getElementById('g-deselectAllBtn');
+
+  if (!tbody) return;
+
+  let store = [];
+  let editingId = null;
+
+  let allVariantsStore = []; // luôn lưu toàn bộ (với flag _selected)
+  let currentVariantsDiscountId = null;
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function formatCurrency(n) { return new Intl.NumberFormat('vi-VN').format(n) + '₫'; }
+  function formatDateTime(v) { if (!v) return '—'; const d = new Date(v); if (isNaN(d)) return escapeHtml(String(v)); return d.toLocaleString(); }
+  function renderStatus(v){
+    if (v == null) return '<span class="g-muted">—</span>';
+    const s = String(v).toLowerCase();
+    if (s.includes('đang')) return '<span class="g-tag">Đang diễn ra</span>';
+    if (s.includes('sắp') || s.includes('chưa')) return '<span class="g-muted2">Sắp diễn ra</span>';
+    return '<span class="g-muted2">Đã kết thúc</span>';
+  }
+
+  /* api helper */
+  async function apiFetch(path, opts = {}) {
+    const csrf = getCsrf();
+    opts.headers = opts.headers || {};
+    opts.headers['Accept'] = 'application/json';
+    if (csrf.token && csrf.header) opts.headers[csrf.header] = csrf.token;
+    if (!opts.method) opts.method = 'GET';
+    const res = await fetch(path, opts);
+    if (!res.ok) {
+      const text = await res.text();
+      let msg = 'HTTP ' + res.status + ': ' + res.statusText;
+      try { const j = JSON.parse(text); msg = j.message || j.error || msg; } catch(e){}
+      throw new Error(msg);
+    }
+    if (res.status === 204) return null;
+    return await res.json();
+  }
+
+  /* render discounts */
+  function renderRows(list) {
+    tbody.innerHTML = '';
+    if (!list || !list.length) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 8;
+      td.className = 'g-muted';
+      td.style.padding = '20px';
+      td.style.textAlign = 'center';
+      td.textContent = 'Không có dữ liệu';
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      return;
+    }
+    list.forEach(r => {
+      const idVal = r.MaGiamGia ?? r.maGiamGia ?? '';
+      const ten = r.TenGG ?? r.tenGG ?? '';
+      const ph = r.PhanTramGiam ?? r.phanTramGiam ?? 0;
+      const gg = r.GiaGiam ?? r.giaGiam ?? 0;
+      const tbd = r.ThoiGianBatDau ?? r.thoiGianBatDau ?? '';
+      const tkt = r.ThoiGianKetThuc ?? r.thoiGianKetThuc ?? '';
+      const tt = r.TrangThai ?? r.trangThai ?? '';
+
+      const tr = document.createElement('tr');
+      const tdId = document.createElement('td'); tdId.textContent = idVal; tr.appendChild(tdId);
+      const tdTen = document.createElement('td'); const sTen = document.createElement('strong'); sTen.textContent = ten; tdTen.appendChild(sTen); tr.appendChild(tdTen);
+      const tdPh = document.createElement('td'); tdPh.textContent = ph ? (ph + '%') : '—'; tr.appendChild(tdPh);
+      const tdGg = document.createElement('td'); tdGg.textContent = gg ? formatCurrency(gg) : '—'; tr.appendChild(tdGg);
+      const tdTbd = document.createElement('td'); tdTbd.className = 'g-small g-muted'; tdTbd.textContent = formatDateTime(tbd); tr.appendChild(tdTbd);
+      const tdTkt = document.createElement('td'); tdTkt.className = 'g-small g-muted'; tdTkt.textContent = formatDateTime(tkt); tr.appendChild(tdTkt);
+      const tdStatus = document.createElement('td'); tdStatus.innerHTML = renderStatus(tt); tr.appendChild(tdStatus);
+
+      const tdActions = document.createElement('td');
+      const wrap = document.createElement('div'); wrap.className = 'g-row-actions';
+
+      const btnVariants = document.createElement('button'); btnVariants.className = 'g-icon-btn'; btnVariants.title = 'Biến thể'; btnVariants.dataset.action = 'variants'; btnVariants.dataset.id = idVal; btnVariants.textContent = '🔗';
+      const btnEdit = document.createElement('button'); btnEdit.className = 'g-icon-btn'; btnEdit.title = 'Chỉnh sửa'; btnEdit.dataset.action = 'edit'; btnEdit.dataset.id = idVal; btnEdit.textContent = '✏️';
+      const btnDelete = document.createElement('button'); btnDelete.className = 'g-icon-btn'; btnDelete.title = 'Xóa'; btnDelete.dataset.action = 'delete'; btnDelete.dataset.id = idVal; btnDelete.textContent = '🗑️';
+
+      wrap.appendChild(btnVariants); wrap.appendChild(btnEdit); wrap.appendChild(btnDelete);
+      tdActions.appendChild(wrap);
+      tr.appendChild(tdActions);
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  /* CRUD discounts */
+  async function loadList() {
+    try {
+      const data = await apiFetch(API_BASE);
+      store = Array.isArray(data) ? data : (data.items || []);
+      renderRows(store);
+    } catch (err) {
+      showToast('Không tải được danh sách: ' + (err.message || err), 'error');
+    }
+  }
+
+  async function createItem(payload, btn) {
+    startLoading(btn);
+    try {
+      const created = await apiFetch(API_BASE, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      showToast('Tạo thành công');
+      if (created) {
+        store.unshift(created);
+        editingId = created.MaGiamGia ?? created.maGiamGia;
+      } else await loadList();
+      renderRows(store);
+    } catch (err) {
+      showToast('Tạo thất bại: ' + (err.message || err), 'error');
+    } finally { stopLoading(btn); }
+  }
+
+  async function updateItem(id, payload, btn) {
+    startLoading(btn);
+    try {
+      const updated = await apiFetch(`${API_BASE}/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      showToast('Cập nhật thành công');
+      if (updated) store = store.map(x => (x.MaGiamGia ?? x.maGiamGia) == id ? updated : x);
+      else await loadList();
+      renderRows(store);
+    } catch (err) {
+      showToast('Cập nhật thất bại: ' + (err.message || err), 'error');
+    } finally { stopLoading(btn); }
+  }
+
+  async function deleteItem(id) {
+	  showConfirm(`Bạn có chắc muốn xóa mã ${id} ?`, async () => {
+	    try {
+	      await apiFetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+	      showToast('Xóa thành công');
+	      // đảm bảo so sánh an toàn với các tên trường khác nhau
+	      store = store.filter(x => String(x.MaGiamGia ?? x.maGiamGia ?? x.maGiamia ?? '') !== String(id));
+	      renderRows(store);
+	    } catch (err) {
+	      showToast('Xóa thất bại: ' + (err.message || err), 'error');
+	    }
+	  });
+	}
+
+
+  /* VARIANTS: load per-discount (returns selected flags) */
+  async function loadVariantsForDiscount(maGiamGia, force = false) {
+    if (allVariantsStore.length && !force && currentVariantsDiscountId === maGiamGia) return allVariantsStore;
+    try {
+      const data = await apiFetch(`${API_BASE}/${maGiamGia}/variants`);
+      if (!Array.isArray(data)) allVariantsStore = [];
+      else {
+    	  allVariantsStore = data.map(v => ({
+    		  maCTSP: v.maCTSP,
+    		  tenBienThe: v.phienBan || v.tenBienThe || v.moTaChiTiet || '',
+    		  productName: v.productName || v.productName || '', // dùng productName từ backend
+    		  gia: v.gia || v.Gia || 0,
+    		  _selected: !!v.selected
+    		}));
+      }
+      currentVariantsDiscountId = maGiamGia;
+      return allVariantsStore;
+    } catch (err) {
+      // fallback sample
+      allVariantsStore = [
+        { maCTSP:101, tenBienThe:'VT - sample', gia:100000, _selected:false }
+      ];
+      return allVariantsStore;
+    }
+  }
+
+  /* render variants list (visible items passed in) */
+  function renderVariants(list) {
+    if (!variantsTbody) return;
+    variantsTbody.innerHTML = '';
+    if (!list || !list.length) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 4;
+      td.style.padding = '14px';
+      td.style.textAlign = 'center';
+      td.style.color = '#7a7f86';
+      td.textContent = 'Không có biến thể';
+      tr.appendChild(td);
+      variantsTbody.appendChild(tr);
+      return;
+    }
+    list.forEach(v => {
+      const tr = document.createElement('tr');
+
+      const tdChk = document.createElement('td'); tdChk.style.padding = '8px';
+      const cb = document.createElement('input'); cb.type = 'checkbox'; cb.className = 'g-variant-checkbox'; cb.dataset.id = v.maCTSP; cb.checked = !!v._selected;
+      tdChk.appendChild(cb); tr.appendChild(tdChk);
+
+      const tdMa = document.createElement('td'); tdMa.style.padding = '8px'; tdMa.textContent = v.maCTSP; tr.appendChild(tdMa);
+		
+      const tdProduct = document.createElement('td'); tdProduct.style.padding = '8px';
+      tdProduct.textContent = v.productName || '—';
+      tr.appendChild(tdProduct);
+      
+      const tdName = document.createElement('td'); tdName.style.padding = '8px'; tdName.textContent = v.tenBienThe || ''; tr.appendChild(tdName);
+
+      const tdGia = document.createElement('td'); tdGia.style.padding = '8px'; tdGia.textContent = v.gia ? formatCurrency(v.gia) : '—'; tr.appendChild(tdGia);
+
+      variantsTbody.appendChild(tr);
+    });
+  }
+
+  /* helper: get currently visible (filtered) variants according to variantsSearch */
+// normalize: remove diacritics + lower-case
+function normalizeText(s) {
+  if (!s) return '';
+  try {
+    // NFD + remove combining marks covers most accents
+    return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  } catch (e) {
+    return String(s).toLowerCase();
+  }
+}
+
+
+function getVisibleVariants() {
+  const rawQ = (variantsSearch && variantsSearch.value) ? variantsSearch.value.trim() : '';
+  if (!rawQ) return allVariantsStore.slice();
+
+  const qNormalized = normalizeText(rawQ);
+  const tokens = qNormalized.split(/\s+/).filter(Boolean);
+
+  const numericOnly = /^[0-9]+$/.test(rawQ);
+
+  return allVariantsStore.filter(v => {
+    if (String(v.maCTSP || '').includes(rawQ)) return true;
+    const combined = normalizeText((v.productName || '') + ' ' + (v.tenBienThe || ''));
+    return tokens.every(t => combined.indexOf(t) !== -1);
+  });
+}
+
+  function openVariantsModalForDiscount(maGiamGia) {
+    currentVariantsDiscountId = maGiamGia;
+    if (variantsDiscountIdSpan) variantsDiscountIdSpan.textContent = String(maGiamGia);
+
+    loadVariantsForDiscount(maGiamGia, true).then(list => {
+      if (selectAllVariants) selectAllVariants.checked = list.length && list.every(x=>x._selected);
+      renderVariants(getVisibleVariants());
+      if (variantsBackdrop) variantsBackdrop.style.display = 'flex';
+    }).catch(err => {
+      showToast('Không tải được biến thể: ' + (err.message || err), 'error');
+    });
+  }
+
+  function hideVariantsModal() {
+    if (variantsBackdrop) variantsBackdrop.style.display = 'none';
+    currentVariantsDiscountId = null;
+  }
+
+
+  if (variantsCancel) variantsCancel.addEventListener('click', hideVariantsModal);
+  if (variantsBackdrop) variantsBackdrop.addEventListener('click', (e) => { if (e.target === variantsBackdrop) hideVariantsModal(); });
+
+  if (variantsSearch) {
+    variantsSearch.addEventListener('input', () => {
+      renderVariants(getVisibleVariants());
+      if (selectAllVariants) selectAllVariants.checked = getVisibleVariants().length && getVisibleVariants().every(x => x._selected);
+    });
+  }
+
+  if (selectAllVariants) {
+    selectAllVariants.addEventListener('change', () => {
+      const checked = selectAllVariants.checked;
+
+      allVariantsStore.forEach(v => v._selected = checked);
+      renderVariants(getVisibleVariants());
+    });
+  }
+
+
+  if (selectAllBtn) {
+    selectAllBtn.addEventListener('click', () => {
+      const visible = getVisibleVariants();
+      const ids = new Set(visible.map(v => v.maCTSP));
+      allVariantsStore.forEach(v => { if (ids.has(v.maCTSP)) v._selected = true; });
+      if (selectAllVariants) selectAllVariants.checked = allVariantsStore.length && allVariantsStore.every(x => x._selected);
+      renderVariants(getVisibleVariants());
+    });
+  }
+  if (deselectAllBtn) {
+    deselectAllBtn.addEventListener('click', () => {
+      const visible = getVisibleVariants();
+      const ids = new Set(visible.map(v => v.maCTSP));
+      allVariantsStore.forEach(v => { if (ids.has(v.maCTSP)) v._selected = false; });
+      if (selectAllVariants) selectAllVariants.checked = allVariantsStore.length && allVariantsStore.every(x => x._selected);
+      renderVariants(getVisibleVariants());
+    });
+  }
+
+  if (variantsTbody) {
+    variantsTbody.addEventListener('change', (ev) => {
+      const cb = ev.target.closest ? ev.target.closest('.g-variant-checkbox') : (ev.target.classList && ev.target.classList.contains('g-variant-checkbox') ? ev.target : null);
+      if (!cb) return;
+      const id = Number(cb.dataset.id);
+      const item = allVariantsStore.find(x => Number(x.maCTSP) === id);
+      if (item) item._selected = !!cb.checked;
+      if (selectAllVariants) selectAllVariants.checked = allVariantsStore.length && allVariantsStore.every(x => x._selected);
+    });
+  }
+
+  if (attachSelectedBtn) {
+    attachSelectedBtn.addEventListener('click', async function () {
+      if (!currentVariantsDiscountId) { showToast('Chưa chọn mã giảm giá', 'error'); return; }
+      const selected = allVariantsStore.filter(x => x._selected).map(x => x.maCTSP);
+      if (!selected.length) { showToast('Chưa chọn biến thể nào', 'error'); return; }
+      try {
+        startLoading(this);
+        await apiFetch(`${API_BASE}/${currentVariantsDiscountId}/variants`, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(selected)
+        });
+        showToast('Gắn biến thể thành công');
+
+        await loadVariantsForDiscount(currentVariantsDiscountId, true);
+        renderVariants(getVisibleVariants());
+        hideVariantsModal();
+      } catch (err) {
+        showToast('Gắn thất bại: ' + (err.message || err), 'error');
+      } finally {
+        stopLoading(this);
+      }
+    });
+  }
+
+  if (openVariantsBtn) {
+    openVariantsBtn.addEventListener('click', () => {
+      let targetId = null;
+      if (typeof editingId !== 'undefined' && editingId !== null && editingId !== '') targetId = editingId;
+      else if (fMa && fMa.value && fMa.value.trim() !== '') {
+        const parsed = Number(fMa.value);
+        if (!isNaN(parsed)) targetId = parsed;
+      }
+      if (targetId) openVariantsModalForDiscount(targetId);
+      else showToast('Bạn cần lưu giảm giá trước khi chọn biến thể', 'error');
+    });
+  }
+
+  if (tbody) {
+    tbody.addEventListener('click', (ev) => {
+      let btn = ev.target;
+      while (btn && !btn.dataset.action) btn = btn.parentElement;
+      if (!btn) return;
+      const id = Number(btn.dataset.id);
+      const action = btn.dataset.action;
+      if (action === 'edit') { openEdit(id); return; }
+      if (action === 'delete') { deleteItem(id); return; }
+      if (action === 'variants') { openVariantsModalForDiscount(id); return; }
+    });
+  }
+
+  if (btnAdd) btnAdd.addEventListener('click', () => {
+    editingId = null;
+    if (fMa) fMa.value = '';
+    if (fTen) fTen.value = '';
+    if (fPhanTram) fPhanTram.value = '';
+    if (fGiaGiam) fGiaGiam.value = '';
+    if (fStart) fStart.value = '';
+    if (fEnd) fEnd.value = '';
+    if (fTrangThai) fTrangThai.value = '0';
+    if (modalBackdrop) modalBackdrop.style.display = 'flex';
+  });
+
+  function openEdit(id) {
+    const item = store.find(x => (x.MaGiamGia ?? x.maGiamia ?? x.maGiamGia) == id);
+    if (!item) { showToast('Không tìm thấy mục', 'error'); return; }
+    editingId = item.MaGiamGia ?? item.maGiamia ?? item.maGiamGia;
+    if (fMa) fMa.value = editingId;
+    if (fTen) fTen.value = item.TenGG ?? item.tenGG ?? '';
+    if (fPhanTram) fPhanTram.value = item.PhanTramGiam ?? item.phanTramGiam ?? '';
+    if (fGiaGiam) fGiaGiam.value = item.GiaGiam ?? item.giaGiam ?? '';
+    if (fStart) fStart.value = (item.ThoiGianBatDau ?? item.thoiGianBatDau ?? '').replace(' ','T');
+    if (fEnd) fEnd.value = (item.ThoiGianKetThuc ?? item.thoiGianKetThuc ?? '').replace(' ','T');
+    if (fTrangThai) {
+      const st = item.TrangThai ?? item.trangThai ?? 'Chưa bắt đầu';
+      fTrangThai.value = (st === 'Đang diễn ra' || st === 1) ? '1' : (st === 'Chưa bắt đầu' || st === 0) ? '0' : '2';
+    }
+    if (modalBackdrop) modalBackdrop.style.display = 'flex';
+  }
+
+  if (q) q.addEventListener('input', () => {
+    const v = q.value.trim().toLowerCase();
+    if (!v) return renderRows(store);
+    const filtered = store.filter(x => {
+      const id = String(x.MaGiamGia ?? x.maGiamia ?? x.maGiamGia ?? '');
+      const ten = String(x.TenGG ?? x.tenGG ?? '');
+      return id.toLowerCase().indexOf(v) !== -1 || ten.toLowerCase().indexOf(v) !== -1;
+    });
+    renderRows(filtered);
+  });
+
+  if (clearSearch) clearSearch.addEventListener('click', () => { if (q) q.value=''; renderRows(store); if (q) q.focus(); });
+
+  if (btnCancel) btnCancel.addEventListener('click', () => { if (modalBackdrop) modalBackdrop.style.display = 'none'; editingId = null; });
+  if (modalBackdrop) modalBackdrop.addEventListener('click', (ev) => { if (ev.target === modalBackdrop) { modalBackdrop.style.display = 'none'; editingId = null; } });
+
+  if (btnSave) btnSave.addEventListener('click', async function () {
+    const btn = this;
+    const payload = {
+      TenGG: fTen ? (fTen.value||'').trim() : '',
+      PhanTramGiam: fPhanTram && fPhanTram.value ? Number(fPhanTram.value) : 0,
+      GiaGiam: fGiaGiam && fGiaGiam.value ? Number(fGiaGiam.value) : 0,
+      ThoiGianBatDau: fStart && fStart.value ? fStart.value : '',
+      ThoiGianKetThuc: fEnd && fEnd.value ? fEnd.value : '',
+      TrangThai: fTrangThai ? (fTrangThai.value==='1' ? 'Đang hoạt động' : (fTrangThai.value==='0' ? 'Sắp diễn ra' : 'Đã kết thúc')) : 'Sắp diễn ra'
+    };
+    if (editingId) await updateItem(editingId, payload, btn); else await createItem(payload, btn);
+    if (modalBackdrop) modalBackdrop.style.display = 'none';
+    editingId = null;
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (variantsBackdrop && variantsBackdrop.style.display === 'flex') hideVariantsModal();
+      else if (modalBackdrop && modalBackdrop.style.display === 'flex') { modalBackdrop.style.display = 'none'; editingId = null; }
+    }
+  });
+
+  loadList();
+});
+  </script>
+</div>

@@ -15,4 +15,5 @@ public interface ChiTietDonHangRepository extends JpaRepository<ChiTietDonHang, 
 
     List<ChiTietDonHang> findByDonHang_MaDH(Integer maDH);
     List<ChiTietDonHang> findByDonHang(DonHang donHang);
+    
 }

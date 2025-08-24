@@ -2,6 +2,7 @@ package com.poly.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 
@@ -97,6 +98,7 @@ public class DonHangService {
 	            .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái đơn hàng 'Đã giao'"));
 
 	        donHang.setTrangThaiDH(trangThai);
+	        donHang.setNgayGiaoThucTe(LocalDateTime.now());
 	        donHangRepo.save(donHang);
 
 	        return donHang; // Trả về để controller sử dụng
@@ -128,38 +130,44 @@ public class DonHangService {
 	
 	public void xacNhanNhanHang(int maDH) {
 	    Optional<DonHang> optionalDonHang = donHangRepo.findById(maDH);
-	    if (optionalDonHang.isPresent()) {
-	        DonHang donHang = optionalDonHang.get();
-	        ThanhToan thanhToan = thanhToanRepo.findByDonHang_MaDH(maDH);
-
-	        if (thanhToan != null && "Đã thanh toán".equalsIgnoreCase(thanhToan.getTrangThai())) {
-	            if (donHang.getTrangThaiDH().getMaTTDH() != 6) { // 6 = Giao hàng thành công
-	                List<ChiTietDonHang> chiTietList = chiTietDonHangRepo.findByDonHang(donHang);
-	                for (ChiTietDonHang chiTiet : chiTietList) {
-	                    BienTheSanPham bienThe = chiTiet.getBienTheSanPham();
-
-	                    int slGiao = chiTiet.getSoLuongSP();
-
-	                    int slDatGiu = bienThe.getSoLuongDatGiu() != null ? bienThe.getSoLuongDatGiu() : 0;
-	                    int soLuongDatGiuMoi = slDatGiu - slGiao;
-	                    if (soLuongDatGiuMoi < 0) soLuongDatGiuMoi = 0;
-	                    bienThe.setSoLuongDatGiu(soLuongDatGiuMoi);
-
-	                    bienTheSanPhamRepo.save(bienThe);
-	                }
-	            }
-
-	            // Cập nhật trạng thái đơn hàng sang "Giao hàng thành công" (6)
-	            TrangThaiDH trangThai = trangThaiDHRepo.findById(6)
-	                    .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái"));
-	            donHang.setTrangThaiDH(trangThai);
-	            donHangRepo.save(donHang);
-	        } else {
-	            throw new RuntimeException("Chưa xác nhận thanh toán cho đơn hàng này.");
-	        }
-	    } else {
+	    if (optionalDonHang.isEmpty()) {
 	        throw new RuntimeException("Không tìm thấy đơn hàng mã: " + maDH);
 	    }
+
+	    DonHang donHang = optionalDonHang.get();
+	    ThanhToan thanhToan = thanhToanRepo.findByDonHang_MaDH(maDH);
+
+	    if (thanhToan == null || !"Đã thanh toán".equalsIgnoreCase(thanhToan.getTrangThai())) {
+	        throw new RuntimeException("Chưa xác nhận thanh toán cho đơn hàng này.");
+	    }
+
+	    if (donHang.getTrangThaiDH().getMaTTDH() != 6) { // 6 = Giao hàng thành công
+	        List<ChiTietDonHang> chiTietList = chiTietDonHangRepo.findByDonHang(donHang);
+
+	        for (ChiTietDonHang chiTiet : chiTietList) {
+	            // ❌ Bỏ qua sản phẩm đã báo lỗi
+	            if (Boolean.TRUE.equals(chiTiet.getDaBaoLoi())) {
+	                continue;
+	            }
+
+	            BienTheSanPham bienThe = chiTiet.getBienTheSanPham();
+	            int slGiao = chiTiet.getSoLuongSP();
+
+	            int slDatGiu = bienThe.getSoLuongDatGiu() != null ? bienThe.getSoLuongDatGiu() : 0;
+	            int soLuongDatGiuMoi = slDatGiu - slGiao;
+	            if (soLuongDatGiuMoi < 0) soLuongDatGiuMoi = 0;
+
+	            bienThe.setSoLuongDatGiu(soLuongDatGiuMoi);
+	            bienTheSanPhamRepo.save(bienThe);
+	        }
+	    }
+
+	    // ✅ Cập nhật trạng thái đơn hàng sang "Giao hàng thành công" (6)
+	    TrangThaiDH trangThai = trangThaiDHRepo.findById(6)
+	            .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái"));
+	    donHang.setTrangThaiDH(trangThai);
+	    donHang.setNgayXacNhanNhanHang(LocalDateTime.now());
+	    donHangRepo.save(donHang);
 	}
 
 

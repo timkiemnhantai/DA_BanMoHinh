@@ -12,14 +12,16 @@ import com.poly.model.ChiTietDonHang;
 @AllArgsConstructor
 public class ChiTietDonHangDTO {
     private Integer maCTDH;
-    private Integer maSP;      // từ BienTheSanPham -> SanPham
-    private String tenSP;      // từ BienTheSanPham -> SanPham
+    private Integer maSP;      
+    private String tenSP;      
     private Integer soLuongSP;
     private BigDecimal donGia;
     private BigDecimal giamGiaThucTe;
     private BigDecimal thanhTien;
     private String ghiChu;
     private String anhSP;
+    private Boolean daBaoLoi; // ✅ Thêm trường này
+
     // constructor từ entity
     public ChiTietDonHangDTO(ChiTietDonHang ct) {
         this.maCTDH = ct.getMaCTDH();
@@ -27,7 +29,7 @@ public class ChiTietDonHangDTO {
         this.donGia = ct.getDonGia();
         this.giamGiaThucTe = ct.getGiamGiaThucTe();
         this.thanhTien = ct.getThanhTien();
-        this.ghiChu = ct.getGhiChu();
+        this.daBaoLoi = ct.getDaBaoLoi() != null ? ct.getDaBaoLoi() : false; // ✅ Gán giá trị
 
         if (ct.getBienTheSanPham() != null && ct.getBienTheSanPham().getSanPham() != null) {
             this.maSP = ct.getBienTheSanPham().getSanPham().getMaSP();
@@ -49,7 +51,5 @@ public class ChiTietDonHangDTO {
             }
         }
     }
-
 }
-
 

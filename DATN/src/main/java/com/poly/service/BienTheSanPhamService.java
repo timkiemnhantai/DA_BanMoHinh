@@ -24,7 +24,7 @@ public class BienTheSanPhamService {
 	
 	@Transactional
 	public void capNhatTrangThaiKho(BienTheSanPham bienThe) {
-	    int tonThucTe = bienThe.getSoLuongTonKho() - bienThe.getSoLuongDatGiu();
+	    int tonThucTe = bienThe.getSoLuongTonKho();
 	    int maTrangThai = tonThucTe > 0 ? 1 : 2;
 
 	    TrangThaiKH trangThai = trangThaiKHRepository.findById(maTrangThai)

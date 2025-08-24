@@ -172,7 +172,10 @@
   background-color: #cff4fc;
   color: #055160;
 }
-
+.status-warning {
+  background-color: #fff3cd; /* vàng cam nhạt */
+  color: #664d03;            /* vàng nâu đậm */
+}
 /* Đã giao */
 .status-delivered {
   background-color: #cfe2ff; /* xanh dương nhạt nền */
@@ -232,4 +235,37 @@
   text-align: center;
   line-height: 20px;
 }
+#modalBaoLoi {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 9999;
+}
+
+#modalBaoLoi .modal-content1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 95%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+ .report-card{border:1px solid #e6e6e6;border-radius:10px;padding:12px;margin-bottom:10px;display:flex;gap:12px;background:#fff;}
+  .report-media{display:flex;gap:6px;flex-wrap:wrap}
+  .media-thumb{width:110px;height:70px;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid #ddd;background:#fafafa}
+  .media-thumb img,.media-thumb video{width:100%;height:100%;object-fit:cover}
+  .report-right{flex:1;min-width:160px}
+  .report-meta{font-size:13px;color:#444;margin-bottom:6px}
+  .report-actions{display:flex;gap:8px;align-items:center;margin-top:8px}
+  .report-status-select{padding:6px;border-radius:6px;border:1px solid #ccc}
+  .btn-update-status{padding:6px 10px;border-radius:6px;border:none;background:#0b74ff;color:#fff;cursor:pointer}
+
+
 

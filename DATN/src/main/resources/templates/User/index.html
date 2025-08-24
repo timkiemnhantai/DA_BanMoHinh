@@ -80,6 +80,12 @@
 									th:href="@{/logout}">Đăng Xuất</a>
 							</div>
 						</div>
+					<a class="anh2" id="btnShowThongBao" style="position:relative;display:inline-block;">
+					  <img src="/img/notification.png" alt="thông báo">
+					  <span id="notifCountBadge" class="notif-badge" style="display:none">0</span>
+					</a>
+
+
 						<a class="anh1" th:href="@{/gio-hang}"><img
 							src="/img/Screenshot_2025-06-19_220342-removebg-preview.png"
 							alt=""></a>
@@ -103,7 +109,7 @@
    <div th:each="tb : ${dsThongBaoChuaDoc}" 
         class="toast toast-websocket" 
         th:attr="data-id=${tb.maThongBao}"
-        style="background-color: #ffc107; color: #fff; border-radius: 8px; margin-bottom: 8px; padding: 12px 16px;">
+        style="background-color: rgb(0, 128, 255); color: #fff; border-radius: 8px; margin-bottom: 8px; padding: 12px 16px;">
         
         <div class="toast-content" style="display: flex; justify-content: space-between; align-items: center;">
         	<a th:href="${tb.url}" onclick="return danhDauVaAn(this)">
@@ -129,6 +135,30 @@
 			</div>
 		</div>
 	</div>
+
+	<div id="thongBaoForm" style="display:none;">
+  <div class="thong-bao-box" id="thongBaoBox">
+    <div class="thong-bao-header">
+      <h3>Thông báo</h3>
+	  <div style="display:flex;gap:8px;align-items:center;">
+	    <button id="btnMarkAllRead">Đánh dấu đã đọc</button>
+	    <button id="btnClearAll">Xóa hết</button>
+	  </div>
+    </div>
+    <div class="thong-bao-list" id="thongBaoList">
+      <div class="thong-bao-item">
+        <div>
+          <strong></strong>
+          <p></p>
+        </div>
+        <button class="btnDelete">Xóa</button>
+      </div>
+    </div>
+    <div class="thong-bao-footer">
+      <button id="btnCloseThongBao">Đóng</button>
+    </div>
+  </div>
+</div>
 
 
 </body>
@@ -206,7 +236,6 @@
         const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
-        // Gửi POST đánh dấu đã đọc
         fetch(`/thong-bao/${id}/da-doc`, {
             method: 'POST',
             headers: {
@@ -217,7 +246,7 @@
             if (res.ok) {
                 toast.remove();
                 if (isLink && url) {
-                    window.location.href = url; // Chuyển hướng sau khi đánh dấu
+                    window.location.href = url; 
                 }
             } else {
                 alert('Lỗi khi đánh dấu thông báo đã đọc');
@@ -227,7 +256,7 @@
             alert('Lỗi kết nối máy chủ');
         });
 
-        return false; // Ngăn chuyển hướng mặc định nếu là <a>
+        return false; 
     }
 </script>
 
@@ -256,10 +285,10 @@
       const currentScrollY = window.scrollY;
 
       if (currentScrollY > lastScrollY) {
-        // Cuộn xuống → ẩn nav
+
         navbar.style.transform = "translateY(-100%)";
       } else {
-        // Cuộn lên → hiện nav
+
         navbar.style.transform = "translateY(0)";
       }
 
@@ -299,7 +328,7 @@ function hienThongBao(noiDung, maThongBao, url) {
 
     const toast = document.createElement("div");
     toast.className = "toast toast-websocket";
-    toast.style.backgroundColor = "#ffc107";
+    toast.style.backgroundColor = "rgb(0, 128, 255)";
     toast.style.color = "#fff";
     toast.style.borderRadius = "8px";
     toast.style.marginBottom = "8px";
@@ -391,16 +420,284 @@ function hienThongBao(noiDung, maThongBao, url) {
 </script>
 
 <script>
-    if (error !== null && error !== '') {
-        hienThongBaoHeThong(error, false);
-    }
+/* ---------- CSRF helper ---------- */
+function getCsrf() {
+  const tokenMeta = document.querySelector('meta[name="_csrf"]');
+  const headerMeta = document.querySelector('meta[name="_csrf_header"]');
+  return {
+    header: headerMeta ? headerMeta.getAttribute('content') : 'X-CSRF-TOKEN',
+    token: tokenMeta ? tokenMeta.getAttribute('content') : ''
+  };
+}
 
-    if (success !== null && success !== '') {
-        hienThongBaoHeThong(success, true);
+/* ---------- UI helpers (badge, toast) ---------- */
+const badgeEl = document.getElementById('notifCountBadge');
+function setNotifBadge(count) {
+  if (!badgeEl) return;
+  const n = Number(count || 0);
+  if (n <= 0) {
+    badgeEl.style.display = 'none';
+    badgeEl.textContent = '0';
+  } else {
+    badgeEl.style.display = 'inline-block';
+    badgeEl.textContent = (n > 99 ? '99+' : String(n));
+  }
+}
+function changeNotifDelta(delta) {
+  if (!badgeEl) return;
+  const curr = badgeEl.style.display === 'none' ? 0 : parseInt(badgeEl.textContent.replace(/\D/g, '') || '0', 10);
+  setNotifBadge(Math.max(0, (curr || 0) + (delta || 0)));
+}
+
+
+/* ---------- small helpers ---------- */
+function escapeHtml(unsafe){
+  if (unsafe == null) return '';
+  return String(unsafe)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+function formatDateTime(iso) {
+  if(!iso) return '';
+  try { return new Date(iso).toLocaleString('vi-VN', { hour12:false }); }
+  catch(e){ return iso; }
+}
+function renderEmptyState() {
+  const list = document.getElementById('thongBaoList');
+  if (!list) return;
+
+  const hasItems = Array.from(list.children).some(ch => ch.classList && ch.classList.contains('thong-bao-item'));
+  if (!hasItems) {
+    list.innerHTML = `<div class="thong-bao-empty">Chưa có thông báo nào</div>`;
+  } else {
+
+    const empty = list.querySelector('.thong-bao-empty');
+    if (empty) empty.remove();
+  }
+}
+
+/* ---------- API calls ---------- */
+async function fetchLatestNotifications(limit=20) {
+  try {
+    if(!maTK || maTK <= 0) return { unread:0, items:[] };
+    const res = await fetch(`/api/thong-bao/latest?maTK=${encodeURIComponent(maTK)}&limit=${encodeURIComponent(limit)}`);
+    if(!res.ok) return { unread:0, items:[] };
+    return await res.json();
+  } catch (e) {
+    console.warn('fetchLatestNotifications err', e);
+    return { unread:0, items:[] };
+  }
+}
+
+async function markSingleAsRead(maThongBao) {
+  try {
+    const { header, token } = getCsrf();
+    const res = await fetch(`/api/thong-bao/${encodeURIComponent(maThongBao)}/read`, {
+      method: 'POST',
+      headers: { [header]: token }
+    });
+    if (!res.ok && res.status !== 204) {
+      console.warn('markSingleAsRead failed', res.status);
+      return false;
     }
+    const el = document.querySelector(`.thong-bao-item[data-id="${maThongBao}"]`);
+    if (el && el.classList.contains('unread')) {
+      el.classList.remove('unread'); el.classList.add('read');
+      changeNotifDelta(-1);
+    }
+    const toast = document.querySelector(`#toast-container .toast-websocket[data-id="${maThongBao}"]`);
+    if (toast) toast.remove();
+    return true;
+  } catch (e) {
+    console.error('markSingleAsRead err', e);
+    return false;
+  }
+}
+
+async function markAllAsReadServer() {
+	  showConfirm('Đánh dấu tất cả thông báo là đã đọc?', async () => {
+	    try {
+	      const { header, token } = getCsrf();
+	      const res = await fetch(`/api/thong-bao/mark-all-read?maTK=${encodeURIComponent(maTK)}`, {
+	        method: 'POST',
+	        headers: { [header]: token }
+	      });
+	      if (!res.ok && res.status !== 204) {
+	        throw new Error('Server trả lỗi ' + res.status);
+	      }
+	      document.querySelectorAll('.thong-bao-item.unread').forEach(el => {
+	        el.classList.remove('unread');
+	        el.classList.add('read');
+	      });
+	      document.querySelectorAll('#toast-container .toast-websocket').forEach(t => t.remove());
+	      setNotifBadge(0);
+	      hienThongBaoHeThong('Đã đánh dấu tất cả là đã đọc', true);
+	    } catch (e) {
+	      console.error(e);
+	      alert('Đánh dấu tất cả thất bại. Kiểm tra console.');
+	    }
+	  });
+	}
+
+async function deleteNotificationOnServer(maThongBao) {
+	  showConfirm('Xóa thông báo này?', async () => {
+	    try {
+	      const { header, token } = getCsrf();
+	      const res = await fetch(`/api/thong-bao/${encodeURIComponent(maThongBao)}`, {
+	        method: 'DELETE',
+	        headers: { [header]: token }
+	      });
+	      if (!res.ok && res.status !== 204) throw new Error('Server trả lỗi ' + res.status);
+	      const el = document.querySelector(`.thong-bao-item[data-id="${maThongBao}"]`);
+	      if (el) el.remove();
+	      renderEmptyState();
+	      const toast = document.querySelector(`#toast-container .toast-websocket[data-id="${maThongBao}"]`);
+	      if (toast) toast.remove();
+	      const fresh = await fetchLatestNotifications(0);
+	      setNotifBadge(fresh.unread || 0);
+	      hienThongBaoHeThong('Đã xóa thông báo', true);
+	      if (window.thongBaoCache) delete window.thongBaoCache[String(maThongBao)];
+	    } catch (e) {
+	      console.error(e);
+	      alert('Xóa thất bại. Kiểm tra console.');
+	    }
+	  });
+	}
+
+async function deleteAllNotificationsOnServer() {
+	  showConfirm('Xóa tất cả thông báo?', async () => {
+	    try {
+	      const { header, token } = getCsrf();
+	      const res = await fetch(`/api/thong-bao/delete-all?maTK=${encodeURIComponent(maTK)}`, {
+	        method: 'DELETE',
+	        headers: { [header]: token }
+	      });
+	      if (!res.ok && res.status !== 204) throw new Error('Server trả lỗi ' + res.status);
+	      document.querySelectorAll('.thong-bao-item').forEach(n => n.remove());
+	      renderEmptyState();
+	      document.querySelectorAll('#toast-container .toast-websocket').forEach(n => n.remove());
+	      setNotifBadge(0);
+	      if (window.thongBaoCache) window.thongBaoCache = {};
+	      hienThongBaoHeThong('Đã xóa tất cả thông báo', true);
+	    } catch (e) {
+	      console.error(e);
+	      alert('Xóa tất cả thất bại. Kiểm tra console.');
+	    }
+	  });
+	}
+
+/* ---------- render item ---------- */
+function makeThongBaoItem(tb) {
+  const div = document.createElement('div');
+  div.className = 'thong-bao-item' + (tb.daDoc ? ' read' : ' unread');
+  div.dataset.id = tb.maThongBao;
+  div.style.display = 'flex';
+  div.style.justifyContent = 'space-between';
+  div.style.alignItems = 'center';
+  div.style.padding = '8px';
+  div.innerHTML = `
+    <div style="flex:1; cursor:pointer;" class="thong-bao-body">
+      <strong>${escapeHtml(tb.tieuDe || '')}</strong>
+      <p style="margin:4px 0 6px 0; color:#333;">${escapeHtml(tb.noiDung || '')}</p>
+      <small style="color:#777">${formatDateTime(tb.ngayTao)}</small>
+    </div>
+    <div style="margin-left:12px; display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
+      <button class="btnMarkSingle" title="Đánh dấu đã đọc">✓</button>
+      <button class="btnDelete" title="Xóa">Xóa</button>
+    </div>
+  `;
+  div.querySelector('.thong-bao-body').addEventListener('click', async (ev) => {
+    ev.stopPropagation();
+    await markSingleAsRead(tb.maThongBao);
+    if (tb.url) window.location.href = tb.url;
+  });
+  div.querySelector('.btnMarkSingle').addEventListener('click', async (ev) => {
+    ev.stopPropagation();
+    await markSingleAsRead(tb.maThongBao);
+  });
+  div.querySelector('.btnDelete').addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    deleteNotificationOnServer(tb.maThongBao);
+  });
+  return div;
+}
+
+/* ---------- open modal / render list ---------- */
+const thongBaoForm = document.getElementById('thongBaoForm');
+const thongBaoList = document.getElementById('thongBaoList');
+const btnShowThongBao = document.getElementById('btnShowThongBao');
+
+async function openThongBaoBox() {
+  if (!thongBaoForm || !thongBaoList) return;
+  thongBaoForm.style.display = 'block';
+  const data = await fetchLatestNotifications(50);
+  const items = Array.isArray(data.items) ? data.items.slice() : [];
+  items.sort((a,b) => {
+    const aUnread = a.daDoc ? 1 : 0;
+    const bUnread = b.daDoc ? 1 : 0;
+    if (aUnread !== bUnread) return aUnread - bUnread; // unread first
+    return (new Date(b.ngayTao || 0)).getTime() - (new Date(a.ngayTao || 0)).getTime();
+  });
+  thongBaoList.innerHTML = '';
+  items.forEach(tb => thongBaoList.appendChild(makeThongBaoItem(tb)));
+  renderEmptyState();
+  setNotifBadge(data.unread || 0);
+}
+
+/* ---------- wire UI buttons ---------- */
+document.addEventListener('DOMContentLoaded', function(){
+  fetchLatestNotifications(0).then(data => setNotifBadge(data.unread || 0)).catch(()=>{});
+
+  if (btnShowThongBao) btnShowThongBao.addEventListener('click', openThongBaoBox);
+  const btnClose = document.getElementById('btnCloseThongBao');
+  if (btnClose) btnClose.addEventListener('click', ()=> thongBaoForm.style.display = 'none');
+
+  const btnClearAll = document.getElementById('btnClearAll');
+  if (btnClearAll) btnClearAll.addEventListener('click', deleteAllNotificationsOnServer);
+
+  const btnMarkAllRead = document.getElementById('btnMarkAllRead');
+  if (btnMarkAllRead) btnMarkAllRead.addEventListener('click', markAllAsReadServer);
+
+  if (thongBaoForm) {
+    thongBaoForm.addEventListener('click', function(e){
+      if (e.target === thongBaoForm) {
+        thongBaoForm.style.display = 'none';
+      }
+    });
+  }
+});
+
+/* ---------- websocket: nhận notif mới realtime ---------- */
+if (maTK > 0) {
+  const socket = new SockJS("/ws");
+  const stompClient = Stomp.over(socket);
+  stompClient.connect({}, function () {
+    stompClient.subscribe("/topic/thong-bao/" + maTK, async function (message) {
+      try {
+        const data = JSON.parse(message.body || '{}');
+        await processIncomingNotification(data);
+      } catch(err) {
+        console.error('Lỗi xử lý notification từ websocket', err);
+      }
+    });
+  }, function(err){
+    console.warn('STOMP connect error', err);
+  });
+}
 
 </script>
+<script>
+  document.getElementById('btnShowThongBao').addEventListener('click', () => {
+    document.getElementById('thongBaoForm').style.display = 'block';
+  });
 
+  document.getElementById('btnCloseThongBao').addEventListener('click', () => {
+    document.getElementById('thongBaoForm').style.display = 'none';
+  });
+</script>
 
 
 
@@ -411,23 +708,96 @@ function hienThongBao(noiDung, maThongBao, url) {
 /*<![CDATA[*/
 const maTK = /*[[${session.user != null ? session.user.maTK : 0}]]*/ 0;
 
+function ensureNotifUiReady() {
+  window.thongBaoCache = window.thongBaoCache || {}; 
+  window.isThongBaoListReady = !!document.getElementById('thongBaoList');
+}
+
+function addNotificationToList(tb){
+	  if(!tb || !tb.maThongBao) return;
+	  const id = String(tb.maThongBao);
+
+	  window.thongBaoCache = window.thongBaoCache || {};
+
+	  if (window.thongBaoCache[id]) return;
+	  if (document.querySelector(`.thong-bao-item[data-id="${id}"]`)) {
+	    window.thongBaoCache[id] = tb; 
+	    return;
+	  }
+
+	  const list = document.getElementById('thongBaoList');
+	  if (!list) {
+
+	    window.pendingNotifications = window.pendingNotifications || [];
+	    window.pendingNotifications.push(tb);
+	    scheduleFlushPending && scheduleFlushPending();
+	    return;
+	  }
+
+	  const empty = list.querySelector('.thong-bao-empty');
+	  if (empty) empty.remove();
+
+	  const node = makeThongBaoItem(tb);
+	  list.insertBefore(node, list.firstChild);
+
+	  window.thongBaoCache[id] = tb;
+	}
+
+async function processIncomingNotification(data){
+	  if (!data) return;
+	  let tbObj = data;
+
+	  if (!data.tieuDe && data.maThongBao) {
+	    try {
+	      const res = await fetch(`/api/thong-bao/latest?maTK=${encodeURIComponent(maTK)}&limit=10`);
+	      if (res.ok) {
+	        const json = await res.json();
+	        const items = Array.isArray(json.items) ? json.items : [];
+	        tbObj = items.find(it => String(it.maThongBao) === String(data.maThongBao)) || data;
+	      }
+	    } catch (e) {
+	      console.warn('Fetch detail fail, using payload', e);
+	    }
+	  }
+
+	  const id = String(tbObj.maThongBao);
+	  if (window.thongBaoCache && window.thongBaoCache[id]) return;
+
+	  addNotificationToList(tbObj);
+
+	  if (!tbObj.daDoc) {
+	    changeNotifDelta(1);
+	  }
+
+	  try {
+	    if (typeof hienThongBao === 'function') {
+	      hienThongBao(tbObj.noiDung || tbObj.tieuDe || '', tbObj.maThongBao, tbObj.url || '');
+	    }
+	  } catch (e) { console.warn(e); }
+	}
 if (maTK > 0) {
-	const socket = new SockJS("/ws");
-	const stompClient = Stomp.over(socket);
-	stompClient.connect({}, function () {
-		stompClient.subscribe("/topic/thong-bao/" + maTK, function (message) {
-			const data = JSON.parse(message.body); // 👈 parse JSON object
-			hienThongBao(data.noiDung, data.maThongBao, data.url); // 👈 dùng đúng dữ liệu
-		});
-	});
+  const socket = new SockJS("/ws");
+  const stompClient = Stomp.over(socket);
+  stompClient.connect({}, function () {
+    stompClient.subscribe("/topic/thong-bao/" + maTK, async function (message) {
+      try {
+        const data = JSON.parse(message.body);
+        await processIncomingNotification(data);
+      } catch(err) {
+        console.error('Lỗi xử lý notification từ websocket', err);
+      }
+    });
+  }, function(err){
+    console.warn('STOMP connect error', err);
+  });
 }
 /*]]>*/
 </script>
+
 
 <!-- Ionicons: để hiển thị icon trong form -->
 <script type="module"
 	src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule
 	src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-
 </html>

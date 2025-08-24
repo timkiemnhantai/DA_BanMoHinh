@@ -130,7 +130,7 @@
 				<div class="order-foot"
 					style="font-size: 18px; display: flex; justify-content: space-between; align-items: center;">
 					<form action="">
-						<button th:if="${dh.donHang.trangThaiDH.maTTDH == 1}"
+						  <button th:if="${dh.donHang.trangThaiDH.maTTDH == 1 or dh.donHang.trangThaiDH.maTTDH == 2 or dh.donHang.trangThaiDH.maTTDH == 3}"
 							style="margin-right: 0;" class="btn btn-danger btn-huy-don"
 							th:attr="data-madh=${dh.donHang.maDH}" type="button">
 							Hủy đơn</button>
