@@ -2,16 +2,8 @@ package com.poly.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,28 +14,31 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChiTietGioHang {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "MaCTGH")
-	private Integer maCTGH;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "MaGH")
-	private GioHang gioHang;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "MaCTGH")
+    private Integer maCTGH;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "MaCTSP")
-	private BienTheSanPham chiTietSanPham;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "MaGH")
+    @JsonBackReference // tránh vòng lặp JSON với GioHang
+    private GioHang gioHang;
 
-	@Column(name = "SoLuong")
-	private Integer soLuong;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "MaCTSP")
+    @JsonBackReference // tránh vòng lặp JSON với BienTheSanPham
+    private BienTheSanPham chiTietSanPham;
 
-	@Column(name = "GiamGiaThucTe")
-	private BigDecimal giamGiaThucTe;
+    @Column(name = "SoLuong")
+    private Integer soLuong;
 
-	@Column(name = "GiaTienThucTe")
-	private BigDecimal giaTienThucTe;
+    @Column(name = "GiamGiaThucTe")
+    private BigDecimal giamGiaThucTe;
 
-	@Column(name = "NgayThem")
-	private LocalDateTime ngayThem;
+    @Column(name = "GiaTienThucTe")
+    private BigDecimal giaTienThucTe;
+
+    @Column(name = "NgayThem")
+    private LocalDateTime ngayThem;
 }

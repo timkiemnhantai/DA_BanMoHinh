@@ -1,6 +1,7 @@
 package com.poly.service;
 
 
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileManagerService {
     
-    private final String rootFolder = "\"src/main/resources/static/AnhSanPham\"";
+    private final String rootFolder = "uploads";
 
     private Path getPath(String folder, String filename) {
         File dir = Paths.get(rootFolder, folder).toFile();

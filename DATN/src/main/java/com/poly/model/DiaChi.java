@@ -1,7 +1,7 @@
 package com.poly.model;
 
 import com.poly.util.SoDienThoaiUtils;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,13 +17,12 @@ public class DiaChi {
     @Column(name = "MaDiaChi")
     private Integer maDiaChi;
 
-    // ✅ Thêm 2 cột mới
     @Column(name = "HoTen")
     private String hoTen;
 
     @Column(name = "SoDienThoai")
     private String soDienThoai;
-    
+
     @Column(name = "Tinh", nullable = true)
     private String tinh;
 
@@ -41,12 +40,12 @@ public class DiaChi {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MaTK", nullable = false)
+    @JsonBackReference // tránh vòng lặp JSON với TaiKhoan
     private TaiKhoan taiKhoan;
 
     @Transient
     public String getDiaChiDayDu() {
         StringBuilder diaChi = new StringBuilder();
-
         if (diaChiChiTiet != null && !diaChiChiTiet.trim().isEmpty()) {
             diaChi.append(diaChiChiTiet).append(", ");
         }
@@ -59,12 +58,11 @@ public class DiaChi {
         if (tinh != null && !tinh.trim().isEmpty()) {
             diaChi.append(tinh);
         }
-
-        return diaChi.toString().replaceAll(", $", ""); // Xoá dấu phẩy cuối nếu có
+        return diaChi.toString().replaceAll(", $", "");
     }
+
     @Transient
     public String getSoDienThoaiQuocTe() {
         return SoDienThoaiUtils.chuyenDinhDangQuocTe(this.soDienThoai);
     }
-
 }

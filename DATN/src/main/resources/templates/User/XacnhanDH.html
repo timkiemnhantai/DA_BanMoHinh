@@ -1,0 +1,139 @@
+<link rel="stylesheet" href="/css/xacnhan.css" />
+
+<div id="content" class="order-confirm-container" style="display: none;">
+	<th:block th:each="dh, iterStat : ${donHang}">
+		<div class="order-header">
+			<h4>🛒 Xác nhận đơn hàng</h4>
+			<p>
+				Mã đơn hàng: <strong th:text="'DH' + ${dh.donHang.maDH}"></strong>
+			</p>
+		</div>
+
+		<th:block th:each="ct, iterStat : ${dh.chiTietDonHangs}">
+			<div class="order-item">
+				<div class="order-item-info">
+					<img
+						th:src="@{${ ct.bienTheSanPham != null and !#lists.isEmpty(ct.bienTheSanPham.anhChiTietList) 
+					 ? ct.bienTheSanPham.anhChiTietList[0].urlAnhCT : (!#lists.isEmpty(ct.bienTheSanPham.sanPham.anhSanPham) 
+					 ? ct.bienTheSanPham.sanPham.anhSanPham[0].urlAnhSP  : '/img/default.png') } }"
+						alt="product">
+					<div>
+						<h6 th:text="${ct.bienTheSanPham.sanPham.tenSP}"></h6>
+						<p th:text="'Số lượng: ' + ${ct.soLuongSP}"></p>
+						<p>
+							<strong><span th:if="${ct.giamGiaThucTe == 0}">
+									Thành tiền: <span style="color: red;"
+									th:text="${#numbers.formatDecimal(ct.thanhTien, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+
+							</span> <span th:if="${ct.giamGiaThucTe > 0}"> Đơn giá: <span
+									th:text="${#numbers.formatDecimal(ct.donGia, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+									| Giảm giá: <span
+									th:text="${#numbers.formatDecimal(ct.giamGiaThucTe, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+									| Thành tiền: <span style="color: red;"
+									th:text="${#numbers.formatDecimal(ct.thanhTien, 0, 'POINT', 0, 'COMMA')} + ' VND'"></span>
+
+							</span></strong>
+						</p>
+					</div>
+				</div>
+				<button class="btn btn-outline-danger btn-sm"
+					onclick="reportIssue('DH123456', 'Gundam RX-78-2 Master Grade')">🚩
+					Báo lỗi</button>
+			</div>
+
+		</th:block>
+		<div class="mt-3">
+			<p>
+				<strong
+					th:text="'Phí vận chuyển: ' + ${#numbers.formatDecimal(dh.donHang.phiVanChuyen, 0, 'POINT', 0, 'COMMA')} + ' VND'"></strong>
+			</p>
+			<h5>
+				<strong> Tổng thanh toán: <span style="color: red;"
+					th:text="${#numbers.formatDecimal(dh.donHang.thanhTien, 0, 'POINT', 0, 'COMMA')} + ' VND'">
+				</span>
+				</strong>
+			</h5>
+
+		</div>
+
+		<!-- Nút hành động -->
+		<div class="order-actions">
+			<button class="btn" style="background-color: #dc3545; color: #fff;"
+				onclick="goBack()">❌ Hủy</button>
+			<button class="btn btn-danger" onclick="reportOrderIssue('DH123456')">⚠️
+				Báo lỗi đơn hàng</button>
+			<form th:action="@{/xac-nhan-nhan-hang}" method="post"
+				th:id="'form-xac-nhan-' + ${dh.donHang.maDH}" style="margin: 0;">
+				<input type="hidden" th:name="${_csrf.parameterName}"
+					th:value="${_csrf.token}" /> <input type="hidden" name="maDH"
+					th:value="${dh.donHang.maDH}" />
+				<button class="btn-xac-nhan-nhan-hang" type="button"
+					style="background-color: #28a745; color: #fff;"
+					th:data-id="'form-xac-nhan-' + ${dh.donHang.maDH}">✅ Xác
+					nhận đơn hàng</button>
+			</form>
+		</div>
+	</th:block>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    // const maThongBao = params.get('maThongBao'); // Bỏ vì không dùng nữa
+    const maDH = params.get('maDH'); // Lấy maDH để dùng nếu cần
+
+    function goBackOrHome() {
+        if (document.referrer) {
+            window.history.back();
+        } else {
+            window.location.href = '/';
+        }
+    }
+
+    // Chỉ kiểm tra token và maDH thôi, không cần maThongBao nữa
+    if (!token || !maDH) {
+        goBackOrHome();
+        return;
+    }
+
+    fetch(`/verify-token?token=${token}&maDH=${maDH}`)
+    .then(async res => {
+        console.log("verify-token status:", res.status);
+        if (res.ok) {
+            console.log("Token hợp lệ, hiển thị nội dung");
+            document.getElementById('content').style.display = 'block';
+            // loadOrderDetails(maDH); // gọi hàm load chi tiết đơn hàng nếu có
+        } else {
+            let errText = await res.text();
+            console.warn("Token không hợp lệ hoặc lỗi server:", errText);
+            goBackOrHome();
+        }
+    })
+    .catch(err => {
+        console.error("Lỗi khi gọi verify-token:", err);
+        goBackOrHome();
+    });
+
+});
+
+
+
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const btnsXoa = document.querySelectorAll(".btn-xac-nhan-nhan-hang");
+
+    btnsXoa.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const formId = btn.getAttribute("data-id");
+
+            showConfirm("Bạn có chắc chắn muốn xác nhận đơn hàng này?", () => {
+                document.getElementById(formId).submit();
+            });
+        });
+    });
+});
+</script>

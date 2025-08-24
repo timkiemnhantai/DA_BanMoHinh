@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gundam Shop</title>
+<link rel="stylesheet" href="/css/style.css" />
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+
+</head>
+<body>
+	<!-- menu -->
+	<div class="body-nav" id="main-nav">
+		<nav id="navbar">
+			<div class="nav-logo">
+				<div class="stripe blue"></div>
+				<div class="stripe yellow"></div>
+				<div class="stripe red"></div>
+
+				<div class="logo-wrapper">
+					<img src="/img/processed_no_white.png" alt="" />
+					<div class="logo-title">Gundam Shop</div>
+				</div>
+			</div>
+
+			<div class="nav-toolbar">
+				<form action="/product" method="get" class="search">
+					<div class="search-left">
+						<input type="text" name="keyword" th:value="${tuKhoa}"
+							placeholder="Từ khóa..." onfocus="this.placeholder=''"
+							onblur="this.placeholder='Từ khóa...'" />
+					</div>
+					<div class="search-right">
+						<button type="submit" class="in">
+							<img src="/img/search.png" alt="Tìm kiếm" />
+						</button>
+					</div>
+				</form>
+
+				<div class="item">
+					<ul>
+						<li><a th:href="@{/home}">Trang chủ</a></li>
+						<li><a th:href="@{/product}">Sản phẩm</a></li>
+						<li><a th:href="@{/product(
+						    giamGia=true)}">Hàng
+								giảm giá</a></li>
+						<li><a th:href="@{/product(loai='Dụng cụ')}">Dụng cụ</a></li>
+						<li><a th:href="@{/product(loai='Phụ kiện')}">Phụ kiện</a></li>
+						<li><a th:href="@{/ChinhSach}">Chính Sách</a></li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="nav-account">
+				<div class="account-left">
+					<label for="">Kết nối</label> <a href=""><img
+						src="/img/facebook.png" alt="" /></a> <a href=""><img
+						src="/img/instagram.png" alt="" /></a>
+				</div>
+				<div class="account-right">
+					<th:block th:if="${session.user != null}">
+						<div class="account-container">
+							<!-- Avatar có thể click được -->
+							<a th:href="@{/TrangCaNhan}" class="anh"> <img
+								id="avatar-img" th:src="${session.user.avatar}" alt="Avatar"
+								onerror="this.onerror=null; this.src='/img/account.png';">
+							</a>
+				
+							<!-- Dropdown xuất hiện khi hover toàn khối account-container -->
+							<div class="account-dropdown">
+								<a th:href="@{/TrangCaNhan}">Tài Khoản Của Tôi</a> <a
+									th:href="@{/logout}">Đăng Xuất</a>
+							</div>
+						</div>
+						<a class="anh1" th:href="@{/gio-hang}"><img
+							src="/img/Screenshot_2025-06-19_220342-removebg-preview.png"
+							alt=""></a>
+					</th:block>
+					<th:block th:if="${session.user == null}">
+						<a class="ngang" th:href="@{/register}">Đăng ký</a> | <a
+							class="ngang" th:href="@{/login}">Đăng nhập</a>
+					</th:block>
+
+				</div>
+			</div>
+		</nav>
+	</div>
+	
+	
+	<!-- banner -->
+	<div th:replace="~{${content}}"></div>
+
+	<!-- Toast container -->
+<div id="toast-container" class="toast-container">
+   <div th:each="tb : ${dsThongBaoChuaDoc}" 
+        class="toast toast-websocket" 
+        th:attr="data-id=${tb.maThongBao}"
+        style="background-color: #ffc107; color: #fff; border-radius: 8px; margin-bottom: 8px; padding: 12px 16px;">
+        
+        <div class="toast-content" style="display: flex; justify-content: space-between; align-items: center;">
+        	<a th:href="${tb.url}" onclick="return danhDauVaAn(this)">
+                <span th:text="${tb.noiDung}"></span>
+        	</a>
+
+            <button class="toast-close" style="background: none; border: none; font-size: 18px; color: #fff; cursor: pointer;" 
+                    onclick="danhDauVaAn(this)">
+                ×
+            </button>
+        </div>
+    </div>
+</div>
+<div id="toast-container1" class="toast-container"></div>
+
+	<!-- Modal xác nhận -->
+	<div id="confirm-modal" class="modal-overlay hidden">
+		<div class="modal-content">
+			<p id="confirm-message"></p>
+			<div class="modal-actions">
+				<button id="confirm-yes" class="btn btn-danger">Xác nhận</button>
+				<button id="confirm-no" class="btn btn-secondary">Hủy</button>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+
+<footer class="site-footer">
+	<div class="footer-container">
+		<div class="footer-column">
+			<div class="footer-logo">
+				<img src="/img/logo_gundam.png" alt="Gundam Shop Footer Logo" /> <span>Gundam
+					Shop</span>
+			</div>
+			<h4>Liên hệ</h4>
+			<p>Địa chỉ: QTSC 9 Building, D. Tố Ký, Tân Chánh Hiệp, Quận 12,
+				Hồ Chí Minh</p>
+			<p>Hotline: xxxx.xxxx.xxx</p>
+			<p>Email: abcyz@gmail.com</p>
+		</div>
+
+		<div class="footer-column">
+			<h4>Chính sách</h4>
+			<ul>
+				<li>Chính sách bảo mật</li>
+				<li>Chính sách đổi trả</li>
+				<li>Chính sách vận chuyển</li>
+				<li>Quy định sử dụng</li>
+			</ul>
+		</div>
+
+		<div class="footer-column payment-shipping-column">
+			<h4>Thanh toán</h4>
+			<div class="payment-methods">
+				<img src="/img/1.png" alt="Visa" /> <img src="/img/2.png"
+					alt="Mastercard" /> <img src="/img/3.jpg" alt="JCB" /> <img
+					src="/img/4.png" alt="Amex" /> <img src="/img/5.png" alt="QR Code" />
+			</div>
+			<h4>Đơn vị vận chuyển</h4>
+			<div class="shipping-methods">
+				<img src="/img/6.png" alt="SPX Express" /> <img src="/img/7.png"
+					alt="Giao Hang Tiet Kiem" /> <img src="/img/8.png"
+					alt="J&T Express" /> <img src="/img/9.png" alt="Ninja Van" /> <img
+					src="/img/12.png" alt="VNPost" /> <img src="/img/10.jpg"
+					alt="Giao Hang Nhanh" /> <img src="/img/11.png" alt="Best Express" />
+			</div>
+		</div>
+
+		<div class="footer-column map-column">
+			<h4>Map</h4>
+			<img src="/img/google_map.png" alt="Google Map"
+				class="footer-map-image" />
+		</div>
+
+		<div class="footer-column final-column">
+			<h4>Đề tài</h4>
+			<p>Website bán hàng mô hình lắp ráp</p>
+			<h4>Thành viên</h4>
+			<ul>
+				<li>Từ Ngọc Sơn</li>
+				<li>Trần Phúc Duy Khang</li>
+				<li>Võ Trường Giang</li>
+				<li>Nguyễn Hoàng Gia Khang</li>
+				<li>Phạm Minh Tân</li>
+			</ul>
+		</div>
+	</div>
+	
+</footer>
+
+<script>
+    function danhDauVaAn(element) {
+        const toast = element.closest('.toast');
+        const id = toast.getAttribute('data-id');
+        const isLink = element.tagName === 'A';
+        const url = isLink ? element.getAttribute('href') : null;
+
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        // Gửi POST đánh dấu đã đọc
+        fetch(`/thong-bao/${id}/da-doc`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            }
+        }).then(res => {
+            if (res.ok) {
+                toast.remove();
+                if (isLink && url) {
+                    window.location.href = url; // Chuyển hướng sau khi đánh dấu
+                }
+            } else {
+                alert('Lỗi khi đánh dấu thông báo đã đọc');
+            }
+        }).catch(err => {
+            console.error('Lỗi fetch:', err);
+            alert('Lỗi kết nối máy chủ');
+        });
+
+        return false; // Ngăn chuyển hướng mặc định nếu là <a>
+    }
+</script>
+
+
+
+
+
+
+
+<script>
+    function updatePadding() {
+      const navbar = document.getElementById("navbar");
+      const mainNav = document.getElementById("main-nav");
+      if (navbar && mainNav) {
+        mainNav.style.paddingTop = navbar.offsetHeight + "px";
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", updatePadding);
+    window.addEventListener("resize", updatePadding);
+
+    let lastScrollY = window.scrollY;
+    const navbar = document.getElementById("navbar");
+
+    window.addEventListener("scroll", () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY) {
+        // Cuộn xuống → ẩn nav
+        navbar.style.transform = "translateY(-100%)";
+      } else {
+        // Cuộn lên → hiện nav
+        navbar.style.transform = "translateY(0)";
+      }
+
+      lastScrollY = currentScrollY;
+    });
+    
+  </script>
+<script>
+function hienThongBaoHeThong(message, isSuccess = true) {
+	const container = document.getElementById('toast-container1');
+
+	const toast = document.createElement('div');
+	toast.classList.add('toast');
+	toast.style.backgroundColor = isSuccess ? '#28a745' : '#dc3545'; // xanh nếu thành công, đỏ nếu lỗi
+	toast.textContent = message;
+
+	container.appendChild(toast);
+
+	setTimeout(() => {
+		toast.remove();
+	}, 4000);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const msg = sessionStorage.getItem('thongBaoDanhGia');
+    if(msg) {
+        hienThongBaoHeThong(msg, true);
+        sessionStorage.removeItem('thongBaoDanhGia'); // xóa sau khi hiển thị
+    }
+});
+
+
+
+function hienThongBao(noiDung, maThongBao, url) {
+    console.log("Nhận thông báo:", noiDung, maThongBao, url);
+    const container = document.getElementById('toast-container');
+
+    const toast = document.createElement("div");
+    toast.className = "toast toast-websocket";
+    toast.style.backgroundColor = "#ffc107";
+    toast.style.color = "#fff";
+    toast.style.borderRadius = "8px";
+    toast.style.marginBottom = "8px";
+    toast.style.padding = "12px 16px";
+
+    toast.setAttribute("data-id", maThongBao);
+    toast.setAttribute("data-url", url);
+    toast.innerHTML = `
+        <div class="toast-content" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>${noiDung}</span>
+            <button class="toast-close" style="background: none; border: none; font-size: 18px; color: #fff; cursor: pointer;">×</button>
+        </div>
+    `;
+
+    toast.querySelector(".toast-close").addEventListener("click", function (e) {
+        e.stopPropagation();
+
+        const id = toast.getAttribute("data-id");
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        fetch(`/thong-bao/${id}/da-doc`, {
+            method: 'POST',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        }).then(res => {
+            if (res.ok) toast.remove();
+            else alert("Lỗi khi đánh dấu đã đọc!");
+        }).catch(err => {
+            console.error(err);
+            alert("Lỗi kết nối máy chủ");
+        });
+    });
+
+    toast.addEventListener("click", () => {
+        console.log("Click toast, url =", toast.getAttribute("data-url"));
+        const id = toast.getAttribute("data-id");
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        const url = toast.getAttribute('data-url'); // lấy url từ attribute
+
+        fetch(`/thong-bao/${id}/da-doc`, {
+            method: 'POST',
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        }).finally(() => {
+            if (url) {
+                window.location.href = url;
+            }
+        });
+    });
+
+
+    container.appendChild(toast);
+}
+
+
+
+
+
+
+  function showConfirm(message, onConfirm) {
+	  const modal = document.getElementById("confirm-modal");
+	  const messageEl = document.getElementById("confirm-message");
+	  const yesBtn = document.getElementById("confirm-yes");
+	  const noBtn = document.getElementById("confirm-no");
+
+	  messageEl.textContent = message;
+	  modal.classList.remove("hidden");
+
+	  const close = () => modal.classList.add("hidden");
+
+	  yesBtn.onclick = () => {
+	    close();
+	    onConfirm();
+	  };
+	  noBtn.onclick = close;
+	}
+  
+</script>
+<!-- Thêm đoạn này trong TrangCaNhan.html -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let error = /*[[${error}]]*/ null;
+    let success = /*[[${success}]]*/ null;
+    /*]]>*/
+</script>
+
+<script>
+    if (error !== null && error !== '') {
+        hienThongBaoHeThong(error, false);
+    }
+
+    if (success !== null && success !== '') {
+        hienThongBaoHeThong(success, true);
+    }
+
+</script>
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script th:inline="javascript">
+/*<![CDATA[*/
+const maTK = /*[[${session.user != null ? session.user.maTK : 0}]]*/ 0;
+
+if (maTK > 0) {
+	const socket = new SockJS("/ws");
+	const stompClient = Stomp.over(socket);
+	stompClient.connect({}, function () {
+		stompClient.subscribe("/topic/thong-bao/" + maTK, function (message) {
+			const data = JSON.parse(message.body); // 👈 parse JSON object
+			hienThongBao(data.noiDung, data.maThongBao, data.url); // 👈 dùng đúng dữ liệu
+		});
+	});
+}
+/*]]>*/
+</script>
+
+<!-- Ionicons: để hiển thị icon trong form -->
+<script type="module"
+	src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule
+	src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+</html>

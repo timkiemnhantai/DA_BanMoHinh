@@ -1,0 +1,42 @@
+ .container-admin {
+      margin-top: 80px;   /* Tránh đè navbar */
+      margin-left: 100px;  /* Tránh đè taskbar */
+      padding: 20px;
+      overflow-x: hidden;
+      background: #fdfdfd;
+      min-height: calc(100vh - 60px);
+    }
+
+
+
+
+    body {
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .status-paid {
+      color: green;
+      font-weight: bold;
+    }
+
+    .status-pending {
+      color: orange;
+      font-weight: bold;
+    }
+
+    .status-failed {
+      color: red;
+      font-weight: bold;
+    }
+
+    .note-cell {
+      max-width: 250px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }

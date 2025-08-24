@@ -1,0 +1,92 @@
+   <link rel="stylesheet" href="/css/Style_QuanLyDanhGia.css">
+ <div class="container-admin">
+    <h2 class="mb-4">Quản lý đánh giá sản phẩm</h2>
+
+    <table class="table table-bordered table-hover text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Mã ĐG</th>
+          <th>Mã SP</th>
+          <th>Tên SP</th>
+          <th>Mã Tài Khoản</th>
+          <th>Tên Tài Khoản</th>
+          <th>Số Sao</th>
+          <th>Bình Luận</th>
+          <th>Ngày Đăng</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="dg : ${danhGiaList}">
+          <td th:text="${dg.maDG}"></td>
+          <td th:text="${dg.sanPham.maSP}"></td>
+          <td th:text="${dg.sanPham.tenSP}"></td>
+          <td th:text="${dg.taiKhoan.maTK}"></td>
+          <td th:text="${dg.taiKhoan.tenDangNhap}"></td>
+          <td th:text="${dg.soSao}"></td>
+          <td th:text="${dg.binhLuan}"></td>
+          <td th:text="${#temporals.format(dg.ngayDang, 'yyyy-MM-dd HH:mm')}"></td>
+          <td>
+            <button class="btn btn-warning btn-sm" onclick="showEditForm(this)">Sửa</button>
+            <a th:href="@{'/QuanLyDanhGia/delete/' + ${dg.maDG}}" class="btn btn-danger btn-sm">Xóa</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- FORM CHỈNH SỬA -->
+    <div id="editForm" class="mt-5 p-4 border rounded bg-white shadow" style="display: none;">
+      <h5 class="mb-3">Chỉnh sửa đánh giá</h5>
+      <form id="reviewEditForm" method="post" th:action="@{/quan-ly-danh-gia/update}">
+        <div class="row g-3">
+          <input type="hidden" name="maDG" id="maDG" class="form-control" readonly>
+
+          <div class="col-md-4">
+            <label for="maSP" class="form-label">Mã Sản Phẩm</label>
+            <input type="text" name="maSP" id="maSP" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label for="maTK" class="form-label">Mã Tài Khoản</label>
+            <input type="text" name="maTK" id="maTK" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label for="soSao" class="form-label">Số Sao (1-5)</label>
+            <input type="number" name="soSao" id="soSao" class="form-control" min="1" max="5">
+          </div>
+          <div class="col-md-4">
+            <label for="ngayDang" class="form-label">Ngày Đăng</label>
+            <input type="date" name="ngayDang" id="ngayDang" class="form-control">
+          </div>
+          <div class="col-12">
+            <label for="binhLuan" class="form-label">Bình Luận</label>
+            <textarea name="binhLuan" id="binhLuan" class="form-control" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="mt-4 d-flex justify-content-end">
+          <button type="button" class="btn btn-secondary me-2" onclick="hideEditForm()">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    function showEditForm(button) {
+      const row = button.closest("tr");
+      document.getElementById("editForm").style.display = "block";
+      document.getElementById("maDG").value = row.children[0].innerText;
+      document.getElementById("maSP").value = row.children[1].innerText;
+      document.getElementById("maTK").value = row.children[3].innerText;
+      document.getElementById("soSao").value = row.children[5].innerText;
+      document.getElementById("binhLuan").value = row.children[6].innerText;
+
+      const dateTime = row.children[7].innerText.split(" ")[0];
+      document.getElementById("ngayDang").value = dateTime;
+    }
+
+    function hideEditForm() {
+      document.getElementById("editForm").style.display = "none";
+    }
+  </script>

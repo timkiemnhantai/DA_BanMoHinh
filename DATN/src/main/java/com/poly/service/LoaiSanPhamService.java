@@ -9,19 +9,10 @@ import com.poly.model.LoaiSanPham;
 import com.poly.repository.LoaiSanPhamRepository;
 @Service
 public class LoaiSanPhamService {
-	//@Autowired
-	//private LoaiSanPhamRepository loaisanphamRepository;
-
-    //public List<LoaiSanPham> getAll() {
-        //return loaisanphamRepository.findAll();
-    //}
-
-        @Autowired
-        private LoaiSanPhamRepository loaisanphamRepository;
-
-        public List<LoaiSanPham> getAllLoaiSanPham() {
-            return loaisanphamRepository.findAll();
-        }
+	@Autowired
+	private LoaiSanPhamRepository loaisanphamRepository;
+	
+    public List<LoaiSanPham> getAll() {
+        return loaisanphamRepository.findAll();
     }
-
-
+}

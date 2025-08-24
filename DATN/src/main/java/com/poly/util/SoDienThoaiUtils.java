@@ -13,4 +13,14 @@ public class SoDienThoaiUtils {
         // Nếu đã có định dạng quốc tế rồi thì giữ nguyên
         return soDienThoai;
     }
+    public static String chuyenVeSo0(String soDienThoai) {
+        if (soDienThoai == null || soDienThoai.isBlank()) return "";
+        soDienThoai = soDienThoai.trim();
+
+        if (soDienThoai.startsWith("(+84)")) {
+            return "0" + soDienThoai.substring(5); // loại bỏ (+84)
+        }
+
+        return soDienThoai;
+    }
 }

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sản phẩm liên quan</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style_QuanLySanPhamLienQuan.css">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav id="navbar">
+    <div class="nav-left">
+      <div class="logo-wrapper flex items-center">
+        <img src="/img/processed_no_white.png" alt="Logo" />
+        <div class="logo-title">Gundam Shop</div>
+      </div>
+    </div>
+    <div class="nav-right flex items-center">
+      <label>Tài khoản |</label>
+      <a href="#"><img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Tài khoản" /></a>
+    </div>
+  </nav>
+
+  <!-- Taskbar -->
+  <div class="taskbar">
+    <a href="/CodeAdmin/QuanLySanPham.html" title="Quản lý sản phẩm"><img src="/img/box.png" alt="" /></a>
+    <a href="/CodeAdmin/SanPhamLienQuan.html" title="Sản phẩm liên quan"><img src="/img/link.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyTaiKhoan.html" title="Quản lý tài khoản"><img src="/img/account.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyDonHang.html" title="Quản lý đơn hàng"><img src="/img/booking.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyDanhGia.html" title="Quản lý đánh giá"><img src="/img/review.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyBanner.html" title="Quản lý banner"><img src="/img/advertisement.png" alt="" /></a>
+    <a href="/CodeAdmin/QuanLyThanhToan.html" title="Quản lý thanh toán"><img src="/img/credit-card.png" alt="" /></a>
+  </div>
+
+  <!-- PHẦN CHÍNH -->
+  <div class="main">
+    <h1>Sản phẩm liên quan</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Mã SP</th>
+          <th>Mã CTSP</th>
+          <th>Tên sản phẩm</th>
+          <th>Ảnh</th>
+          <th>Loại</th>
+          <th>Hãng</th>
+          <th>Giá</th>
+          <th>Giảm giá</th>
+          <th>Tồn kho</th>
+          <th>Trạng thái</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody id="relatedProductTable">
+        <tr>
+          <td>SP001</td>
+          <td>CT001</td>
+          <td>Gundam RX-78</td>
+          <td><img src="/img/MoHinh/BanDai/HG/GundamAerial/sp1.png" width="60" class="mx-auto block"></td>
+          <td>HG</td>
+          <td>Bandai</td>
+          <td>500.000đ</td>
+          <td>10%</td>
+          <td>50</td>
+          <td>Còn hàng</td>
+          <td>
+            <button class="action-btn" onclick="editProduct(this)">Sửa</button>
+            <button class="action-btn ml-2 text-red-600" onclick="deleteProduct(this)">Xóa</button>
+          </td>
+        </tr>
+        <tr>
+          <td>SP002</td>
+          <td>CT002</td>
+          <td>Gundam Barbatos</td>
+          <td><img src="/img/MoHinh/BanDai/MG/00-QuanTFullSaber/sp8.png" width="60" class="mx-auto block"></td>
+          <td>MG</td>
+          <td>Bandai</td>
+          <td>1.200.000đ</td>
+          <td>5%</td>
+          <td>20</td>
+          <td>Hết hàng</td>
+          <td>
+            <button class="action-btn" onclick="editProduct(this)">Sửa</button>
+            <button class="action-btn ml-2 text-red-600" onclick="deleteProduct(this)">Xóa</button>
+          </td>
+        </tr>
+         <tr>
+          <td>SP002</td>
+          <td>CT002</td>
+          <td>Gundam Barbatos</td>
+          <td><img src="/img/MoHinh/BanDai/MG/00-QuanTFullSaber/sp8.png" width="60" class="mx-auto block"></td>
+          <td>MG</td>
+          <td>Bandai</td>
+          <td>1.200.000đ</td>
+          <td>5%</td>
+          <td>20</td>
+          <td>Hết hàng</td>
+          <td>
+            <button class="action-btn" onclick="editProduct(this)">Sửa</button>
+            <button class="action-btn ml-2 text-red-600" onclick="deleteProduct(this)">Xóa</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- FORM SỬA -->
+    <div class="edit-form" id="editForm" style="display: none;">
+      <h3>Sửa sản phẩm liên quan</h3>
+      <form id="formEdit" onsubmit="return false;">
+        <input type="hidden" id="editMaSP">
+        <input type="hidden" id="editMaCTSP">
+
+        <label>Tên sản phẩm:</label>
+        <input type="text" id="editTenSP">
+
+        <label>Ảnh (URL):</label>
+        <input type="text" id="editAnh">
+
+        <label>Loại:</label>
+        <input type="text" id="editLoai">
+
+        <label>Hãng:</label>
+        <input type="text" id="editHang">
+
+        <label>Giá:</label>
+        <input type="text" id="editGia">
+
+        <label>Giảm giá:</label>
+        <input type="text" id="editGiamGia">
+
+        <label>Tồn kho:</label>
+        <input type="number" id="editTonKho">
+
+        <label>Trạng thái:</label>
+        <input type="text" id="editTrangThai">
+
+        <!-- Nút Lưu và Hủy -->
+        <button type="button" onclick="saveEdit()">Lưu</button>
+        <button type="button" onclick="cancelEdit()" style="margin-left: 10px;">Hủy</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- JS xử lý -->
+  <script>
+    function editProduct(btn) {
+      const row = btn.closest('tr');
+      const cells = row.getElementsByTagName('td');
+
+      document.getElementById('editMaSP').value = cells[0].innerText;
+      document.getElementById('editMaCTSP').value = cells[1].innerText;
+      document.getElementById('editTenSP').value = cells[2].innerText;
+      document.getElementById('editAnh').value = cells[3].querySelector('img').getAttribute('src');
+      document.getElementById('editLoai').value = cells[4].innerText;
+      document.getElementById('editHang').value = cells[5].innerText;
+      document.getElementById('editGia').value = cells[6].innerText;
+      document.getElementById('editGiamGia').value = cells[7].innerText;
+      document.getElementById('editTonKho').value = cells[8].innerText;
+      document.getElementById('editTrangThai').value = cells[9].innerText;
+
+      document.getElementById('editForm').style.display = 'block';
+    }
+
+    function saveEdit() {
+      const maSP = document.getElementById('editMaSP').value;
+      const maCTSP = document.getElementById('editMaCTSP').value;
+
+      const rows = document.querySelectorAll('#relatedProductTable tr');
+      rows.forEach(row => {
+        if (row.cells[0].innerText === maSP && row.cells[1].innerText === maCTSP) {
+          row.cells[2].innerText = document.getElementById('editTenSP').value;
+          row.cells[3].innerHTML = `<img src="${document.getElementById('editAnh').value}" width="60" class="mx-auto block">`;
+          row.cells[4].innerText = document.getElementById('editLoai').value;
+          row.cells[5].innerText = document.getElementById('editHang').value;
+          row.cells[6].innerText = document.getElementById('editGia').value;
+          row.cells[7].innerText = document.getElementById('editGiamGia').value;
+          row.cells[8].innerText = document.getElementById('editTonKho').value;
+          row.cells[9].innerText = document.getElementById('editTrangThai').value;
+        }
+      });
+
+      alert("Cập nhật sản phẩm liên quan thành công!");
+      document.getElementById('editForm').style.display = 'none';
+    }
+
+    function cancelEdit() {
+      document.getElementById('formEdit').reset();
+      document.getElementById('editForm').style.display = 'none';
+    }
+
+    function deleteProduct(btn) {
+      const row = btn.closest('tr');
+      const tenSP = row.cells[2].innerText;
+      if (confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${tenSP}"?`)) {
+        row.remove();
+        alert("Đã xóa sản phẩm liên quan.");
+      }
+    }
+  </script>
+</body>
+
+</html>

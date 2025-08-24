@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import com.poly.model.BienTheSanPham;
 import com.poly.model.ChiTietGioHang;
 import com.poly.model.GioHang;
+
+import jakarta.transaction.Transactional;
 
 
 @Repository
@@ -22,5 +23,13 @@ public interface ChiTietGioHangRepository extends JpaRepository<ChiTietGioHang, 
 
 	Optional<ChiTietGioHang> findByGioHangAndChiTietSanPhamAndGiaTienThucTe(GioHang gioHang,
 			BienTheSanPham chiTietSanPham, BigDecimal giaTienThucTe);
+	@Transactional
+	void deleteByGioHang_TaiKhoan_MaTKAndChiTietSanPham_MaCTSPIn(Integer maTK, List<Integer> maCTSPList);
+
+
+
+
+	
+
 
 }

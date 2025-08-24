@@ -1,0 +1,619 @@
+
+<link rel="stylesheet" href="/css/style_ChiTietSanPham2.css" />
+
+<div class="main-content-wrapper product-detail-page-wrapper">
+	<div class="product-detail-container">
+		<div class="product-image-gallery">
+			<div class="product-image-slider">
+				<div class="slider-images-wrapper" id="sliderImagesWrapper">
+					<img th:each="anhSP, iStat : ${dsAnhSP}"
+						th:src="@{${anhSP.urlAnhSP}}"
+						th:alt="'Thumbnail SP ' + ${iStat.index + 1}"
+						th:classappend="${iStat.index == 0} ? ' active' : ''"
+						th:data-anh="@{${anhSP.urlAnhSP}}"
+						th:data-gia="${chiTiet[0].bienThe.gia}"
+						th:data-giasaugiam="${chiTiet[0].giaSauGiam}"
+						th:data-phienban="${chiTiet[0].bienThe.phienBan}"
+						th:data-tonkho="${chiTiet[0].bienThe.soLuongTonKho}"
+						th:data-mact="${chiTiet[0].bienThe.maCTSP}" />
+
+
+					<th:block th:each="bt : ${chiTiet}">
+						<th:block th:each="anhCT : ${bt.dsAnhChiTiet}">
+							<img th:src="@{${anhCT.urlAnhCT}}"
+								th:data-anh="@{${anhCT.urlAnhCT}}"
+								th:data-gia="${bt.bienThe.gia}"
+								th:data-giasaugiam="${bt.giaSauGiam}"
+								th:data-phienban="${bt.bienThe.phienBan}"
+								th:data-tonkho="${bt.bienThe.soLuongTonKho}"
+								th:data-mact="${bt.bienThe.maCTSP}" />
+						</th:block>
+					</th:block>
+
+				</div>
+				<div id="overlayHetHang" class="overlay-het-hang"
+					style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); color: white; font-weight: bold; font-size: 24px; display: flex; justify-content: center; align-items: center; pointer-events: none;">
+					HẾT HÀNG</div>
+				<button class="slider-button prev" onclick="moveSlider(-1)">&#10094;</button>
+				<button class="slider-button next" onclick="moveSlider(1)">&#10095;</button>
+			</div>
+
+			<div class="thumbnail-images">
+				<img th:each="anhSP, iStat : ${dsAnhSP}"
+					th:src="@{${anhSP.urlAnhSP}}"
+					th:alt="'Thumbnail SP ' + ${iStat.index + 1}" class="thumbnail"
+					th:classappend="${iStat.index == 0} ? ' active' : ''"
+					th:data-anh="@{${anhSP.urlAnhSP}}"
+					th:data-gia="${chiTiet[0].bienThe.gia}"
+					th:data-giasaugiam="${chiTiet[0].giaSauGiam}"
+					th:data-phienban="${chiTiet[0].bienThe.phienBan}"
+					th:data-tonkho="${chiTiet[0].bienThe.soLuongTonKho}"
+					th:data-mact="${chiTiet[0].bienThe.maCTSP}" />
+
+
+				<th:block th:each="bt : ${chiTiet}">
+					<th:block th:each="anhCT : ${bt.dsAnhChiTiet}">
+						<img th:src="@{${anhCT.urlAnhCT}}" class="thumbnail"
+							th:data-anh="@{${anhCT.urlAnhCT}}"
+							th:data-gia="${bt.bienThe.gia}"
+							th:data-giasaugiam="${bt.giaSauGiam}"
+							th:data-phienban="${bt.bienThe.phienBan}"
+							th:data-tonkho="${bt.bienThe.soLuongTonKho}"
+							th:data-mact="${bt.bienThe.maCTSP}" />
+					</th:block>
+				</th:block>
+			</div>
+
+
+		</div>
+
+
+
+		<div class="product-info-section">
+			<h1 th:text="${chiTietSP.sanPham.tenSP}">Tên sản phẩm</h1>
+			<p class="product-version" id="phienBanText"
+				th:text="${chiTiet[0].bienThe.phienBan}"></p>
+
+			<div class="price-section">
+				<span class="original-price" id="giaGocText"
+					style="text-decoration: line-through;"
+					th:if="${chiTiet[0].giaGiam != null or chiTiet[0].phanTramGiam != null}"
+					th:text="${#numbers.formatDecimal(chiTiet[0].bienThe.gia, 0, 'POINT', 0, 'COMMA')} + ' đ'">
+				</span> <span class="current-price" id="giaSauGiamText"
+					th:text="${#numbers.formatDecimal(chiTiet[0].giaSauGiam, 0, 'POINT', 0, 'COMMA')} + ' đ'">
+				</span>
+			</div>
+			<div class="stock-indicator">
+				<div class="stock-bar" id="stockBar" style="width: 100%;"></div>
+			</div>
+
+
+
+
+
+			<!-- BẮT ĐẦU: Form chọn loại ảnh sản phẩm -->
+			<div class="variant-selection mt-4"
+				th:if="${chiTiet != null and chiTiet.size() > 1}">
+				<h3 class="text-lg font-semibold mb-2">Chọn loại sản phẩm:</h3>
+				<div class="flex gap-4 flex-wrap">
+					<label class="cursor-pointer text-center"
+						th:each="bt, iterStat : ${chiTiet}"
+						th:classappend="${bt.bienThe.soLuongTonKho <= 0} ? ' opacity-50 hover:cursor-not-allowed' : ''">
+						<input type="radio" name="variant"
+						th:id="'variant-' + ${iterStat.index}"
+						th:value="${bt.bienThe.maCTSP}" class="hidden peer"
+						th:checked="${iterStat.index == 0}" />
+						<div
+							class="border rounded-lg p-2 peer-checked:ring-2 peer-checked:ring-blue-500">
+							<img th:src="@{${bt.dsAnhChiTiet[0].urlAnhCT}}"
+								th:alt="${bt.bienThe.phienBan}"
+								class="w-20 h-20 object-cover rounded mx-auto" />
+						</div>
+					</label>
+				</div>
+			</div>
+
+
+			<!-- KẾT THÚC: Form chọn loại ảnh sản phẩm -->
+
+
+
+
+
+
+			<div class="quantity-section">
+				<h3>Số lượng</h3>
+				<div class="quantity-control">
+					<button class="quantity-btn minus">-</button>
+					<input type="text" value="1" class="quantity-input"
+						id="soLuongInput">
+					<button class="quantity-btn plus">+</button>
+				</div>
+
+				<p class="max-purchase" id="tonkho-text">
+					Kho: <span id="tonkho-value"
+						th:text="${chiTiet[0].bienThe.soLuongTonKho}"></span>
+				</p>
+				<div class="action-buttons">
+					<input type="hidden" id="maCTSP"
+						th:value="${chiTiet[0].bienThe.maCTSP}" />
+					<button class="buy-now-btn"
+						th:data-mact="${chiTiet[0].bienThe.maCTSP}" th:data-soluong="1">
+						MUA NGAY</button>
+
+					<button class="add-to-cart-btn"
+						th:data-mact="${chiTiet[0].bienThe.maCTSP}" th:data-soluong="1">
+						<i class="fas fa-shopping-bag"></i> Thêm vào giỏ hàng
+					</button>
+				</div>
+			</div>
+
+
+		</div>
+	</div>
+</div>
+
+<!-- Form mô tả sản phẩm -->
+
+
+<div class="main-content-wrapper comments-page-wrapper">
+
+	<div class="product-detail-container">
+		<div class="description-section">
+			<div class="description-section" th:if="${mota != null}">
+				<h3>Mô tả</h3>
+				<p th:text="'- Chất liệu: ' + ${mota.chatLieu}"></p>
+				<p th:text="'- Trọng lượng: ' + ${mota.trongLuong}"></p>
+				<p th:text="'- Loại bảo hành: ' + ${mota.loaiBaoHanh}"></p>
+				<p th:text="'- Kích thước: ' + ${mota.kichThuoc}"></p>
+				<p th:text="'- Gửi từ: ' + ${mota.guiTu}"></p>
+				<p th:text="'- Tỉ lệ: ' + ${mota.tiLe}"></p>
+				<p th:text="'- Xuất xứ: ' + ${mota.xuatXu}"></p>
+				<p th:text="'- Trình độ: ' + ${mota.trinhDo}"></p>
+			</div>
+
+		</div>
+	</div>
+
+</div>
+
+
+
+
+<div class="main-content-wrapper comments-page-wrapper">
+	<div class="comments-container">
+		<h2 class="comments-title">BÌNH LUẬN</h2>
+		<div class="comments-header">
+			<span class="comment-count" th:text="${soLuongDanhGia} + ' Đánh giá'"></span>
+
+		</div>
+		<th:block th:each="dg, iterStat : ${danhGia}">
+			<div class="comment-list"
+				th:classappend="${iterStat.index} >= 5 ? 'hidden-comment' : ''">
+				<div class="comment-item">
+					<img th:src="@{${dg.taiKhoan.avatar}}" alt="User Avatar"
+						class="comment-avatar">
+					<div class="comment-content">
+						<span class="comment-author" th:text="${dg.taiKhoan.tenDangNhap}"></span>
+						<div class="star-rating">
+							<th:block th:each="i : ${#numbers.sequence(1,5)}">
+								<span style="font-size: 24px; color: #ffc107;"
+									th:text="${i <= dg.soSao ? '★' : '☆'}"></span>
+							</th:block>
+						</div>
+						<p class="comment-text" th:text="${dg.binhLuan}"></p>
+						<!-- Container các media -->
+						<div
+							style="display: flex; gap: 10px; overflow-x: auto; padding: 5px;">
+							<th:block th:each="media : ${dg.mediaList}">
+								<div
+									style="flex: 0 0 auto; width: 150px; height: 100px; overflow: hidden; border: 1px solid #ccc; border-radius: 5px; cursor: pointer;"
+									onclick="openLightbox(this)">
+									<img th:if="${media.loai == 'image'}" th:src="@{${media.url}}"
+										style="width: 100%; height: 100%; object-fit: cover;" />
+									<video th:if="${media.loai == 'video'}"
+										th:src="@{${media.url}}"
+										style="width: 100%; height: 100%; object-fit: cover;"></video>
+								</div>
+							</th:block>
+						</div>
+
+						<!-- Lightbox overlay -->
+						<div id="lightbox"
+							style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 99999;">
+							<span
+								style="position: absolute; top: 20px; right: 30px; font-size: 30px; color: white; cursor: pointer;"
+								onclick="closeLightbox()">&times;</span>
+							<div id="lightbox-content"
+								style="max-width: 90%; max-height: 90%;"></div>
+						</div>
+
+						<div class="comment-actions-row">
+							<span class="comment-time"
+								th:text="${ngayDangFormattedList[iterStat.index]}"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</th:block>
+
+		<button id="loadMoreBtn" class="load-more-comments-btn">Xem
+			thêm bình luận</button>
+
+	</div>
+</div>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const sliderWrapper = document.getElementById('sliderImagesWrapper');
+  const thumbnails = document.querySelectorAll('.thumbnail-images .thumbnail');
+  const variantRadios = document.querySelectorAll('input[name="variant"]');
+
+  let currentIndex = 0;
+  const totalImages = thumbnails.length;
+
+  // Các nút điều chỉnh số lượng
+  const inputSoLuong = document.getElementById("soLuongInput");
+  const btnMinus = document.querySelector(".quantity-btn.minus");
+  const btnPlus = document.querySelector(".quantity-btn.plus");
+  const addToCartBtn = document.querySelector(".add-to-cart-btn");
+
+  function updateMainDisplay(thumbnail) {
+    const imgURL = thumbnail.dataset.anh;
+    const giaGiam = thumbnail.dataset.giasaugiam;
+    const giaGoc = thumbnail.dataset.gia;
+    const phienBan = thumbnail.dataset.phienban;
+    const tonKho = parseInt(thumbnail.dataset.tonkho) || 0;
+    const maCTSP = thumbnail.dataset.mact;
+
+    // Cập nhật ảnh lớn bằng translateX
+    if (sliderWrapper) {
+      currentIndex = Array.from(thumbnails).indexOf(thumbnail);
+      const offset = -currentIndex * 100;
+      sliderWrapper.style.transform = `translateX(${offset}%)`;
+    }
+
+    // Cập nhật phiên bản
+    const phienBanElem = document.getElementById("phienBanText");
+    if (phienBanElem) {
+      phienBanElem.textContent = phienBan ? phienBan : "";
+    }
+
+    // Giá gốc
+    const giaGocElem = document.getElementById("giaGocText");
+    if (giaGocElem) {
+      if (giaGoc && parseFloat(giaGoc) !== parseFloat(giaGiam)) {
+        giaGocElem.style.display = "inline";
+        giaGocElem.textContent = parseFloat(giaGoc).toLocaleString("vi-VN") + " đ";
+      } else {
+        giaGocElem.style.display = "none";
+      }
+    }
+
+    // Giá sau giảm
+    const giaSauGiamElem = document.getElementById("giaSauGiamText");
+    if (giaSauGiamElem && giaGiam !== undefined && giaGiam !== null) {
+      giaSauGiamElem.textContent = parseFloat(giaGiam).toLocaleString("vi-VN") + " đ";
+    }
+
+    // Overlay hết hàng	
+    const overlayHetHang = document.getElementById("overlayHetHang");
+    if (overlayHetHang) {
+      overlayHetHang.style.display = tonKho <= 0 ? "flex" : "none";
+    }
+
+    // Cập nhật kho text
+    const tonkhoElem = document.querySelector(".max-purchase");
+    if (tonkhoElem) {
+      tonkhoElem.textContent = "Kho: " + tonKho;
+    }
+
+    // Cập nhật mã biến thể
+    const maInput = document.getElementById("maCTSP");
+    if (maInput) maInput.value = maCTSP || "";
+
+    if (addToCartBtn) addToCartBtn.dataset.mact = maCTSP || "";
+
+    // Reset số lượng
+    if (inputSoLuong) {
+      inputSoLuong.value = 1;
+      inputSoLuong.setAttribute("data-max", tonKho);
+      inputSoLuong.disabled = tonKho <= 0;
+    }
+
+    // Cập nhật trạng thái nút +, -, thêm giỏ hàng
+const buyNowBtn = document.querySelector(".buy-now-btn");
+if(buyNowBtn) buyNowBtn.dataset.mact = maCTSP || "";
+
+const quantityInput = btnMinus?.nextElementSibling; // phần tử ngay sau nút -
+
+if (btnPlus && btnMinus && addToCartBtn && buyNowBtn && quantityInput) {
+    const isOutOfStock = tonKho <= 0;
+
+    // Disable + -
+    btnPlus.disabled = isOutOfStock;
+    btnMinus.disabled = isOutOfStock;
+
+    // Nút thêm giỏ
+    addToCartBtn.disabled = isOutOfStock;
+    addToCartBtn.style.cursor = isOutOfStock ? "not-allowed" : "pointer";
+
+    // Nút mua ngay
+    buyNowBtn.disabled = isOutOfStock;
+    buyNowBtn.style.cursor = isOutOfStock ? "not-allowed" : "pointer";
+
+    // Nếu hết hàng → số lượng = 0
+    if (isOutOfStock) {
+        if (quantityInput.tagName === "INPUT") {
+            quantityInput.value = 0;
+        } else {
+            quantityInput.textContent = "0";
+        }
+    }
+}
+
+
+    // Cập nhật active thumbnail
+    thumbnails.forEach(t => t.classList.remove("active"));
+    thumbnail.classList.add("active");
+
+    // Đồng bộ radio biến thể tương ứng
+    variantRadios.forEach(radio => {
+      radio.checked = radio.value === maCTSP;
+    });
+  }
+
+  function moveSlider(direction) {
+    if (totalImages === 0) return;
+    currentIndex += direction;
+    if (currentIndex < 0) currentIndex = totalImages - 1;
+    else if (currentIndex >= totalImages) currentIndex = 0;
+
+    updateMainDisplay(thumbnails[currentIndex]);
+  }
+
+  // Khởi tạo hiển thị lần đầu
+  if (totalImages > 0) {
+    updateMainDisplay(thumbnails[0]);
+  }
+
+  // Thêm sự kiện click cho thumbnails
+  thumbnails.forEach((thumb, index) => {
+    thumb.setAttribute('data-index', index);
+    thumb.addEventListener('click', () => {
+      currentIndex = index;
+      updateMainDisplay(thumb);
+    });
+  });
+
+  // Thêm sự kiện thay đổi radio biến thể
+  variantRadios.forEach(radio => {
+    radio.addEventListener("change", () => {
+      if (!radio.checked) return;
+      const selectedMaCTSP = radio.value;
+      const thumbnail = Array.from(thumbnails).find(t => t.dataset.mact === selectedMaCTSP);
+      if (thumbnail) {
+        currentIndex = Array.from(thumbnails).indexOf(thumbnail);
+        updateMainDisplay(thumbnail);
+      }
+    });
+  });
+
+  // Hàm lấy tồn kho hiện tại
+  function layTonKho() {
+    return parseInt(inputSoLuong.getAttribute("data-max")) || 0;
+  }
+
+  // Nút tăng số lượng
+  btnPlus.addEventListener("click", () => {
+    let val = parseInt(inputSoLuong.value) || 0;
+    const maxSoLuong = layTonKho();
+    if (val < maxSoLuong) {
+      inputSoLuong.value = val + 1;
+    } else {
+      hienThongBaoHeThong("⚠️ Số lượng bạn chọn đã đạt mức tối đa tồn kho!", false);
+    }
+  });
+
+  // Nút giảm số lượng
+  btnMinus.addEventListener("click", () => {
+    let val = parseInt(inputSoLuong.value) || 0;
+    if (val > 1) {
+      inputSoLuong.value = val - 1;
+    }
+  });
+
+  // Kiểm tra nhập số lượng tay
+  inputSoLuong.addEventListener("input", () => {
+    let val = parseInt(inputSoLuong.value) || 0;
+    const maxSoLuong = layTonKho();
+
+    if (val > maxSoLuong) {
+      hienThongBaoHeThong("⚠️ Số lượng bạn nhập vượt quá tồn kho!", false);
+      inputSoLuong.value = maxSoLuong;
+    }
+    if (val < 1) {
+      inputSoLuong.value = 1;
+    }
+  });
+
+  // Thêm vào giỏ hàng
+  addToCartBtn.addEventListener("click", async () => {
+    const maCTSP = addToCartBtn.dataset.mact;
+    const soLuong = parseInt(inputSoLuong.value) || 1;
+    try {
+      const res = await fetch("/gio-hang/them", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": document.querySelector('meta[name="_csrf"]').content
+        },
+        body: JSON.stringify({ maCT: maCTSP, soLuong: soLuong })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        hienThongBaoHeThong(data.message, true);
+      } else {
+        hienThongBaoHeThong(data.error, false);
+      }
+    } catch (err) {
+      hienThongBaoHeThong("⚠️ Vui lòng đăng nhập để thêm vào giỏ hàng", false);
+    }
+  });
+
+  window.moveSlider = moveSlider;
+});
+
+document.querySelectorAll('.buy-now-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const maCT = this.dataset.mact; // ID biến thể
+        const soLuong = parseInt(document.getElementById("soLuongInput").value) || 1;
+
+        try {
+            const res = await fetch('/gio-hang/them', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+                },
+                body: JSON.stringify({ maCT, soLuong })
+            });
+
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                alert(data.error || "❌ Không thể thêm sản phẩm");
+                return;
+            }
+
+            const ctgh = await res.json(); // backend trả ChiTietGioHang
+            if (ctgh && ctgh.maCTGH) {
+                // Lưu maCTGH mới tạo vào sessionStorage
+                sessionStorage.setItem('tickNewItem', ctgh.maCTGH);
+
+                // Chuyển sang trang giỏ hàng
+                window.location.href = '/gio-hang';
+            } else {
+                alert("❌ Lỗi: không nhận được thông tin sản phẩm vừa thêm");
+            }
+
+        } catch (err) {
+            hienThongBaoHeThong("⚠️ Vui lòng đăng nhập để mua hàng", false);
+        }
+    });
+});
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const comments = document.querySelectorAll(".comment-item"); 
+    const loadBtn = document.getElementById("loadMoreBtn");
+
+    let visibleCount = 5; 
+
+    comments.forEach((comment, index) => {
+        if (index >= visibleCount) {
+            comment.style.display = "none";
+        }
+    });
+
+    loadBtn.addEventListener("click", function () {
+        let newVisible = visibleCount + 5;
+        comments.forEach((comment, index) => {
+            if (index < newVisible) {
+                comment.style.display = "flex"; 
+            }
+        });
+        visibleCount = newVisible;
+        if (visibleCount >= comments.length) {
+            loadBtn.style.display = "none";
+        }
+    });
+});
+</script>
+<script>
+function openLightbox(el) {
+    const lightbox = document.getElementById('lightbox');
+    const content = document.getElementById('lightbox-content');
+
+    content.innerHTML = '';
+
+    const media = el.querySelector('img, video');
+    const clone = media.cloneNode(true);
+
+    // Giới hạn kích thước vừa phải
+    clone.style.maxWidth = '70vw';  // 70% chiều ngang màn hình
+    clone.style.maxHeight = '70vh'; // 70% chiều cao màn hình
+    clone.style.objectFit = 'contain';
+
+    if(clone.tagName === 'VIDEO') {
+        clone.controls = true;
+        clone.autoplay = true;
+    }
+    content.appendChild(clone);
+
+    lightbox.style.display = 'flex';
+}
+
+
+function closeLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    lightbox.style.display = 'none';
+    document.getElementById('lightbox-content').innerHTML = '';
+}
+</script>
+<script>
+window.addEventListener('pageshow', () => {
+    const thumbnails = document.querySelectorAll('.thumbnail-images .thumbnail');
+    if (!thumbnails.length) return;
+
+    const firstThumb = thumbnails[0];
+    const sliderWrapper = document.getElementById('sliderImagesWrapper');
+    const variantRadios = document.querySelectorAll('input[name="variant"]');
+    const inputSoLuong = document.getElementById("soLuongInput");
+    const addToCartBtn = document.querySelector(".add-to-cart-btn");
+    const buyNowBtn = document.querySelector(".buy-now-btn");
+
+    const tonKho = parseInt(firstThumb.dataset.tonkho) || 0;
+    const maCTSP = firstThumb.dataset.mact;
+
+    // Reset thumbnail & slider
+    thumbnails.forEach(t => t.classList.remove("active"));
+    firstThumb.classList.add("active");
+    if (sliderWrapper) sliderWrapper.style.transform = `translateX(0%)`;
+
+    // Reset radio
+    variantRadios.forEach(r => r.checked = false);
+    if (variantRadios[0]) variantRadios[0].checked = true;
+
+    // Reset số lượng
+    if (inputSoLuong) {
+        inputSoLuong.value = 1;
+        inputSoLuong.setAttribute("data-max", tonKho);
+        inputSoLuong.disabled = tonKho <= 0;
+    }
+
+    // Reset nút mua
+    if (addToCartBtn) addToCartBtn.dataset.mact = maCTSP || "";
+    if (buyNowBtn) buyNowBtn.dataset.mact = maCTSP || "";
+
+    // Reset giá, phiên bản, kho
+    const phienBanElem = document.getElementById("phienBanText");
+    const giaGocElem = document.getElementById("giaGocText");
+    const giaSauGiamElem = document.getElementById("giaSauGiamText");
+    const overlayHetHang = document.getElementById("overlayHetHang");
+    const tonkhoElem = document.querySelector(".max-purchase");
+
+    if (phienBanElem) phienBanElem.textContent = firstThumb.dataset.phienban || "";
+    if (giaGocElem && giaSauGiamElem) {
+        const giaGoc = firstThumb.dataset.gia;
+        const giaGiam = firstThumb.dataset.giasaugiam;
+        giaGocElem.style.display = (giaGoc && giaGoc != giaGiam) ? "inline" : "none";
+        if (giaGocElem.style.display === "inline") giaGocElem.textContent = parseFloat(giaGoc).toLocaleString("vi-VN") + " đ";
+        giaSauGiamElem.textContent = parseFloat(giaGiam).toLocaleString("vi-VN") + " đ";
+    }
+    if (overlayHetHang) overlayHetHang.style.display = tonKho <= 0 ? "flex" : "none";
+    if (tonkhoElem) tonkhoElem.textContent = "Kho: " + tonKho;
+});
+</script>

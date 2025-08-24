@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Đặt Hàng Thành Công</title>
+  <link rel="stylesheet" href="/css/style_ThanhCong.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .success-container {
+      max-width: 600px;
+      margin: 60px auto;
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .success-icon {
+      font-size: 64px;
+      color: #28a745;
+      margin-bottom: 20px;
+    }
+
+    .success-message {
+      font-size: 22px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .success-submessage {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .btn-home {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .btn-home:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-orders {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .btn-orders:hover {
+      background-color: #218838;
+    }
+
+    @media (max-width: 500px) {
+      .btn-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="success-container">
+    <div class="success-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    <div class="success-message">Đặt hàng thành công!</div>
+    <div class="success-submessage">
+      Cảm ơn bạn đã mua sắm tại <strong>Gundam Shop</strong>.<br />
+      Đơn hàng của bạn đang được xử lý.
+    </div>
+    <div class="btn-group">
+      <a th:href="@{/home}" class="btn btn-home"><i class="fas fa-home"></i> Về trang chủ</a>
+      <a th:href="@{/DonHang?trangThai=1}" class="btn btn-orders"><i class="fas fa-clipboard-list"></i> Xem đơn hàng</a>
+    </div>
+  </div>
+</body>
+</html>

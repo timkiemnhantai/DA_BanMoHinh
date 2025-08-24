@@ -1,9 +1,10 @@
 package com.poly.security;
 
-import com.poly.model.TaiKhoan;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.poly.model.TaiKhoan;
 
 import java.util.Collection;
 import java.util.List;

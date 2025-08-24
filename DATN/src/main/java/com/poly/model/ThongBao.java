@@ -2,16 +2,8 @@ package com.poly.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,7 +28,7 @@ public class ThongBao {
 
     @Column(name = "Url")
     private String url;
-    
+
     @Column(name = "DaDoc")
     private Boolean daDoc = false;
 
@@ -45,5 +37,6 @@ public class ThongBao {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MaTK")
+    @JsonBackReference // tránh vòng lặp JSON với TaiKhoan
     private TaiKhoan taiKhoan;
 }

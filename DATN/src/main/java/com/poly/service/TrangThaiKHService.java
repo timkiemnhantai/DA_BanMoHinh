@@ -1,41 +1,31 @@
 package com.poly.service;
 
+import java.util.List;
 
-import com.poly.model.TrangThaiKH;
-import com.poly.repository.TrangThaiKHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.poly.model.TrangThaiKH;
+import com.poly.repository.TrangThaiKHRepository;
 
 @Service
 public class TrangThaiKHService {
 
     @Autowired
-    private TrangThaiKHRepository trangThaiKHRepository;
+    private TrangThaiKHRepository repo;
 
-    // Lấy tất cả trạng thái
     public List<TrangThaiKH> getAll() {
-        return trangThaiKHRepository.findAll();
+        return repo.findAll();
     }
 
-    // Lấy trạng thái theo ID
-    public Optional<TrangThaiKH> findById(Integer id) {
-        return trangThaiKHRepository.findById(id);
+    public TrangThaiKH getById(Integer id) {
+        return repo.findById(id).orElse(null);
+    }
+    
+    public TrangThaiKH getByTen(String ten) {
+        return repo.findByTenTrangThai(ten).orElseThrow(
+            () -> new RuntimeException("Không tìm thấy trạng thái: " + ten)
+        );
     }
 
-    // Lưu hoặc cập nhật
-    public TrangThaiKH save(TrangThaiKH trangThaiKH) {
-        return trangThaiKHRepository.save(trangThaiKH);
-    }
-
-    // Xóa
-    public boolean delete(Integer id) {
-        if (trangThaiKHRepository.existsById(id)) {
-            trangThaiKHRepository.deleteById(id);
-            return true;
-        }
-        return false;
-    }
 }

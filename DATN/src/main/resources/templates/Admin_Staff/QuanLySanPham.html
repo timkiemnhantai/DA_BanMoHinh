@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý sản phẩm</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        #navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 25px;
+            z-index: 999;
+            border-bottom: 1px solid #ccc;
+        }
+        #navbar .logo-wrapper img { height: 45px; margin-right: 10px; }
+        #navbar .logo-title { font-size: 18px; font-weight: bold; }
+        #navbar .nav-right img { height: 35px; border-radius: 50%; }
+        .taskbar {
+            position: fixed;
+            top: 100px;
+            left: 0;
+            width: 100px;
+            height: calc(100vh - 100px);
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            border-right: 1px solid #ccc;
+            z-index: 998;
+        }
+        .taskbar a { margin-bottom: 20px; }
+        .taskbar img {
+            width: 28px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        .taskbar img:hover { opacity: 1; transform: scale(1.1); }
+        .container-admin {
+            margin-top: 100px;
+            margin-left: 100px;
+            padding: 20px;
+            background: #fdfdfd;
+            min-height: calc(100vh - 100px);
+        }
+        .modal-bg { background-color: rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav id="navbar">
+        <div class="nav-left">
+            <div class="logo-wrapper flex items-center">
+                <img src="/img/processed_no_white.png" alt="Logo" />
+                <div class="logo-title">Gundam Shop</div>
+            </div>
+        </div>
+        <div class="nav-right flex items-center">
+            <label>Tài khoản |</label>
+            <a href="#"><img src="/img/Screenshot_2025-06-19_220523-removebg-preview.png" alt="Tài khoản" /></a>
+        </div>
+    </nav>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <a href="/QuanLySanPham.html" title="Quản lý sản phẩm"><img src="/img/box.png" alt="" /></a>
+        <a href="/Admin_Staff/QuanLyTaiKhoan.html" title="Quản lý tài khoản"><img src="/img/account.png" alt="" /></a>
+        <a href="/QuanLyDonHang.html" title="Quản lý đơn hàng"><img src="/img/booking.png" alt="" /></a>
+        <a href="#" title="Quản lý đánh giá"><img src="/img/review.png" alt="" /></a>
+        <a href="/QuanLyBanner.html" title="Quản lý banner"><img src="/img/advertisement.png" alt="" /></a>
+        <a href="#" title="Quản lý thanh toán"><img src="/img/credit-card.png" alt="" /></a>
+    </div>
+
+    <!-- Nội dung chính -->
+    <div class="container-admin">
+        <div class="bg-white rounded-lg shadow p-5">
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="text-xl font-bold">Quản lý sản phẩm</h1>
+                <button onclick="openModal('modalAdd')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Thêm sản phẩm</button>
+            </div>
+
+            <!-- Tìm kiếm -->
+            <form th:action="@{/QuanLySanPham}" method="get" class="flex mb-4 gap-4">
+                <input type="text" name="keyword" placeholder="Tìm sản phẩm..." class="flex-1 border px-3 py-2 rounded" th:value="${keyword}" />
+                <select name="loaiKeyword" class="border px-3 py-2 rounded">
+                    <option value="">Chọn loại sản phẩm</option>
+                    <option th:each="loai : ${dsLoai}" th:value="${loai.maLoaiSanPham}" th:text="${loai.tenLoaiSanPham}"></option>
+                </select>
+                <button type="submit" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+
+            <!-- Bảng sản phẩm -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full border text-sm">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="p-2 border text-center">Mã SP</th>
+                            <th class="p-2 border text-center">Tên sản phẩm</th>
+                            <th class="p-2 border text-center">Ảnh</th>
+                            <th class="p-2 border text-center">Loại</th>
+                            <th class="p-2 border text-center">Hãng</th>
+                            <th class="p-2 border text-center">Giá</th>
+                            <th class="p-2 border text-center">Tồn kho</th>
+                            <th class="p-2 border text-center">Trạng thái</th>
+                            <th class="p-2 border text-center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="sp : ${dsSanPham}" class="hover:bg-gray-50 text-center">
+                            <td class="p-2 border" th:text="${sp.maSP}"></td>
+                            <td class="p-2 border" th:text="${sp.tenSP}"></td>
+                            <td class="p-2 border">
+                                <img th:src="${#lists.isEmpty(sp.anhSanPham) ? '/img/default.png' : sp.anhSanPham[0].urlAnhSP}" class="w-[120px] h-[120px] object-cover rounded mx-auto" />
+                            </td>
+                            <td class="p-2 border" th:text="${sp.loaiSanPham != null ? sp.loaiSanPham.tenLoaiSanPham : 'Chưa phân loại'}"></td>
+                            <td class="p-2 border" th:text="${sp.thuongHieu}"></td>
+							
+							<td class="p-2 border text-blue-600 font-semibold"
+							    th:text="${#numbers.formatDecimal(sp.bienTheSanPham[0].gia, 0, 'POINT', 0, 'COMMA')} + ' VND'">
+							</td>
+
+                            <td class="p-2 border" th:text="${sp.bienTheSanPham[0].soLuongTonKho}"></td>
+							<td class="p-2 border">
+							    <span class="px-2 py-1 rounded-full text-xs"
+							          th:text="${sp.bienTheSanPham[0].trangThaiKH != null ? sp.bienTheSanPham[0].trangThaiKH.tenTrangThai : 'Chưa có trạng thái'}">
+							    </span>
+							</td>
+
+                            <td class="p-2 border flex justify-center gap-2">
+                                <button type="button" class="text-blue-600 hover:text-blue-800 btn-edit"
+                                    th:data-id="${sp.maSP}"
+                                    th:data-ten="${sp.tenSP}"
+                                    th:data-thuonghieu="${sp.thuongHieu}"
+                                    th:data-gia="${sp.bienTheSanPham[0].gia}"
+                                    th:data-tonkho="${sp.bienTheSanPham[0].soLuongTonKho}"
+                                    th:data-loai="${sp.loaiSanPham != null ? sp.loaiSanPham.maLoaiSanPham : ''}">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                                <a th:href="@{'/QuanLySanPham/delete/' + ${sp.maSP}}" class="text-red-600 hover:text-red-800" onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+	<!-- Modal Add Product -->
+	<div id="modalAdd" class="hidden fixed inset-0 flex justify-center items-center modal-bg">
+	    <div class="bg-white rounded-lg shadow p-5 w-[500px] relative">
+	        <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onclick="closeModal('modalAdd')">&times;</button>
+	        <h2 class="text-lg font-bold mb-4">Thêm sản phẩm</h2>
+	        <form th:action="@{/QuanLySanPham/add}" method="post" enctype="multipart/form-data" class="flex flex-col gap-3">
+	            <input type="text" name="tenSP" placeholder="Tên sản phẩm" class="border px-3 py-2 rounded" required />
+	            <input type="file" name="anhSP" class="border px-3 py-2 rounded" />
+	            <select name="loaiSanPham" class="border px-3 py-2 rounded" required>
+	                <option value="">Chọn loại sản phẩm</option>
+	                <option th:each="loai : ${dsLoai}" th:value="${loai.maLoaiSanPham}" th:text="${loai.tenLoaiSanPham}"></option>
+	            </select>
+	            <input type="text" name="thuongHieu" placeholder="Hãng" class="border px-3 py-2 rounded" required />
+	            <input type="number" name="gia" placeholder="Giá" class="border px-3 py-2 rounded" required />
+	            <input type="number" name="tonKho" placeholder="Tồn kho" class="border px-3 py-2 rounded" value="0" required />
+	            <!-- Trạng thái -->
+				<select name="TrangThaiKH" class="border px-3 py-2 rounded" required>
+				                <option value="">TrangThaiKH</option>
+				                <option th:each="loai : ${dsTrangThai}" th:value="${loai.maTrangThaiKH}" th:text="${loai.tenTrangThai}"></option>
+				            </select>
+	            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Lưu</button>
+	        </form>
+	    </div>
+	</div>
+
+	<!-- Modal Edit Product -->
+	
+	<div id="modalEdit" class="hidden fixed inset-0 flex justify-center items-center modal-bg">
+	    <div class="bg-white rounded-lg shadow p-5 w-[500px] relative">
+	        <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onclick="closeModal('modalEdit')">&times;</button>
+	        <h2 class="text-lg font-bold mb-4">Sửa sản phẩm</h2>
+	        <form th:action="@{/QuanLySanPham/edit}" method="post" enctype="multipart/form-data" class="flex flex-col gap-3">
+	            <input type="hidden" name="maSP" id="editMaSP"/>
+	            <input type="text" name="tenSP" id="editTenSP" placeholder="Tên sản phẩm" class="border px-3 py-2 rounded" required />
+	            <input type="file" name="anhSP" class="border px-3 py-2 rounded" />
+	            <select name="loaiSanPham" id="editLoaiSP" class="border px-3 py-2 rounded" required>
+	                <option value="">Chọn loại sản phẩm</option>
+	                <option th:each="loai : ${dsLoai}" th:value="${loai.maLoaiSanPham}" th:text="${loai.tenLoaiSanPham}"></option>
+	            </select>
+	            <input type="text" name="thuongHieu" id="editThuongHieu" placeholder="Hãng" class="border px-3 py-2 rounded" required />
+	            <input type="number" name="gia" id="editGia" placeholder="Giá" class="border px-3 py-2 rounded" required />
+	            <input type="number" name="tonKho" id="editTonKho" placeholder="Tồn kho" class="border px-3 py-2 rounded" required />
+	            
+	            <!-- Trạng thái giống Add -->
+	            <select name="TrangThaiKH" id="editTrangThai" class="border px-3 py-2 rounded" required>
+	                <option value="">Chọn trạng thái</option>
+	                <option th:each="trangthai : ${dsTrangThai}" 
+	                        th:value="${trangthai.maTrangThaiKH}" 
+	                        th:text="${trangthai.tenTrangThai}"></option>
+	            </select>
+
+	            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Cập nhật</button>
+	        </form>
+	    </div>
+	</div>
+
+	<script>
+	    function openModal(id){ document.getElementById(id).classList.remove('hidden'); }
+	    function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
+
+	    document.querySelectorAll('.btn-edit').forEach(btn => {
+	        btn.addEventListener('click', function(){
+	            document.getElementById('editMaSP').value = this.dataset.id;
+	            document.getElementById('editTenSP').value = this.dataset.ten;
+	            document.getElementById('editThuongHieu').value = this.dataset.thuonghieu;
+	            document.getElementById('editGia').value = this.dataset.gia;
+	            document.getElementById('editTonKho').value = this.dataset.tonkho;
+	            document.getElementById('editLoaiSP').value = this.dataset.loai;
+
+	            // Tự động set trạng thái theo tồn kho
+	            document.getElementById('editTrangThai').value = this.dataset.tonkho > 0 ? 1 : 0;
+
+	            openModal('modalEdit');
+	        });
+	    });
+	</script>
+
+</body>
+</html>
